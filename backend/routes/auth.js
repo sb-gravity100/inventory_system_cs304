@@ -100,8 +100,7 @@ router.post(
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-    user.password = hashedNewPassword;
+    user.password = newPassword;
     await user.save();
     res.json({ message: "Password changed successfully by admin" });
   },
@@ -124,10 +123,9 @@ router.post(
     if (existingUser) {
       return res.status(409).json({ message: "Username already exists" });
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       username,
-      password: hashedPassword,
+      password,
       role: role || "staff",
     });
     await newUser.save();
