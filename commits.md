@@ -11,6 +11,10 @@ Format:
 
 ---
 
+### `1a8fafa` · 2026-03-24 · feat: sleek login screen redesign + PasswordInput forwardRef
+- `frontend/app/(auth)/login.jsx`
+- `frontend/components/PasswordInput.jsx`
+
 ### `84937d4` · 2026-03-24 · feat: overhaul Users screen and unmodified UI components
 - `frontend/app/users.jsx`
 - `frontend/components/ui/Card.jsx`
