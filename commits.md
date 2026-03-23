@@ -11,6 +11,11 @@ Format:
 
 ---
 
+### `bdef47b` · 2026-03-24 · fix: update all Log writes to new event/actor schema across auth, products, sales routes
+- `backend/routes/auth.js`
+- `backend/routes/products.js`
+- `backend/routes/sales.js`
+
 ### `0f2e8de` · 2026-03-24 · fix: remove next param from async pre-save hook
 - `backend/Models/User.js`
 
