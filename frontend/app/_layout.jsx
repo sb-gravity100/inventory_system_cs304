@@ -1,5 +1,6 @@
 import { Stack } from "expo-router";
 import { ThemeProvider } from "../components/ThemeProvider";
+import { useTheme } from "../components/ThemeProvider";
 import { AuthProvider } from "../context/AuthContext";
 import { PaperProvider } from "react-native-paper";
 import ErrorBoundary from "../components/ErrorBoundary";
@@ -10,12 +11,15 @@ import { useEffect } from "react";
 SplashScreen.preventAutoHideAsync();
 
 function RootContent() {
+  const { theme } = useTheme();
+
   return (
     <Stack
       screenOptions={{
         headerShown: false,
         animation: "slide_from_right",
         gestureEnabled: true,
+        contentStyle: { backgroundColor: theme.background },
       }}
     >
       {/* Auth gate — fade both ways, no directional slide */}
