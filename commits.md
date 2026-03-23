@@ -11,6 +11,38 @@ Format:
 
 ---
 
+### `0a5203a` · 2026-03-23 · docs: mark Phase 4 tasks done (except error boundary)
+- `PHASES.md`
+
+---
+
+### `edce1e5` · 2026-03-23 · feat: add pull-to-refresh on users screen
+- `frontend/app/users.jsx`
+
+---
+
+### `449f923` · 2026-03-23 · feat: add inline request validation on all backend routes
+- `backend/routes/auth.js`
+- `backend/routes/products.js`
+- `backend/routes/sales.js`
+
+---
+
+### `f11132b` · 2026-03-23 · feat: add verifyManager middleware for manager/admin role guard
+- `backend/middlewares.js`
+
+---
+
+### `864491c` · 2026-03-23 · fix: ObjectId string comparison and add manager/admin bypass in sales routes
+- `backend/routes/sales.js`
+
+---
+
+### `06b1e49` · 2026-03-23 · fix: replace req.userId with req.user.id in products route log writes
+- `backend/routes/products.js`
+
+---
+
 ### `2fbc06e` · 2026-03-23 · scripts: add run-backend and run-frontend bat scripts
 - `run-backend.bat`
 - `run-frontend.bat`
