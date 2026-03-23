@@ -17,7 +17,7 @@ function RootContent() {
     <Stack
       screenOptions={{
         headerShown: false,
-        animation: "slide_from_right",
+        animation: "none",
         gestureEnabled: true,
         contentStyle: { backgroundColor: theme.background },
       }}
@@ -28,10 +28,8 @@ function RootContent() {
       <Stack.Screen name="(tabs)" options={{ animation: "fade", gestureEnabled: false }} />
       {/* Action screen — modal presentation: slides up, swipe-down dismisses */}
       <Stack.Screen name="transaction" options={{ presentation: "modal", gestureEnabled: true }} />
-      {/* Detail drill-down — slide right in, swipe-left-edge to go back */}
-      <Stack.Screen name="transactions/[transactionId]/index" options={{ animation: "slide_from_right", gestureEnabled: true }} />
-      {/* Admin utility — same drill-down pattern */}
-      <Stack.Screen name="users" options={{ animation: "slide_from_right", gestureEnabled: true }} />
+      <Stack.Screen name="transactions/[transactionId]/index" options={{ animation: "none", gestureEnabled: true }} />
+      <Stack.Screen name="users" options={{ animation: "none", gestureEnabled: true }} />
     </Stack>
   );
 }
