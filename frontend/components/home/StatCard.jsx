@@ -1,38 +1,48 @@
 import { View, Text, StyleSheet } from "react-native";
 import { useTheme } from "../ThemeProvider";
-import Card from "../ui/Card";
+import { Font, FontSize, Spacing, Radius } from "../../constants/colors";
 
-export default function StatCard({ value, label, backgroundColor }) {
-   const { theme } = useTheme();
+/**
+ * colorScheme: "blue" | "green" | "neutral"
+ * fullWidth: boolean — spans full row
+ */
+export default function StatCard({ value, label, colorScheme = "neutral", fullWidth = false }) {
+  const { theme } = useTheme();
 
-   const styles = StyleSheet.create({
-      cardContent: {
-         alignItems: "center",
-      },
-      statValue: {
-         fontSize: 24,
-         fontWeight: "bold",
-         color: theme.textPrimary,
-         marginBottom: 4,
-      },
-      statLabel: {
-         fontSize: 12,
-         color: theme.textSecondary,
-         opacity: 0.9,
-      },
-   });
+  const schemeMap = {
+    blue: theme.statBlue,
+    green: theme.statGreen,
+    neutral: theme.statNeutral,
+  };
 
-   return (
-      <Card
-         style={{
-            flex: 1,
-            backgroundColor: backgroundColor || theme.secondary,
-         }}
-      >
-         <View style={styles.cardContent}>
-            <Text style={styles.statValue}>{value}</Text>
-            <Text style={styles.statLabel}>{label}</Text>
-         </View>
-      </Card>
-   );
+  const scheme = schemeMap[colorScheme] || theme.statNeutral;
+
+  const styles = StyleSheet.create({
+    card: {
+      backgroundColor: scheme.bg,
+      borderRadius: Radius.card,
+      padding: Spacing.cardPadding,
+      flex: fullWidth ? undefined : 1,
+      width: fullWidth ? "100%" : undefined,
+    },
+    value: {
+      fontFamily: Font.bold,
+      fontSize: FontSize.statValue,
+      color: scheme.text,
+      marginBottom: 2,
+    },
+    label: {
+      fontFamily: Font.regular,
+      fontSize: FontSize.listSecondary,
+      color: scheme.text,
+      opacity: 0.8,
+    },
+  });
+
+  return (
+    <View style={styles.card}>
+      <Text style={styles.value}>{value}</Text>
+      <Text style={styles.label}>{label}</Text>
+    </View>
+  );
 }
