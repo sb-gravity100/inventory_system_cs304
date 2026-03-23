@@ -106,46 +106,46 @@ Status legend: `[ ]` todo · `[x]` done · `[-]` in progress
 - [x] Copy Outfit font files to `frontend/assets/fonts/` and load via `useFonts` in `_layout.jsx`
 
 ### Tab Bar
-- [ ] Icon-only tab bar; active tab shows pill/capsule highlight behind icon; remove labels
+- [x] Icon-only tab bar; active tab shows pill/capsule highlight behind icon; remove labels
 
 ### Screen Headers (all screens)
-- [ ] Remove colored header bar; move title + subtitle into scrollable body
-- [ ] Home: title = "Welcome, {username}", subtitle = "{role} Dashboard", action icons inline right
-- [ ] Other screens: title left-aligned in body, back arrow where needed
+- [x] Remove colored header bar; move title + subtitle into scrollable body
+- [x] Home: title = "Welcome, {username}", subtitle = "{role} Dashboard", action icons inline right
+- [x] Other screens: title left-aligned in body, back arrow where needed
 
 ### Home Screen
-- [ ] Stat cards: 2+1 stacked layout (two top, one full-width below); color-coded tints
-- [ ] Remove hint banner and Quick Actions entirely
-- [ ] Add "Recent Transactions" section — last 5, flat rows with chevron + status text
-- [ ] FAB bottom-right for new transaction
+- [x] Stat cards: 2+1 stacked layout (two top, one full-width below); color-coded tints
+- [x] Remove hint banner and Quick Actions entirely
+- [x] Add "Recent Transactions" section — last 5, flat rows with chevron + status text
+- [x] FAB bottom-right for new transaction
 
 ### Inventory Screen
-- [ ] Replace list with 2-column product tile grid
-- [ ] Each tile: product name, price (`currency` green), stock count; radius 6px card
-- [ ] Tap tile → detail modal (image placeholder, full info, stock action buttons)
-- [ ] Search bar above grid; filters if needed
+- [x] Replace list with 2-column product tile grid
+- [x] Each tile: product name, price (`currency` green), stock count; radius 6px card
+- [x] Tap tile → detail modal (image placeholder, full info, stock action buttons)
+- [x] Search bar above grid; filters if needed
 
 ### Sales Screen
-- [ ] Stat cards: same 2+1 stacked + color-coded as home
-- [ ] Transaction list: flat rows with right chevron (`›`), dividers, status as colored inline text
-- [ ] Remove left-border accent and badge boxes
+- [x] Stat cards: same 2+1 stacked + color-coded as home
+- [x] Transaction list: flat rows with right chevron (`›`), dividers, status as colored inline text
+- [x] Remove left-border accent and badge boxes
 
 ### New Transaction Screen
-- [ ] Full-screen product list (receipt-style rows: name, price, `[+]` button)
-- [ ] Cart bottom sheet: slides up when first item added, shows handle + item count + total + confirm button
-- [ ] Cart sheet expands to show full itemized list on drag
+- [x] Full-screen product list (receipt-style rows: name, price, `[+]` button)
+- [x] Cart bottom sheet: slides up when first item added, shows handle + item count + total + confirm button
+- [x] Cart sheet expands to show full itemized list on drag
 
 ### Transaction Detail Screen
-- [ ] Receipt card layout: rounded card, header block → itemized products → subtotal/discount/total
-- [ ] Truncate transaction ID to last 8 chars (`…bc33cde`)
-- [ ] Action buttons (Finalize / Cancel) below receipt card, only shown if pending + authorized
+- [x] Receipt card layout: rounded card, header block → itemized products → subtotal/discount/total
+- [x] Truncate transaction ID to last 8 chars (`…bc33cde`)
+- [x] Action buttons (Finalize / Cancel) below receipt card, only shown if pending + authorized
 
 ### Global
-- [ ] Apply `Font` and `FontSize` tokens to all text elements across all screens
-- [ ] Section headers: 13px uppercase + letter-spacing 0.8 throughout
-- [ ] All `currency` values use `currency` green + `Outfit-Bold`
-- [ ] Replace all hardcoded hex values with tokens from `constants/colors.js`
-- [ ] Apply `Spacing` and `Radius` tokens throughout
+- [x] Apply `Font` and `FontSize` tokens to all text elements across all screens
+- [x] Section headers: 13px uppercase + letter-spacing 0.8 throughout
+- [x] All `currency` values use `currency` green + `Outfit-Bold`
+- [x] Replace all hardcoded hex values with tokens from `constants/colors.js`
+- [x] Apply `Spacing` and `Radius` tokens throughout
 
 **Done criteria:** Tab bar icon-only with pill; no colored header bars; inventory is a tile grid with tap modal; new transaction has bottom-sheet cart; transaction detail is receipt layout; stat cards 2+1 stacked; all tokens applied, no hardcoded hex.
 

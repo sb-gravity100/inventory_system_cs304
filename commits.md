@@ -11,6 +11,37 @@ Format:
 
 ---
 
+### `89c8df6` · 2026-03-24 · feat: apply Outfit font and design tokens to UI components
+- `frontend/components/ui/Typography.jsx`
+- `frontend/components/ui/Button.jsx`
+- `frontend/components/ui/Input.jsx`
+- `frontend/components/ui/Header.jsx`
+
+### `f09de51` · 2026-03-24 · feat: transaction detail receipt card layout, truncated ID, action buttons below
+- `frontend/app/transactions/[transactionId]/index.jsx`
+
+### `e379c23` · 2026-03-24 · feat: new transaction screen - receipt rows, cart bottom sheet
+- `frontend/app/transaction.jsx`
+
+### `c6bdd96` · 2026-03-24 · feat: inventory screen 2-column tile grid; ProductCard tile redesign
+- `frontend/app/(tabs)/inventory.jsx`
+- `frontend/components/ProductCard.jsx`
+
+### `dd313c8` · 2026-03-24 · feat: sales screen - title in body, 2+1 stat cards, flat transaction list
+- `frontend/app/(tabs)/sales.jsx`
+
+### `3d1319f` · 2026-03-24 · feat: TransactionItem flat row - colored status, chevron, no badge/border
+- `frontend/components/TransactionItem.jsx`
+
+### `e8dba66` · 2026-03-24 · feat: home screen - title in body, 2+1 stat cards, recent transactions, FAB
+- `frontend/app/(tabs)/index.jsx`
+
+### `7c229e9` · 2026-03-24 · feat: StatCard color-coded tint scheme (blue/green/neutral)
+- `frontend/components/home/StatCard.jsx`
+
+### `86a48af` · 2026-03-24 · feat: tab bar icon-only with pill highlight, no labels
+- `frontend/app/(tabs)/_layout.jsx`
+
 ### `0f2ec9b` · 2026-03-23 · docs: update UI spec with structural layout decisions (tab bar, headers, grid, receipt, cart sheet)
 - `PLAN.md`
 - `PHASES.md`
