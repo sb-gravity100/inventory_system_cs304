@@ -11,11 +11,10 @@ import { FAB, SearchBar, Loading } from "../../components/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../components/ThemeProvider";
 import { useAuth } from "../../context/AuthContext";
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import axios from "axios";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import ProductCard from "../../components/ProductCard";
-import AddProductModal from "../../components/AddProductModal";
 import UpdateStockModal from "../../components/UpdateStockModal";
 import { Font, FontSize, Spacing, Radius } from "../../constants/colors";
 
@@ -35,21 +34,18 @@ export default function InventoryScreen() {
   const [totalProducts, setTotalProducts] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [addProductModal, setAddProductModal] = useState(false);
   const [updateStockModal, setUpdateStockModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-
-  const [newProductName, setNewProductName] = useState("");
-  const [newProductPrice, setNewProductPrice] = useState("");
-  const [newProductStock, setNewProductStock] = useState("");
 
   const [stockAction, setStockAction] = useState("add");
   const [stockQuantity, setStockQuantity] = useState("");
   const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    fetchProducts(1);
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchProducts(1);
+    }, [])
+  );
 
   const fetchProducts = async (pageNum, name = "") => {
     try {
@@ -102,37 +98,10 @@ export default function InventoryScreen() {
       actions.push({
         label: "Add Product",
         icon: "add-box",
-        onPress: () => setAddProductModal(true),
+        onPress: () => router.push("/add-product"),
       });
     }
     return actions;
-  };
-
-  const handleAddProduct = () => {
-    if (!newProductName || !newProductPrice || !newProductStock) {
-      Alert.alert("Error", "Please fill all fields");
-      return;
-    }
-    axios
-      .post(
-        `${api_url}/products`,
-        {
-          name: newProductName,
-          price: parseFloat(newProductPrice),
-          stock: parseInt(newProductStock),
-        },
-        { headers: { Authorization: `Bearer ${authState.token}` } }
-      )
-      .then(() => {
-        fetchProducts(1);
-        Alert.alert("Success", "Product added successfully");
-      })
-      .catch(() => {});
-
-    setAddProductModal(false);
-    setNewProductName("");
-    setNewProductPrice("");
-    setNewProductStock("");
   };
 
   const handleUpdateStock = () => {
@@ -259,23 +228,6 @@ export default function InventoryScreen() {
       </Loading>
 
       <FAB actions={getActions()} />
-
-      <AddProductModal
-        visible={addProductModal}
-        newProductName={newProductName}
-        setNewProductName={setNewProductName}
-        newProductPrice={newProductPrice}
-        setNewProductPrice={setNewProductPrice}
-        newProductStock={newProductStock}
-        setNewProductStock={setNewProductStock}
-        onCancel={() => {
-          setAddProductModal(false);
-          setNewProductName("");
-          setNewProductPrice("");
-          setNewProductStock("");
-        }}
-        onSave={handleAddProduct}
-      />
 
       <UpdateStockModal
         visible={updateStockModal}
