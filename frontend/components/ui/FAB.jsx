@@ -16,15 +16,19 @@ export default function FAB({ actions = [] }) {
   const [fabOpen, setFabOpen] = useState(false);
   const isSingle = actions.length === 1;
 
-  // Separate anim per item for true stagger
   const itemAnims = useRef(actions.map(() => new Animated.Value(0))).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
+  const isAnimating = useRef(false);
+  const isOpenRef = useRef(false);
 
   const open = () => {
     if (isSingle) {
       actions[0].onPress();
       return;
     }
+    if (isAnimating.current) return;
+    isAnimating.current = true;
+    isOpenRef.current = true;
     setFabOpen(true);
     Animated.parallel([
       Animated.spring(rotateAnim, {
@@ -44,10 +48,17 @@ export default function FAB({ actions = [] }) {
           })
         )
       ),
-    ]).start();
+    ]).start(() => {
+      isAnimating.current = false;
+    });
   };
 
   const close = (callback) => {
+    if (isAnimating.current) return;
+    isAnimating.current = true;
+    isOpenRef.current = false;
+    // Fire action immediately — no waiting for animation
+    callback?.();
     Animated.parallel([
       Animated.spring(rotateAnim, {
         toValue: 0,
@@ -56,18 +67,18 @@ export default function FAB({ actions = [] }) {
         useNativeDriver: true,
       }),
       Animated.stagger(
-        40,
+        30,
         [...itemAnims].reverse().map((anim) =>
           Animated.timing(anim, {
             toValue: 0,
-            duration: 160,
+            duration: 120,
             useNativeDriver: true,
           })
         )
       ),
     ]).start(() => {
+      isAnimating.current = false;
       setFabOpen(false);
-      callback?.();
     });
   };
 
@@ -143,38 +154,34 @@ export default function FAB({ actions = [] }) {
     },
   });
 
+  const handleFabPress = () => {
+    if (isSingle) {
+      open();
+    } else if (isOpenRef.current) {
+      close();
+    } else {
+      open();
+    }
+  };
+
   return (
     <>
-      {/* Backdrop — only blocks touches when open */}
       {fabOpen && <Pressable style={s.backdrop} onPress={() => close()} />}
 
-      {/* Action items — always mounted, invisible + non-interactive when closed */}
       <View
         style={s.actionsContainer}
         pointerEvents={fabOpen ? "box-none" : "none"}
       >
         {actions.map((action, index) => {
           const anim = itemAnims[index];
-          const opacity = anim.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0, 1],
-          });
-          const translateY = anim.interpolate({
-            inputRange: [0, 1],
-            outputRange: [14, 0],
-          });
-          const scale = anim.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0.85, 1],
-          });
+          const opacity = anim.interpolate({ inputRange: [0, 1], outputRange: [0, 1] });
+          const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [14, 0] });
+          const scale = anim.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] });
 
           return (
             <Animated.View
               key={action.label}
-              style={[
-                s.actionRow,
-                { opacity, transform: [{ translateY }, { scale }] },
-              ]}
+              style={[s.actionRow, { opacity, transform: [{ translateY }, { scale }] }]}
             >
               <View style={s.label}>
                 <Text style={s.labelText}>{action.label}</Text>
@@ -184,23 +191,14 @@ export default function FAB({ actions = [] }) {
                 onPress={() => close(action.onPress)}
                 activeOpacity={0.75}
               >
-                <MaterialIcons
-                  name={action.icon}
-                  size={22}
-                  color={theme.textPrimary}
-                />
+                <MaterialIcons name={action.icon} size={22} color={theme.textPrimary} />
               </TouchableOpacity>
             </Animated.View>
           );
         })}
       </View>
 
-      {/* Main FAB */}
-      <TouchableOpacity
-        style={s.fab}
-        onPress={isSingle ? open : fabOpen ? () => close() : open}
-        activeOpacity={0.85}
-      >
+      <TouchableOpacity style={s.fab} onPress={handleFabPress} activeOpacity={0.85}>
         <Animated.View style={{ transform: [{ rotate: iconRotate }] }}>
           <MaterialIcons name="add" size={26} color="#ffffff" />
         </Animated.View>
