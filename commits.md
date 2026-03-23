@@ -11,6 +11,13 @@ Format:
 
 ---
 
+### `e0dd0ad` · 2026-03-23 · feat: add reset-db script to wipe collections and re-seed admin
+- `backend/scripts/reset-db.js`
+- `backend/package.json`
+- `FILE_INDEX.md`
+
+---
+
 ### `dbaabbd` · 2026-03-23 · feat: add ErrorBoundary component wrapping root layout
 - `frontend/components/ErrorBoundary.jsx`
 - `frontend/app/_layout.jsx`
