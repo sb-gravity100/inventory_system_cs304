@@ -42,7 +42,8 @@ File system index for Il Vento inventory management system. Read this before ope
 | File | Purpose | Tags |
 |---|---|---|
 | `backend/Models/User.js` | Mongoose schema: username, password (bcrypt), role (admin/manager/staff) | model, auth |
-| `backend/Models/Product.js` | Mongoose schema: name, price, stock; instance methods: increaseStock, decreaseStock, updateStocks | model, inventory |
+| `backend/Models/Category.js` | Mongoose schema: name (unique), color; managed by manager/admin | model, inventory |
+| `backend/Models/Product.js` | Mongoose schema: name, sku (sparse unique), price, costPrice, stock, low_stock_threshold, category (ref), imageUrl, isActive; instance methods: increaseStock, decreaseStock, updateStocks | model, inventory |
 | `backend/Models/Transaction.js` | Mongoose schema: status (pending/completed/cancelled), seller (User ref), products array; timestamps enabled | model, sales |
 | `backend/Models/Log.js` | Audit log schema: message, type, user, transaction_id, products_involved, timestamp | model, audit |
 
@@ -51,7 +52,8 @@ File system index for Il Vento inventory management system. Read this before ope
 | File | Purpose | Tags |
 |---|---|---|
 | `backend/routes/auth.js` | Login, /auth/me, admin user CRUD, manager admin-request endpoint | route, auth, admin |
-| `backend/routes/products.js` | Product CRUD + stock operations (increase/decrease/set); all require verifyToken | route, inventory |
+| `backend/routes/categories.js` | Category CRUD; GET open to all token holders, writes require manager/admin | route, inventory |
+| `backend/routes/products.js` | Product CRUD (archive/restore replaces hard delete) + stock operations; GET populates category, filters isActive; writes require manager/admin | route, inventory |
 | `backend/routes/sales.js` | Transaction lifecycle (create/update/finalize/cancel), list, detail, logs, stats | route, sales |
 
 ---
@@ -75,7 +77,7 @@ File system index for Il Vento inventory management system. Read this before ope
 | `frontend/app/(auth)/login.jsx` | Login form (username + password); calls AuthContext.login(); redirects on success | screen, auth |
 | `frontend/app/(tabs)/_layout.jsx` | Tab bar: Home, Inventory, Sales, Reports; theme-aware styling | layout, navigation |
 | `frontend/app/(tabs)/index.jsx` | Home/dashboard: stats cards (manager+), quick actions grid (role-filtered), logout, theme toggle | screen, home |
-| `frontend/app/(tabs)/inventory.jsx` | Paginated product list, search, update-stock modal, add-product modal (manager+), FAB | screen, inventory |
+| `frontend/app/(tabs)/inventory.jsx` | Paginated product tile grid, search, update-stock modal, FAB (Add Product → /add-product, Create Transaction); useFocusEffect refresh | screen, inventory |
 | `frontend/app/(tabs)/sales.jsx` | Transaction list, stats cards, pull-to-refresh; taps navigate to transaction detail | screen, sales |
 | `frontend/app/(tabs)/reports.jsx` | Stub — "coming soon" placeholder | screen, reports |
 | `frontend/app/transaction.jsx` | New transaction creation: product search, cart, quantity controls, POST to /sales/transaction | screen, sales |
@@ -122,9 +124,10 @@ File system index for Il Vento inventory management system. Read this before ope
 | `frontend/components/transaction/QtyControl.jsx` | Quantity increment/decrement controls | component, sales, ui |
 | `frontend/components/transaction/index.js` | Re-exports transaction components | sales |
 | `frontend/components/ErrorBoundary.jsx` | Class component that catches render errors and shows a fallback screen with a retry button | component, error |
-| `frontend/components/AddProductModal.jsx` | Modal form to create a new product (name, price, stock) | component, inventory |
+| `frontend/app/add-product.jsx` | Modal screen: create product with name, SKU, selling price, cost price, stock, category chip picker, image URL | screen, inventory |
+| `frontend/components/AddProductModal.jsx` | Legacy modal form (superseded by add-product.jsx screen; kept for reference) | component, inventory, legacy |
 | `frontend/components/UpdateStockModal.jsx` | Modal to update stock (add qty or set exact value) | component, inventory |
-| `frontend/components/ProductCard.jsx` | Individual product list item (name, price, stock badge) | component, inventory |
+| `frontend/components/ProductCard.jsx` | Product tile: image/emoji placeholder, category badge, name, SKU, price, stock, margin % | component, inventory |
 | `frontend/components/TransactionItem.jsx` | Individual transaction list item | component, sales |
 | `frontend/components/FloatingActionButton.jsx` | Standalone FAB (used on inventory screen) | component, ui |
 | `frontend/components/PasswordInput.jsx` | Secure password input with visibility toggle | component, auth, ui |

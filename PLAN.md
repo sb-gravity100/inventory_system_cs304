@@ -50,14 +50,31 @@ password:   String  required (bcrypt hash)
 role:       String  enum: admin | manager | staff  required
 ```
 
+### Category
+```
+name:       String   required, unique — display name
+color:      String   optional hex (e.g. "#3b82f6") — used for badge tint on product cards
+createdAt:  Date     (auto)
+updatedAt:  Date     (auto)
+```
+Created/edited/deleted by manager and admin only. All authenticated users can read.
+
 ### Product
 ```
-name:            String  required
-price:           Number  required
-stock:           Number  required
-low_stock_threshold: Number  default: 10  — triggers low-stock flag in UI/reports
+name:                String   required
+sku:                 String   optional, unique (sparse index — multiple nulls allowed)
+price:               Number   required — selling price
+costPrice:           Number   default: 0 — buying/cost price; used to compute margin on frontend
+stock:               Number   required
+low_stock_threshold: Number   default: 10 — triggers low-stock flag in UI/reports
+category:            ObjectId → Category  optional
+imageUrl:            String   optional — full URL; frontend falls back to 📦 emoji if null
+isActive:            Boolean  default: true — soft delete flag; archived products hidden from default queries
+createdAt:           Date     (auto)
+updatedAt:           Date     (auto)
 ```
 Instance methods: `increaseStock(qty)`, `decreaseStock(qty)`, `updateStocks(newStock)`
+Frontend computes margin: `((price − costPrice) / price × 100)%`
 
 ### Transaction
 ```
@@ -103,12 +120,20 @@ timestamp:         Date  default: Date.now
 | Code | Trigger |
 |---|---|
 | `PRODUCT_CREATED` | New product added to inventory |
-| `PRODUCT_UPDATED` | Product name or price changed |
-| `PRODUCT_DELETED` | Product removed |
+| `PRODUCT_UPDATED` | Product fields changed |
+| `PRODUCT_ARCHIVED` | Product soft-deleted (isActive → false) |
+| `PRODUCT_RESTORED` | Archived product restored (isActive → true) |
 | `STOCK_INCREASE` | Stock manually increased |
 | `STOCK_DECREASE` | Stock manually decreased |
 | `STOCK_SET` | Stock set to an exact value |
 | `STOCK_SOLD` | Stock decremented by a completed transaction |
+
+**Category events**
+| Code | Trigger |
+|---|---|
+| `CATEGORY_CREATED` | New category created |
+| `CATEGORY_UPDATED` | Category name or color changed |
+| `CATEGORY_DELETED` | Category deleted |
 
 **Transaction events**
 | Code | Trigger |
@@ -136,17 +161,27 @@ timestamp:         Date  default: Date.now
 | GET | `/auth/admin/user/:id` | Token | admin | Get user by ID |
 | POST | `/auth/manager-admin-request` | Token | manager | Log an admin request message |
 
+### Categories — `/categories`
+
+| Method | Path | Auth | Role | Description |
+|---|---|---|---|---|
+| GET | `/categories` | Token | any | List all categories sorted by name |
+| POST | `/categories` | Token | manager/admin | Create category (`name`, optional `color`) |
+| PUT | `/categories/:id` | Token | manager/admin | Update name/color |
+| DELETE | `/categories/:id` | Token | manager/admin | Delete category |
+
 ### Products — `/products`
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| GET | `/products` | Token | Paginated list; query: `name` (regex), `page`, `limit` |
-| POST | `/products` | Token | Create product |
-| PUT | `/products/:id` | Token | Update name/price/stock |
-| DELETE | `/products/:id` | Token | Delete product |
-| POST | `/products/:id/increase-stock` | Token | Add qty to stock; logs to Log |
-| POST | `/products/:id/decrease-stock` | Token | Subtract qty from stock; logs to Log |
-| POST | `/products/:id/update-stocks` | Token | Set stock to exact value; logs to Log |
+| Method | Path | Auth | Role | Description |
+|---|---|---|---|---|
+| GET | `/products` | Token | any | Paginated list; query: `name` (regex), `category` (id), `page`, `limit`, `includeArchived`; populates `category`; filters `isActive: true` by default |
+| POST | `/products` | Token | manager/admin | Create product; fields: `name`, `price`, `stock`, `sku`?, `costPrice`?, `category`?, `imageUrl`? |
+| PUT | `/products/:id` | Token | manager/admin | Update any product fields |
+| PATCH | `/products/:id/archive` | Token | manager/admin | Soft-delete: set `isActive → false`; logs `PRODUCT_ARCHIVED` |
+| PATCH | `/products/:id/restore` | Token | manager/admin | Restore: set `isActive → true`; logs `PRODUCT_RESTORED` |
+| POST | `/products/:id/increase-stock` | Token | any | Add qty to stock; logs `STOCK_INCREASE` |
+| POST | `/products/:id/decrease-stock` | Token | any | Subtract qty from stock; logs `STOCK_DECREASE` |
+| POST | `/products/:id/update-stocks` | Token | any | Set stock to exact value; logs `STOCK_SET` |
 
 ### Sales — `/sales`
 
@@ -185,6 +220,8 @@ All export endpoints stream a file download. Require manager+ role.
 | Edit/finalize any transaction | — | ✓ | ✓ |
 | View inventory | ✓ | ✓ | ✓ |
 | Modify products / stock | — | ✓ | ✓ |
+| Archive / restore products | — | ✓ | ✓ |
+| Manage categories | — | ✓ | ✓ |
 | View dashboard stats | — | ✓ | ✓ |
 | Export transactions / inventory | — | ✓ | ✓ |
 | Export audit log | — | — | ✓ |

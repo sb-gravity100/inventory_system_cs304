@@ -151,6 +151,30 @@ Status legend: `[ ]` todo · `[x]` done · `[-]` in progress
 
 ---
 
+## Phase 5.6 — Product Schema Overhaul
+*Add categories, SKU, cost price, image, and soft-delete to products.*
+
+### Backend
+- [x] `Category` model: `name` (unique), `color`
+- [x] `GET/POST/PUT/DELETE /categories` routes; writes require manager/admin
+- [x] `Product` model: add `sku` (sparse unique), `costPrice`, `category` (ref), `imageUrl`, `isActive`
+- [x] `GET /products`: default filter `isActive: true`, populate `category`, accept `category` and `includeArchived` query params
+- [x] `POST /products` and `PUT /products/:id`: accept all new fields; manager/admin guard
+- [x] Replace `DELETE /products/:id` with `PATCH /products/:id/archive` + `PATCH /products/:id/restore`; logs `PRODUCT_ARCHIVED` / `PRODUCT_RESTORED`
+- [ ] Emit `CATEGORY_CREATED`, `CATEGORY_UPDATED`, `CATEGORY_DELETED` log events from category routes
+- [ ] Category management screen (create/edit/delete categories, with color picker)
+
+### Frontend
+- [x] `add-product.jsx`: new fields — SKU, cost price, category chip picker (fetched from `/categories`), image URL
+- [x] `ProductCard`: image area (URL or 📦 emoji fallback), category color badge, SKU line, margin % from costPrice
+- [ ] Inventory screen: category filter chips above product grid
+- [ ] Edit product screen (separate from add-product; pre-fills existing values)
+- [ ] Archive/restore action in product detail sheet
+
+**Done criteria:** Products have categories, SKU, cost price, image; soft delete works; ProductCard shows category badge + margin; add-product form captures all new fields.
+
+---
+
 ## Phase 6 — Reports & Analytics
 *Replace the Reports stub with real data and export UI.*
 
