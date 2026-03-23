@@ -7,6 +7,9 @@ const router = Router();
 
 router.post("/transaction", verifyToken, async (req, res) => {
   const { products = [] } = req.body;
+  if (!Array.isArray(products)) {
+    return res.status(400).json({ message: "Products must be an array" });
+  }
   console.log(req.user);
   const tr = new Transaction({
     seller: req.user.id,
@@ -26,6 +29,12 @@ router.post("/transaction", verifyToken, async (req, res) => {
 
 router.post("/transaction-update-products", verifyToken, async (req, res) => {
   const { transaction, products = [] } = req.body;
+  if (!transaction || !transaction.id) {
+    return res.status(400).json({ message: "Transaction is required" });
+  }
+  if (!Array.isArray(products)) {
+    return res.status(400).json({ message: "Products must be an array" });
+  }
   const isOwner = transaction.seller._id.toString() === req.user.id;
   const isManagerOrAdmin = req.user.role === "manager" || req.user.role === "admin";
   if (!isOwner && !isManagerOrAdmin) {
@@ -50,6 +59,9 @@ router.post("/transaction-update-products", verifyToken, async (req, res) => {
 
 router.post("/transaction-finalize", verifyToken, async (req, res) => {
   const { transaction } = req.body;
+  if (!transaction || !transaction.id) {
+    return res.status(400).json({ message: "Transaction is required" });
+  }
   const isOwner = transaction.seller._id.toString() === req.user.id;
   const isManagerOrAdmin = req.user.role === "manager" || req.user.role === "admin";
   if (!isOwner && !isManagerOrAdmin) {
@@ -113,6 +125,9 @@ router.get("/transaction-logs", verifyToken, async (req, res) => {
 
 router.post("/transaction-cancel", verifyToken, async (req, res) => {
   const { transactionId } = req.body;
+  if (!transactionId) {
+    return res.status(400).json({ message: "transactionId is required" });
+  }
   const tr = await Transaction.findById(transactionId);
   if (!tr) return res.status(404).json({ message: "Transaction not found" });
   const isOwner = tr.seller.toString() === req.user.id;

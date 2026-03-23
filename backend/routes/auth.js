@@ -19,6 +19,9 @@ router.get("/me", verifyToken, async (req, res) => {
 
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ message: "Username and password are required" });
+  }
   const user = await User.findOne({ username });
   console.log("Login attempt for user:", username);
   if (!user) {
@@ -90,6 +93,9 @@ router.post(
   verifyAdmin,
   async (req, res) => {
     const { username, newPassword } = req.body;
+    if (!username || !newPassword) {
+      return res.status(400).json({ message: "Username and newPassword are required" });
+    }
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -107,6 +113,13 @@ router.post(
   verifyAdmin,
   async (req, res) => {
     const { username, password, role } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password are required" });
+    }
+    const validRoles = ["admin", "manager", "staff"];
+    if (role && !validRoles.includes(role)) {
+      return res.status(400).json({ message: "Role must be admin, manager, or staff" });
+    }
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(409).json({ message: "Username already exists" });
@@ -134,6 +147,9 @@ router.post(
   verifyAdmin,
   async (req, res) => {
     const { username } = req.body;
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -155,6 +171,13 @@ router.post(
   verifyAdmin,
   async (req, res) => {
     const { username, newUsername, newRole } = req.body;
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+    const validRoles = ["admin", "manager", "staff"];
+    if (newRole && !validRoles.includes(newRole)) {
+      return res.status(400).json({ message: "Role must be admin, manager, or staff" });
+    }
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -203,6 +226,9 @@ router.post("/manager-admin-request", verifyToken, async (req, res) => {
       .json({ message: "Forbidden: Manager access required" });
   }
   const { message } = req.body;
+  if (!message || !message.trim()) {
+    return res.status(400).json({ message: "Message is required" });
+  }
   const log = new Log({
     message: `Manager ${req.user.username} requested admin action: ${message}`,
     type: "manager_request",

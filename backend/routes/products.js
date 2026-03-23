@@ -23,7 +23,16 @@ router.get("/", verifyToken, async (req, res) => {
 
 router.post("/", verifyToken, async (req, res) => {
   const { name, price, stock } = req.body;
-  const newProduct = new Product({ name, price, stock });
+  if (!name || typeof name !== "string" || !name.trim()) {
+    return res.status(400).json({ message: "Product name is required" });
+  }
+  if (price === undefined || isNaN(Number(price)) || Number(price) <= 0) {
+    return res.status(400).json({ message: "Price must be a positive number" });
+  }
+  if (stock === undefined || isNaN(Number(stock)) || Number(stock) < 0) {
+    return res.status(400).json({ message: "Stock must be a non-negative number" });
+  }
+  const newProduct = new Product({ name: name.trim(), price: Number(price), stock: Number(stock) });
   await newProduct.save();
   res.json(newProduct);
 });
@@ -48,6 +57,9 @@ router.delete("/:id", verifyToken, async (req, res) => {
 router.post("/:id/increase-stock", verifyToken, async (req, res) => {
   const { id } = req.params;
   const { quantity } = req.body;
+  if (!quantity || isNaN(Number(quantity)) || Number(quantity) <= 0 || !Number.isInteger(Number(quantity))) {
+    return res.status(400).json({ message: "Quantity must be a positive integer" });
+  }
   const product = await Product.findById(id);
   if (!product) {
     return res.status(404).json({ message: "Product not found" });
@@ -66,6 +78,9 @@ router.post("/:id/increase-stock", verifyToken, async (req, res) => {
 router.post("/:id/decrease-stock", verifyToken, async (req, res) => {
   const { id } = req.params;
   const { quantity } = req.body;
+  if (!quantity || isNaN(Number(quantity)) || Number(quantity) <= 0 || !Number.isInteger(Number(quantity))) {
+    return res.status(400).json({ message: "Quantity must be a positive integer" });
+  }
   const product = await Product.findById(id);
   if (!product) {
     return res.status(404).json({ message: "Product not found" });
@@ -84,6 +99,9 @@ router.post("/:id/decrease-stock", verifyToken, async (req, res) => {
 router.post("/:id/update-stocks", verifyToken, async (req, res) => {
   const { id } = req.params;
   const { quantity } = req.body;
+  if (quantity === undefined || isNaN(Number(quantity)) || Number(quantity) < 0 || !Number.isInteger(Number(quantity))) {
+    return res.status(400).json({ message: "Quantity must be a non-negative integer" });
+  }
   const product = await Product.findById(id);
   if (!product) {
     return res.status(404).json({ message: "Product not found" });
