@@ -11,6 +11,11 @@ Format:
 
 ---
 
+### `a2adb49` · 2026-03-24 · feat: replace AddProductModal with add-product modal screen
+- `frontend/app/add-product.jsx` *(new)*
+- `frontend/app/_layout.jsx`
+- `frontend/app/(tabs)/inventory.jsx`
+
 ### `1a8fafa` · 2026-03-24 · feat: sleek login screen redesign + PasswordInput forwardRef
 - `frontend/app/(auth)/login.jsx`
 - `frontend/components/PasswordInput.jsx`
