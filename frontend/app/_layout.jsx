@@ -1,12 +1,12 @@
 import { Stack } from "expo-router";
-import { ThemeProvider } from "../components/ThemeProvider";
-import { useTheme } from "../components/ThemeProvider";
+import { ThemeProvider, useTheme } from "../components/ThemeProvider";
 import { AuthProvider } from "../context/AuthContext";
 import { PaperProvider } from "react-native-paper";
 import ErrorBoundary from "../components/ErrorBoundary";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { View } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -14,6 +14,7 @@ function RootContent() {
   const { theme } = useTheme();
 
   return (
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
     <Stack
       screenOptions={{
         headerShown: false,
@@ -31,6 +32,7 @@ function RootContent() {
       <Stack.Screen name="transactions/[transactionId]/index" options={{ animation: "none", gestureEnabled: true }} />
       <Stack.Screen name="users" options={{ animation: "none", gestureEnabled: true }} />
     </Stack>
+    </View>
   );
 }
 
