@@ -1,7 +1,8 @@
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Modal, FormField, Input, Dropdown, Body, Caption } from "./ui";
 import { useTheme } from "./ThemeProvider";
 import Button from "./ui/Button";
+import { Spacing, Radius } from "../constants/colors";
 
 export default function UpdateStockModal({
    visible,
@@ -17,11 +18,11 @@ export default function UpdateStockModal({
 
    const styles = StyleSheet.create({
       productDisplay: {
-         backgroundColor: theme.bg2,
+         backgroundColor: theme.background,
          borderWidth: 1,
          borderColor: theme.border,
-         borderRadius: 8,
-         padding: 12,
+         borderRadius: Radius.card,
+         padding: Spacing.cardPadding,
       },
    });
 
@@ -34,13 +35,13 @@ export default function UpdateStockModal({
             <>
                <Button
                   title="Cancel"
-                  variant="secondary"
+                  variant="outline"
                   onPress={onCancel}
                   style={{ flex: 1 }}
                />
                <Button
                   title="Update"
-                  variant="success"
+                  variant="primary"
                   onPress={onSave}
                   style={{ flex: 1 }}
                />
@@ -72,9 +73,6 @@ export default function UpdateStockModal({
                value={stockQuantity}
                onChangeText={setStockQuantity}
                keyboardType="number-pad"
-               style={{
-                  width: 250,
-               }}
             />
          </FormField>
       </Modal>

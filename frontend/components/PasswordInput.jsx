@@ -1,31 +1,61 @@
 import { useState } from "react";
-import { TextInput } from "react-native-paper";
+import { TextInput, TouchableOpacity, View, StyleSheet } from "react-native";
+import { useTheme } from "./ThemeProvider";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Font, FontSize, Spacing, Radius } from "../constants/colors";
 
-export default function PasswordInput({ 
-   value, 
-   onChangeText, 
-   placeholder = "Enter password",
-   style,
-   ...props 
+export default function PasswordInput({
+  value,
+  onChangeText,
+  placeholder = "Enter password",
+  style,
+  ...props
 }) {
-   const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [secure, setSecure] = useState(true);
+  const { theme } = useTheme();
 
-   return (
+  const s = StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: theme.surface,
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: Radius.input,
+    },
+    input: {
+      flex: 1,
+      paddingHorizontal: Spacing.lg,
+      paddingVertical: Spacing.md,
+      fontFamily: Font.regular,
+      fontSize: FontSize.body,
+      color: theme.textPrimary,
+    },
+    toggle: {
+      padding: Spacing.md,
+    },
+  });
+
+  return (
+    <View style={[s.container, style]}>
       <TextInput
-         style={style}
-         placeholder={placeholder}
-         value={value}
-         onChangeText={onChangeText}
-         secureTextEntry={secureTextEntry}
-         autoCapitalize="none"
-         autoCorrect={false}
-         right={
-            <TextInput.Icon
-               icon={secureTextEntry ? "eye-off" : "eye"}
-               onPress={() => setSecureTextEntry(!secureTextEntry)}
-            />
-         }
-         {...props}
+        style={s.input}
+        placeholder={placeholder}
+        placeholderTextColor={theme.textSecondary}
+        value={value}
+        onChangeText={onChangeText}
+        secureTextEntry={secure}
+        autoCapitalize="none"
+        autoCorrect={false}
+        {...props}
       />
-   );
+      <TouchableOpacity style={s.toggle} onPress={() => setSecure(!secure)}>
+        <MaterialIcons
+          name={secure ? "visibility-off" : "visibility"}
+          size={20}
+          color={theme.textSecondary}
+        />
+      </TouchableOpacity>
+    </View>
+  );
 }

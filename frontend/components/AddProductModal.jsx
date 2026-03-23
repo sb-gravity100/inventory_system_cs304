@@ -20,13 +20,13 @@ export default function AddProductModal({
             <>
                <Button
                   title="Cancel"
-                  variant="secondary"
+                  variant="outline"
                   onPress={onCancel}
                   style={{ flex: 1 }}
                />
                <Button
                   title="Add Product"
-                  variant="success"
+                  variant="primary"
                   onPress={onSave}
                   style={{ flex: 1 }}
                />
@@ -38,9 +38,6 @@ export default function AddProductModal({
                placeholder="Enter product name"
                value={newProductName}
                onChangeText={setNewProductName}
-               style={{
-                  width: 250,
-               }}
             />
          </FormField>
 

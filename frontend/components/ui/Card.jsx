@@ -1,28 +1,24 @@
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { useTheme } from "../ThemeProvider";
+import { Spacing, Radius } from "../../constants/colors";
 
-export default function Card({ children, style, variant = "default" }) {
-   const { theme } = useTheme();
+export default function Card({ children, style }) {
+  const { theme } = useTheme();
 
-   const styles = StyleSheet.create({
-      card: {
-         backgroundColor: variant === "elevated" ? theme.bg2 : "#FFFFFF",
-         borderRadius: 12,
-         padding: 16,
-         shadowColor: "#000",
-         shadowOffset: { width: 0, height: 2 },
-         shadowOpacity: 0.1,
-         shadowRadius: 4,
-         elevation: 3,
-      },
-      cardDark: {
-         backgroundColor: "#3A3A3A",
-      },
-   });
-
-   return (
-      <View style={[styles.card, theme.isDark && styles.cardDark, style]}>
-         {children}
-      </View>
-   );
+  return (
+    <View
+      style={[
+        {
+          backgroundColor: theme.surface,
+          borderRadius: Radius.card,
+          borderWidth: 1,
+          borderColor: theme.border,
+          padding: Spacing.cardPadding,
+        },
+        style,
+      ]}
+    >
+      {children}
+    </View>
+  );
 }

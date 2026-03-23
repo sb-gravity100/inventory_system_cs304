@@ -1,12 +1,14 @@
 import {
-   View,
-   TouchableOpacity,
-   ScrollView,
-   Alert,
-   Modal,
-   RefreshControl,
+  View,
+  ScrollView,
+  Alert,
+  Modal,
+  RefreshControl,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
 } from "react-native";
-import { Title, Subtitle, Body, Caption, Loading } from "../components/ui";
+import { Loading } from "../components/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../components/ThemeProvider";
 import { useAuth } from "../context/AuthContext";
@@ -17,400 +19,401 @@ import Header from "../components/ui/Header";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import PasswordInput from "../components/PasswordInput";
-import Card from "../components/ui/Card";
 import Dropdown from "../components/ui/Dropdown";
 import FormField from "../components/ui/FormField";
+import FAB from "../components/ui/FAB";
+import { Font, FontSize, Spacing, Radius } from "../constants/colors";
+
 const api_url =
-   process.env.NODE_ENV === "development"
-      ? process.env.EXPO_PUBLIC_API_DEVURL
-      : process.env.EXPO_PUBLIC_API_URL;
+  process.env.NODE_ENV === "development"
+    ? process.env.EXPO_PUBLIC_API_DEVURL
+    : process.env.EXPO_PUBLIC_API_URL;
+
+const ROLE_COLOR = (theme) => ({
+  admin: theme.danger,
+  manager: theme.warning,
+  staff: theme.statusCompleted,
+});
 
 export default function UsersScreen() {
-   const { theme } = useTheme();
-   const { authState, user } = useAuth();
-   const [users, setUsers] = useState([]);
-   const [loading, setLoading] = useState(true);
-   const [refreshing, setRefreshing] = useState(false);
-   const [modalVisible, setModalVisible] = useState(false);
-   const [editModalVisible, setEditModalVisible] = useState(false);
-   const [selectedUser, setSelectedUser] = useState(null);
-   const [isModified, setIsModified] = useState(false);
+  const { theme } = useTheme();
+  const { authState, user } = useAuth();
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isModified, setIsModified] = useState(false);
 
-   // Form states
-   const [newUsername, setNewUsername] = useState("");
-   const [newPassword, setNewPassword] = useState("");
-   const [newRole, setNewRole] = useState("staff");
+  // Create form
+  const [newUsername, setNewUsername] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newRole, setNewRole] = useState("staff");
 
-   // Edit form states
-   const [editUsername, setEditUsername] = useState("");
-   const [editRole, setEditRole] = useState("");
-   const [editPassword, setEditPassword] = useState("");
+  // Edit form
+  const [editUsername, setEditUsername] = useState("");
+  const [editRole, setEditRole] = useState("");
+  const [editPassword, setEditPassword] = useState("");
 
-   const fetchUsers = async () => {
-      try {
-         const response = await axios.get(`${api_url}/auth/admin/list-users`, {
-            headers: { Authorization: `Bearer ${authState.token}` },
-         });
-         setUsers(response.data);
-      } catch (error) {
-         Alert.alert("Error", "Failed to fetch users");
-         console.error(error);
-      } finally {
-         setLoading(false);
-      }
-   };
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get(`${api_url}/auth/admin/list-users`, {
+        headers: { Authorization: `Bearer ${authState.token}` },
+      });
+      setUsers(response.data);
+    } catch (error) {
+      Alert.alert("Error", "Failed to fetch users");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-   useEffect(() => {
-      fetchUsers();
-   }, []);
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-   const onRefresh = async () => {
-      setRefreshing(true);
-      await fetchUsers();
-      setRefreshing(false);
-   };
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchUsers();
+    setRefreshing(false);
+  };
 
-   const handleCreateUser = async () => {
-      if (!newUsername || !newPassword) {
-         Alert.alert("Error", "Please fill in all fields");
-         return;
-      }
-
-      try {
-         await axios.post(
-            `${api_url}/auth/admin-create-user`,
-            {
-               username: newUsername,
-               password: newPassword,
-               role: newRole,
-            },
-            {
-               headers: { Authorization: `Bearer ${authState.token}` },
-            },
-         );
-         Alert.alert("Success", "User created successfully");
-         setModalVisible(false);
-         setNewUsername("");
-         setNewPassword("");
-         setNewRole("staff");
-         fetchUsers();
-      } catch (error) {
-         Alert.alert(
-            "Error",
-            error.response?.data?.message || "Failed to create user",
-         );
-      }
-   };
-
-   const handleUpdateUser = async () => {
-      if (!editUsername) {
-         Alert.alert("Error", "Username cannot be empty");
-         return;
-      }
-
-      try {
-         // Update user details
-         await axios.post(
-            `${api_url}/auth/admin-update-user`,
-            {
-               username: selectedUser.username,
-               newUsername: editUsername,
-               newRole: editRole,
-            },
-            {
-               headers: { Authorization: `Bearer ${authState.token}` },
-            },
-         );
-
-         // Update password if provided
-         if (editPassword) {
-            await axios.post(
-               `${api_url}/auth/admin-change-password`,
-               {
-                  username: editUsername,
-                  newPassword: editPassword,
-               },
-               {
-                  headers: { Authorization: `Bearer ${authState.token}` },
-               },
-            );
-         }
-
-         Alert.alert("Success", "User updated successfully");
-         setEditModalVisible(false);
-         setSelectedUser(null);
-         setEditUsername("");
-         setEditRole("");
-         setEditPassword("");
-         fetchUsers();
-      } catch (error) {
-         Alert.alert(
-            "Error",
-            error.response?.data?.message || "Failed to update user",
-         );
-      }
-   };
-
-   const handleDeleteUser = async (username) => {
-      Alert.alert(
-         "Confirm Delete",
-         `Are you sure you want to delete user "${username}"?`,
-         [
-            { text: "Cancel", style: "cancel" },
-            {
-               text: "Delete",
-               style: "destructive",
-               onPress: async () => {
-                  try {
-                     await axios.post(
-                        `${api_url}/auth/admin-delete-user`,
-                        { username },
-                        {
-                           headers: {
-                              Authorization: `Bearer ${authState.token}`,
-                           },
-                        },
-                     );
-                     Alert.alert("Success", "User deleted successfully");
-                     fetchUsers();
-                  } catch (error) {
-                     Alert.alert(
-                        "Error",
-                        error.response?.data?.message ||
-                           "Failed to delete user",
-                     );
-                  }
-               },
-            },
-         ],
+  const handleCreateUser = async () => {
+    if (!newUsername || !newPassword) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+    try {
+      await axios.post(
+        `${api_url}/auth/admin-create-user`,
+        { username: newUsername, password: newPassword, role: newRole },
+        { headers: { Authorization: `Bearer ${authState.token}` } },
       );
-   };
+      setModalVisible(false);
+      setNewUsername("");
+      setNewPassword("");
+      setNewRole("staff");
+      fetchUsers();
+    } catch (error) {
+      Alert.alert("Error", error.response?.data?.message || "Failed to create user");
+    }
+  };
 
-   const openEditModal = (userItem) => {
-      setSelectedUser(userItem);
-      setEditUsername(userItem.username);
-      setEditRole(userItem.role);
+  const handleUpdateUser = async () => {
+    if (!editUsername) {
+      Alert.alert("Error", "Username cannot be empty");
+      return;
+    }
+    try {
+      await axios.post(
+        `${api_url}/auth/admin-update-user`,
+        { username: selectedUser.username, newUsername: editUsername, newRole: editRole },
+        { headers: { Authorization: `Bearer ${authState.token}` } },
+      );
+      if (editPassword) {
+        await axios.post(
+          `${api_url}/auth/admin-change-password`,
+          { username: editUsername, newPassword: editPassword },
+          { headers: { Authorization: `Bearer ${authState.token}` } },
+        );
+      }
+      setEditModalVisible(false);
+      setSelectedUser(null);
+      setEditUsername("");
+      setEditRole("");
       setEditPassword("");
-      setIsModified(false); // Add this line
-      setEditModalVisible(true);
-   };
+      fetchUsers();
+    } catch (error) {
+      Alert.alert("Error", error.response?.data?.message || "Failed to update user");
+    }
+  };
 
-   useEffect(() => {
-      if (selectedUser) {
-         const hasChanges =
-            editUsername !== selectedUser.username ||
-            editRole !== selectedUser.role ||
-            editPassword !== "";
-         setIsModified(hasChanges);
-      }
-   }, [editUsername, editRole, editPassword, selectedUser]);
+  const handleDeleteUser = (username) => {
+    Alert.alert(
+      "Delete User",
+      `Delete "${username}"? This cannot be undone.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await axios.post(
+                `${api_url}/auth/admin-delete-user`,
+                { username },
+                { headers: { Authorization: `Bearer ${authState.token}` } },
+              );
+              fetchUsers();
+            } catch (error) {
+              Alert.alert("Error", error.response?.data?.message || "Failed to delete user");
+            }
+          },
+        },
+      ],
+    );
+  };
 
-   const getRoleBadgeColor = (role) => {
-      switch (role.toLowerCase()) {
-         case "admin":
-            return theme.error;
-         case "manager":
-            return theme.card;
-         default:
-            return theme.success;
-      }
-   };
+  const openEditModal = (userItem) => {
+    setSelectedUser(userItem);
+    setEditUsername(userItem.username);
+    setEditRole(userItem.role);
+    setEditPassword("");
+    setIsModified(false);
+    setEditModalVisible(true);
+  };
 
-   return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
-         <Header
-            title="👥 User Management"
-            subtitle="Manage staff accounts and permissions"
-            showBack
-         />
+  useEffect(() => {
+    if (selectedUser) {
+      const hasChanges =
+        editUsername !== selectedUser.username ||
+        editRole !== selectedUser.role ||
+        editPassword !== "";
+      setIsModified(hasChanges);
+    }
+  }, [editUsername, editRole, editPassword, selectedUser]);
 
-         <Button
-            title="Add New User"
-            variant="success"
-            icon="person-add"
-            onPress={() => setModalVisible(true)}
-            style={{ margin: 20 }}
-         />
+  const roleColors = ROLE_COLOR(theme);
 
-         <Loading isLoading={loading} message="Loading users...">
-            <ScrollView
-               style={{ paddingHorizontal: 20 }}
-               refreshControl={
-                  <RefreshControl
-                     refreshing={refreshing}
-                     onRefresh={onRefresh}
-                     tintColor={theme.primary}
-                  />
-               }
-            >
-               {users.length > 0 ? (
-                  users.map((userItem) => (
-                     <Card key={userItem._id} style={{ marginBottom: 12 }}>
-                        <View
-                           style={{
-                              flexDirection: "row",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              marginBottom: 8,
-                           }}
+  const s = StyleSheet.create({
+    scrollContent: {
+      padding: Spacing.screenPadding,
+      paddingBottom: 100,
+    },
+    sectionLabel: {
+      fontFamily: Font.semiBold,
+      fontSize: FontSize.sectionLabel,
+      color: theme.textSecondary,
+      letterSpacing: 0.8,
+      textTransform: "uppercase",
+      marginBottom: Spacing.sm,
+    },
+    list: {
+      backgroundColor: theme.surface,
+      borderRadius: Radius.card,
+      borderWidth: 1,
+      borderColor: theme.border,
+      overflow: "hidden",
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: Spacing.lg,
+      paddingVertical: Spacing.md,
+    },
+    divider: {
+      height: 1,
+      backgroundColor: theme.border,
+      marginHorizontal: Spacing.lg,
+    },
+    rowName: {
+      fontFamily: Font.medium,
+      fontSize: FontSize.listPrimary,
+      color: theme.textPrimary,
+    },
+    roleBadge: {
+      alignSelf: "flex-start",
+      paddingHorizontal: Spacing.sm,
+      paddingVertical: 2,
+      borderRadius: Radius.button,
+      marginTop: 3,
+    },
+    roleBadgeText: {
+      fontFamily: Font.medium,
+      fontSize: FontSize.listSecondary,
+      color: "#ffffff",
+      textTransform: "capitalize",
+    },
+    rowActions: {
+      flexDirection: "row",
+    },
+    iconBtn: {
+      padding: Spacing.sm,
+    },
+    emptyText: {
+      fontFamily: Font.regular,
+      fontSize: FontSize.body,
+      color: theme.textSecondary,
+      textAlign: "center",
+      paddingVertical: Spacing.xl,
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: "rgba(0,0,0,0.5)",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    modalCard: {
+      backgroundColor: theme.surface,
+      borderRadius: Radius.modal,
+      padding: Spacing.xl,
+      width: "90%",
+      maxWidth: 400,
+    },
+    modalTitle: {
+      fontFamily: Font.bold,
+      fontSize: FontSize.screenTitle,
+      color: theme.textPrimary,
+      marginBottom: Spacing.xl,
+    },
+    modalActions: {
+      flexDirection: "row",
+      gap: Spacing.md,
+      marginTop: Spacing.lg,
+    },
+  });
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
+      <Header title="User Management" subtitle="Manage staff accounts" showBack />
+
+      <Loading isLoading={loading} message="Loading users...">
+        <ScrollView
+          contentContainerStyle={s.scrollContent}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.primary} />
+          }
+        >
+          <Text style={s.sectionLabel}>ACCOUNTS ({users.length})</Text>
+          {users.length === 0 ? (
+            <Text style={s.emptyText}>No users found.</Text>
+          ) : (
+            <View style={s.list}>
+              {users.map((userItem, i) => (
+                <View key={userItem._id}>
+                  {i > 0 && <View style={s.divider} />}
+                  <View style={s.row}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={s.rowName}>{userItem.username}</Text>
+                      <View
+                        style={[
+                          s.roleBadge,
+                          { backgroundColor: roleColors[userItem.role] || theme.textSecondary },
+                        ]}
+                      >
+                        <Text style={s.roleBadgeText}>{userItem.role}</Text>
+                      </View>
+                    </View>
+                    <View style={s.rowActions}>
+                      <TouchableOpacity style={s.iconBtn} onPress={() => openEditModal(userItem)}>
+                        <MaterialIcons name="edit" size={20} color={theme.textSecondary} />
+                      </TouchableOpacity>
+                      {userItem.username !== user?.username && (
+                        <TouchableOpacity
+                          style={s.iconBtn}
+                          onPress={() => handleDeleteUser(userItem.username)}
                         >
-                           <View style={{ flex: 1 }}>
-                              <Subtitle>{userItem.username}</Subtitle>
-                              <View
-                                 style={{
-                                    paddingHorizontal: 12,
-                                    paddingVertical: 4,
-                                    borderRadius: 12,
-                                    alignSelf: "flex-start",
-                                    backgroundColor: getRoleBadgeColor(
-                                       userItem.role,
-                                    ),
-                                    marginTop: 4,
-                                 }}
-                              >
-                                 <Caption
-                                    style={{
-                                       color: "#FFFFFF",
-                                       fontWeight: "600",
-                                       textTransform: "capitalize",
-                                    }}
-                                 >
-                                    {userItem.role}
-                                 </Caption>
-                              </View>
-                           </View>
-                           <View style={{ flexDirection: "row", gap: 8 }}>
-                              <TouchableOpacity
-                                 style={{
-                                    padding: 8,
-                                    borderRadius: 6,
-                                    backgroundColor: theme.accent,
-                                 }}
-                                 onPress={() => openEditModal(userItem)}
-                              >
-                                 <MaterialIcons
-                                    name="edit"
-                                    size={20}
-                                    color="#FFFFFF"
-                                 />
-                              </TouchableOpacity>
-                              {userItem.username !== user?.username && (
-                                 <TouchableOpacity
-                                    style={{
-                                       padding: 8,
-                                       borderRadius: 6,
-                                       backgroundColor: theme.error,
-                                    }}
-                                    onPress={() =>
-                                       handleDeleteUser(userItem.username)
-                                    }
-                                 >
-                                    <MaterialIcons
-                                       name="delete"
-                                       size={20}
-                                       color="#FFFFFF"
-                                    />
-                                 </TouchableOpacity>
-                              )}
-                           </View>
-                        </View>
-                     </Card>
-                  ))
-               ) : (
-                  <View
-                     style={{
-                        flex: 1,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        paddingVertical: 60,
-                     }}
-                  >
-                     <Body style={{ textAlign: "center" }}>
-                        No users found.{"\n"}Create your first user to get
-                        started.
-                     </Body>
+                          <MaterialIcons name="delete-outline" size={20} color={theme.danger} />
+                        </TouchableOpacity>
+                      )}
+                    </View>
                   </View>
-               )}
-            </ScrollView>
-         </Loading>
-
-         {/* For the modals, replace the form fields: */}
-         <Modal
-            visible={modalVisible}
-            transparent
-            animationType="fade"
-            onRequestClose={() => setModalVisible(false)}
-         >
-            <View
-               style={{
-                  flex: 1,
-                  backgroundColor: "rgba(0, 0, 0, 0.5)",
-                  justifyContent: "center",
-                  alignItems: "center",
-               }}
-            >
-               <View
-                  style={{
-                     backgroundColor: theme.background,
-                     borderRadius: 12,
-                     padding: 24,
-                     width: "90%",
-                     maxWidth: 400,
-                  }}
-               >
-                  <Title style={{ marginBottom: 20 }}>Create New User</Title>
-
-                  <FormField label="Username">
-                     <Input
-                        placeholder="Enter username"
-                        value={newUsername}
-                        onChangeText={setNewUsername}
-                        autoCapitalize="none"
-                     />
-                  </FormField>
-
-                  <FormField label="Password">
-                     <PasswordInput
-                        placeholder="Enter password"
-                        value={newPassword}
-                        onChangeText={setNewPassword}
-                     />
-                  </FormField>
-
-                  <FormField label="Role">
-                     <Dropdown
-                        options={["staff", "manager", "admin"]}
-                        value={newRole}
-                        onChange={setNewRole}
-                     />
-                  </FormField>
-
-                  <View
-                     style={{ flexDirection: "row", gap: 12, marginTop: 20 }}
-                  >
-                     <Button
-                        title="Cancel"
-                        variant="secondary"
-                        onPress={() => {
-                           setModalVisible(false);
-                           setNewUsername("");
-                           setNewPassword("");
-                           setNewRole("staff");
-                        }}
-                        style={{ flex: 1 }}
-                     />
-                     <Button
-                        title="Create"
-                        variant="success"
-                        onPress={handleCreateUser}
-                        style={{ flex: 1 }}
-                     />
-                  </View>
-               </View>
+                </View>
+              ))}
             </View>
-         </Modal>
+          )}
+        </ScrollView>
+      </Loading>
 
-         {/* Same pattern for Edit Modal */}
-      </SafeAreaView>
-   );
+      <FAB actions={[{ label: "Add User", icon: "person-add", onPress: () => setModalVisible(true) }]} />
+
+      {/* Create Modal */}
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={s.modalOverlay}>
+          <View style={s.modalCard}>
+            <Text style={s.modalTitle}>Create User</Text>
+            <FormField label="Username">
+              <Input
+                placeholder="Enter username"
+                value={newUsername}
+                onChangeText={setNewUsername}
+                autoCapitalize="none"
+              />
+            </FormField>
+            <FormField label="Password">
+              <PasswordInput
+                placeholder="Enter password"
+                value={newPassword}
+                onChangeText={setNewPassword}
+              />
+            </FormField>
+            <FormField label="Role">
+              <Dropdown options={["staff", "manager", "admin"]} value={newRole} onChange={setNewRole} />
+            </FormField>
+            <View style={s.modalActions}>
+              <Button
+                title="Cancel"
+                variant="outline"
+                onPress={() => {
+                  setModalVisible(false);
+                  setNewUsername("");
+                  setNewPassword("");
+                  setNewRole("staff");
+                }}
+                style={{ flex: 1 }}
+              />
+              <Button title="Create" variant="primary" onPress={handleCreateUser} style={{ flex: 1 }} />
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Edit Modal */}
+      <Modal
+        visible={editModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setEditModalVisible(false)}
+      >
+        <View style={s.modalOverlay}>
+          <View style={s.modalCard}>
+            <Text style={s.modalTitle}>Edit User</Text>
+            <FormField label="Username">
+              <Input
+                placeholder="Enter username"
+                value={editUsername}
+                onChangeText={setEditUsername}
+                autoCapitalize="none"
+              />
+            </FormField>
+            <FormField label="New Password">
+              <PasswordInput
+                placeholder="Leave blank to keep current"
+                value={editPassword}
+                onChangeText={setEditPassword}
+              />
+            </FormField>
+            <FormField label="Role">
+              <Dropdown options={["staff", "manager", "admin"]} value={editRole} onChange={setEditRole} />
+            </FormField>
+            <View style={s.modalActions}>
+              <Button
+                title="Cancel"
+                variant="outline"
+                onPress={() => {
+                  setEditModalVisible(false);
+                  setSelectedUser(null);
+                }}
+                style={{ flex: 1 }}
+              />
+              <Button
+                title="Save"
+                variant="primary"
+                onPress={handleUpdateUser}
+                disabled={!isModified}
+                style={{ flex: 1 }}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </SafeAreaView>
+  );
 }
