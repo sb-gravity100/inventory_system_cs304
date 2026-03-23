@@ -27,7 +27,8 @@ router.post("/login", async (req, res) => {
   if (!user) {
     return res.status(401).json({ message: "Authentication failed" });
   }
-  const isPasswordValid = await bcrypt.compare(password, user.password);
+  const pepper = process.env.BCRYPT_PEPPER || "";
+  const isPasswordValid = await bcrypt.compare(password + pepper, user.password);
   if (!isPasswordValid) {
     return res.status(401).json({ message: "Authentication failed" });
   }
