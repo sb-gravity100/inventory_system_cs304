@@ -11,6 +11,10 @@ Format:
 
 ---
 
+### `982824b` · 2026-03-24 · feat: add BCRYPT_PEPPER env var; apply pepper in pre-save hash and login compare
+- `backend/Models/User.js`
+- `backend/routes/auth.js`
+
 ### `2129520` · 2026-03-24 · feat: bcrypt pre-save hook on User model; remove manual hashing from auth routes
 - `backend/Models/User.js`
 - `backend/routes/auth.js`
