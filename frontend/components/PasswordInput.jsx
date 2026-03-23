@@ -1,16 +1,13 @@
-import { useState } from "react";
+import { forwardRef, useState } from "react";
 import { TextInput, TouchableOpacity, View, StyleSheet } from "react-native";
 import { useTheme } from "./ThemeProvider";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Font, FontSize, Spacing, Radius } from "../constants/colors";
 
-export default function PasswordInput({
-  value,
-  onChangeText,
-  placeholder = "Enter password",
-  style,
-  ...props
-}) {
+const PasswordInput = forwardRef(function PasswordInput(
+  { value, onChangeText, placeholder = "Enter password", style, ...props },
+  ref,
+) {
   const [secure, setSecure] = useState(true);
   const { theme } = useTheme();
 
@@ -39,6 +36,7 @@ export default function PasswordInput({
   return (
     <View style={[s.container, style]}>
       <TextInput
+        ref={ref}
         style={s.input}
         placeholder={placeholder}
         placeholderTextColor={theme.textSecondary}
@@ -58,4 +56,6 @@ export default function PasswordInput({
       </TouchableOpacity>
     </View>
   );
-}
+});
+
+export default PasswordInput;
