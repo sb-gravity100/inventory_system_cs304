@@ -11,6 +11,10 @@ Format:
 
 ---
 
+### `a5a375a` · 2026-03-24 · fix: FAB bottom prop + users screen lift
+- `frontend/components/ui/FAB.jsx`
+- `frontend/app/users.jsx`
+
 ### `bd35c69` · 2026-03-24 · docs: reflect product schema overhaul in PLAN, PHASES, FILE_INDEX
 - `PLAN.md`
 - `PHASES.md`
