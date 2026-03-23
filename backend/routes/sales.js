@@ -26,8 +26,9 @@ router.post("/transaction", verifyToken, async (req, res) => {
 
 router.post("/transaction-update-products", verifyToken, async (req, res) => {
   const { transaction, products = [] } = req.body;
-  console.log(transaction.seller._id, req.user.id);
-  if (transaction.seller._id !== req.user.id) {
+  const isOwner = transaction.seller._id.toString() === req.user.id;
+  const isManagerOrAdmin = req.user.role === "manager" || req.user.role === "admin";
+  if (!isOwner && !isManagerOrAdmin) {
     return res.status(403).json({ message: "Forbidden: Not the seller" });
   }
   const tr = await Transaction.findById(transaction.id);
@@ -49,7 +50,9 @@ router.post("/transaction-update-products", verifyToken, async (req, res) => {
 
 router.post("/transaction-finalize", verifyToken, async (req, res) => {
   const { transaction } = req.body;
-  if (transaction.seller._id !== req.user.id) {
+  const isOwner = transaction.seller._id.toString() === req.user.id;
+  const isManagerOrAdmin = req.user.role === "manager" || req.user.role === "admin";
+  if (!isOwner && !isManagerOrAdmin) {
     return res.status(403).json({ message: "Forbidden: Not the seller" });
   }
   const tr = await Transaction.findById(transaction.id);
@@ -112,7 +115,9 @@ router.post("/transaction-cancel", verifyToken, async (req, res) => {
   const { transactionId } = req.body;
   const tr = await Transaction.findById(transactionId);
   if (!tr) return res.status(404).json({ message: "Transaction not found" });
-  if (tr.seller.toString() !== req.user.id)
+  const isOwner = tr.seller.toString() === req.user.id;
+  const isManagerOrAdmin = req.user.role === "manager" || req.user.role === "admin";
+  if (!isOwner && !isManagerOrAdmin)
     return res.status(403).json({ message: "Forbidden: Not the seller" });
   if (tr.status !== "pending")
     return res.status(400).json({ message: "Transaction already finalized" });
