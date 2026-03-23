@@ -114,6 +114,7 @@ File system index for Il Vento inventory management system. Read this before ope
 | `frontend/components/transaction/ActionButtons.jsx` | Finalize / Cancel buttons based on transaction status | component, sales |
 | `frontend/components/transaction/QtyControl.jsx` | Quantity increment/decrement controls | component, sales, ui |
 | `frontend/components/transaction/index.js` | Re-exports transaction components | sales |
+| `frontend/components/ErrorBoundary.jsx` | Class component that catches render errors and shows a fallback screen with a retry button | component, error |
 | `frontend/components/AddProductModal.jsx` | Modal form to create a new product (name, price, stock) | component, inventory |
 | `frontend/components/UpdateStockModal.jsx` | Modal to update stock (add qty or set exact value) | component, inventory |
 | `frontend/components/ProductCard.jsx` | Individual product list item (name, price, stock badge) | component, inventory |
