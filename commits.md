@@ -11,6 +11,15 @@ Format:
 
 ---
 
+### `0c31bd1` · 2026-03-23 · docs: update typography spec to reference Outfit font and mark design system tasks done
+- `PLAN.md`
+- `PHASES.md`
+
+### `10f94d6` · 2026-03-23 · feat: add Outfit font and design system tokens (colors, spacing, radius, typography)
+- `frontend/app/_layout.jsx`
+- `frontend/assets/fonts/` (9 Outfit .ttf files)
+- `frontend/constants/colors.js`
+
 ### `c89a24b` · 2026-03-23 · docs: add UI design system spec and Phase 5.5 UI overhaul tasks
 - `PLAN.md`
 - `PHASES.md`
