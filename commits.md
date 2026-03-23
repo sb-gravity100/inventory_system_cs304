@@ -11,6 +11,9 @@ Format:
 
 ---
 
+### `0f2e8de` · 2026-03-24 · fix: remove next param from async pre-save hook
+- `backend/Models/User.js`
+
 ### `982824b` · 2026-03-24 · feat: add BCRYPT_PEPPER env var; apply pepper in pre-save hash and login compare
 - `backend/Models/User.js`
 - `backend/routes/auth.js`
