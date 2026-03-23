@@ -317,7 +317,7 @@ export default function UsersScreen() {
         </ScrollView>
       </Loading>
 
-      <FAB actions={[{ label: "Add User", icon: "person-add", onPress: () => setModalVisible(true) }]} />
+      <FAB actions={[{ label: "Add User", icon: "person-add", onPress: () => setModalVisible(true) }]} bottom={80} />
 
       {/* Create Modal */}
       <Modal

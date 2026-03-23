@@ -11,7 +11,7 @@ import { useTheme } from "../ThemeProvider";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Font, FontSize, Spacing, Radius } from "../../constants/colors";
 
-export default function FAB({ actions = [] }) {
+export default function FAB({ actions = [], bottom: fabBottom = Spacing.lg }) {
   const { theme } = useTheme();
   const [fabOpen, setFabOpen] = useState(false);
   const isSingle = actions.length === 1;
@@ -92,7 +92,7 @@ export default function FAB({ actions = [] }) {
     },
     actionsContainer: {
       position: "absolute",
-      bottom: 84,
+      bottom: fabBottom + 56 + 12,
       right: Spacing.lg,
       alignItems: "flex-end",
       gap: Spacing.sm,
@@ -137,7 +137,7 @@ export default function FAB({ actions = [] }) {
     },
     fab: {
       position: "absolute",
-      bottom: Spacing.lg,
+      bottom: fabBottom,
       right: Spacing.lg,
       backgroundColor: theme.primary,
       width: 56,
