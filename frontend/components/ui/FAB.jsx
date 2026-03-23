@@ -1,4 +1,11 @@
-import { TouchableOpacity, View, Animated, StyleSheet, Text, Pressable } from "react-native";
+import {
+  TouchableOpacity,
+  View,
+  Animated,
+  StyleSheet,
+  Text,
+  Pressable,
+} from "react-native";
 import { useRef, useState } from "react";
 import { useTheme } from "../ThemeProvider";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -7,27 +14,59 @@ import { Font, FontSize, Spacing, Radius } from "../../constants/colors";
 export default function FAB({ actions = [] }) {
   const { theme } = useTheme();
   const [fabOpen, setFabOpen] = useState(false);
-  const animation = useRef(new Animated.Value(0)).current;
 
-  const toggle = () => {
-    const toValue = fabOpen ? 0 : 1;
-    Animated.spring(animation, {
-      toValue,
-      friction: 6,
-      useNativeDriver: true,
-    }).start();
-    setFabOpen((v) => !v);
+  // Separate anim per item for true stagger
+  const itemAnims = useRef(actions.map(() => new Animated.Value(0))).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+
+  const open = () => {
+    setFabOpen(true);
+    Animated.parallel([
+      Animated.spring(rotateAnim, {
+        toValue: 1,
+        friction: 5,
+        tension: 80,
+        useNativeDriver: true,
+      }),
+      Animated.stagger(
+        55,
+        itemAnims.map((anim) =>
+          Animated.spring(anim, {
+            toValue: 1,
+            friction: 6,
+            tension: 100,
+            useNativeDriver: true,
+          })
+        )
+      ),
+    ]).start();
   };
 
-  const close = () => {
-    Animated.spring(animation, {
-      toValue: 0,
-      friction: 6,
-      useNativeDriver: true,
-    }).start(() => setFabOpen(false));
+  const close = (callback) => {
+    Animated.parallel([
+      Animated.spring(rotateAnim, {
+        toValue: 0,
+        friction: 5,
+        tension: 80,
+        useNativeDriver: true,
+      }),
+      Animated.stagger(
+        40,
+        [...itemAnims].reverse().map((anim) =>
+          Animated.timing(anim, {
+            toValue: 0,
+            duration: 160,
+            useNativeDriver: true,
+          })
+        )
+      ),
+    ]).start(() => {
+      setFabOpen(false);
+      callback?.();
+    });
   };
 
-  const iconRotate = animation.interpolate({
+  const iconRotate = rotateAnim.interpolate({
     inputRange: [0, 1],
     outputRange: ["0deg", "45deg"],
   });
@@ -38,7 +77,7 @@ export default function FAB({ actions = [] }) {
     },
     actionsContainer: {
       position: "absolute",
-      bottom: 80,
+      bottom: 84,
       right: Spacing.lg,
       alignItems: "flex-end",
       gap: Spacing.sm,
@@ -101,55 +140,62 @@ export default function FAB({ actions = [] }) {
 
   return (
     <>
-      {/* Tap-outside backdrop */}
-      {fabOpen && (
-        <Pressable style={s.backdrop} onPress={close} />
-      )}
+      {/* Backdrop — only blocks touches when open */}
+      {fabOpen && <Pressable style={s.backdrop} onPress={() => close()} />}
 
-      {/* Action items */}
-      {fabOpen && (
-        <View style={s.actionsContainer} pointerEvents="box-none">
-          {actions.map((action, index) => {
-            const delay = index * 30;
-            const translateY = animation.interpolate({
-              inputRange: [0, 1],
-              outputRange: [20, 0],
-            });
-            const opacity = animation.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, 1],
-            });
+      {/* Action items — always mounted, invisible + non-interactive when closed */}
+      <View
+        style={s.actionsContainer}
+        pointerEvents={fabOpen ? "box-none" : "none"}
+      >
+        {actions.map((action, index) => {
+          const anim = itemAnims[index];
+          const opacity = anim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 1],
+          });
+          const translateY = anim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [14, 0],
+          });
+          const scale = anim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0.85, 1],
+          });
 
-            return (
-              <Animated.View
-                key={action.label}
-                style={[s.actionRow, { opacity, transform: [{ translateY }] }]}
+          return (
+            <Animated.View
+              key={action.label}
+              style={[
+                s.actionRow,
+                { opacity, transform: [{ translateY }, { scale }] },
+              ]}
+            >
+              <View style={s.label}>
+                <Text style={s.labelText}>{action.label}</Text>
+              </View>
+              <TouchableOpacity
+                style={s.actionBtn}
+                onPress={() => close(action.onPress)}
+                activeOpacity={0.75}
               >
-                <View style={s.label}>
-                  <Text style={s.labelText}>{action.label}</Text>
-                </View>
-                <TouchableOpacity
-                  style={s.actionBtn}
-                  onPress={() => {
-                    close();
-                    action.onPress();
-                  }}
-                  activeOpacity={0.75}
-                >
-                  <MaterialIcons
-                    name={action.icon}
-                    size={22}
-                    color={theme.textPrimary}
-                  />
-                </TouchableOpacity>
-              </Animated.View>
-            );
-          })}
-        </View>
-      )}
+                <MaterialIcons
+                  name={action.icon}
+                  size={22}
+                  color={theme.textPrimary}
+                />
+              </TouchableOpacity>
+            </Animated.View>
+          );
+        })}
+      </View>
 
       {/* Main FAB */}
-      <TouchableOpacity style={s.fab} onPress={toggle} activeOpacity={0.85}>
+      <TouchableOpacity
+        style={s.fab}
+        onPress={fabOpen ? () => close() : open}
+        activeOpacity={0.85}
+      >
         <Animated.View style={{ transform: [{ rotate: iconRotate }] }}>
           <MaterialIcons name="add" size={26} color="#ffffff" />
         </Animated.View>
