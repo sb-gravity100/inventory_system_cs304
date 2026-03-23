@@ -12,15 +12,11 @@ import { useTheme } from "../../components/ThemeProvider";
 import { useAuth } from "../../context/AuthContext";
 import { router } from "expo-router";
 import StatCard from "../../components/home/StatCard";
+import FAB from "../../components/ui/FAB";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import {
-  Font,
-  FontSize,
-  Spacing,
-  Radius,
-} from "../../constants/colors";
+import { Font, FontSize, Spacing, Radius } from "../../constants/colors";
 
 const api_url =
   process.env.NODE_ENV === "development"
@@ -109,6 +105,32 @@ export default function HomeScreen() {
     router.replace("/(auth)/login");
   };
 
+  const getFabActions = () => {
+    const role = user?.role?.toLowerCase();
+    const actions = [
+      {
+        label: "New Transaction",
+        icon: "add-shopping-cart",
+        onPress: () => router.push("/transaction"),
+      },
+    ];
+    if (role === "manager" || role === "admin") {
+      actions.push({
+        label: "Add Product",
+        icon: "add-box",
+        onPress: () => router.navigate("/(tabs)/inventory"),
+      });
+    }
+    if (role === "admin") {
+      actions.push({
+        label: "Manage Users",
+        icon: "manage-accounts",
+        onPress: () => router.push("/users"),
+      });
+    }
+    return actions;
+  };
+
   const s = styles(theme);
 
   return (
@@ -187,14 +209,7 @@ export default function HomeScreen() {
         )}
       </ScrollView>
 
-      {/* FAB for new transaction */}
-      <TouchableOpacity
-        style={s.fab}
-        onPress={() => router.push("/transaction")}
-        activeOpacity={0.85}
-      >
-        <MaterialIcons name="add" size={28} color="#ffffff" />
-      </TouchableOpacity>
+      <FAB actions={getFabActions()} />
     </SafeAreaView>
   );
 }
@@ -283,21 +298,5 @@ const styles = (theme) =>
       color: theme.textSecondary,
       textAlign: "center",
       paddingVertical: Spacing.xl,
-    },
-    fab: {
-      position: "absolute",
-      bottom: 24,
-      right: 20,
-      width: 56,
-      height: 56,
-      borderRadius: 28,
-      backgroundColor: theme.primary,
-      alignItems: "center",
-      justifyContent: "center",
-      elevation: 6,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.2,
-      shadowRadius: 4,
     },
   });

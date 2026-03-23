@@ -14,12 +14,17 @@ import { Font, FontSize, Spacing, Radius } from "../../constants/colors";
 export default function FAB({ actions = [] }) {
   const { theme } = useTheme();
   const [fabOpen, setFabOpen] = useState(false);
+  const isSingle = actions.length === 1;
 
   // Separate anim per item for true stagger
   const itemAnims = useRef(actions.map(() => new Animated.Value(0))).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
   const open = () => {
+    if (isSingle) {
+      actions[0].onPress();
+      return;
+    }
     setFabOpen(true);
     Animated.parallel([
       Animated.spring(rotateAnim, {
@@ -193,7 +198,7 @@ export default function FAB({ actions = [] }) {
       {/* Main FAB */}
       <TouchableOpacity
         style={s.fab}
-        onPress={fabOpen ? () => close() : open}
+        onPress={isSingle ? open : fabOpen ? () => close() : open}
         activeOpacity={0.85}
       >
         <Animated.View style={{ transform: [{ rotate: iconRotate }] }}>
