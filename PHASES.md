@@ -64,7 +64,7 @@ Status legend: `[ ]` todo · `[x]` done · `[-]` in progress
 - [x] Add request validation/sanitization (express-validator or zod) on all backend routes
 - [x] Make dev/prod API URL switch in AuthContext driven by an env flag
 - [x] Pull-to-refresh on all list screens
-- [ ] Error boundary or graceful error screens on frontend
+- [x] Error boundary or graceful error screens on frontend
 
 **Done criteria:** All known bugs fixed; no undefined `req.userId` references; role checks consistent.
 

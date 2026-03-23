@@ -11,6 +11,13 @@ Format:
 
 ---
 
+### `dbaabbd` · 2026-03-23 · feat: add ErrorBoundary component wrapping root layout
+- `frontend/components/ErrorBoundary.jsx`
+- `frontend/app/_layout.jsx`
+- `FILE_INDEX.md`
+
+---
+
 ### `0a5203a` · 2026-03-23 · docs: mark Phase 4 tasks done (except error boundary)
 - `PHASES.md`
 
