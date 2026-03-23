@@ -55,7 +55,7 @@ router.post("/:id/increase-stock", verifyToken, async (req, res) => {
   const log = new Log({
     message: `Increased stock of ${product.name} by ${quantity}`,
     type: "inventory",
-    user: req.userId,
+    user: req.user.id,
     products_involved: [product._id],
   });
   await log.save();
@@ -73,7 +73,7 @@ router.post("/:id/decrease-stock", verifyToken, async (req, res) => {
   const log = new Log({
     message: `Decreased stock of ${product.name} by ${quantity}`,
     type: "inventory",
-    user: req.userId,
+    user: req.user.id,
     products_involved: [product._id],
   });
   await log.save();
@@ -91,7 +91,7 @@ router.post("/:id/update-stocks", verifyToken, async (req, res) => {
   const log = new Log({
     message: `Updated stock of ${product.name} to ${quantity}`,
     type: "inventory",
-    user: req.userId,
+    user: req.user.id,
     products_involved: [product._id],
   });
   await log.save();
