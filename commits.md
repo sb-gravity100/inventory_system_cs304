@@ -11,6 +11,14 @@ Format:
 
 ---
 
+### `f016811` · 2026-03-23 · feat: rename bat scripts to underscore case and add reset_db.bat
+- `run_backend.bat`
+- `run_frontend.bat`
+- `reset_db.bat`
+- `FILE_INDEX.md`
+
+---
+
 ### `e0dd0ad` · 2026-03-23 · feat: add reset-db script to wipe collections and re-seed admin
 - `backend/scripts/reset-db.js`
 - `backend/package.json`
