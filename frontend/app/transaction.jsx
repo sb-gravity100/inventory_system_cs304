@@ -1,296 +1,418 @@
-import { View, ScrollView, Alert, TouchableOpacity } from "react-native";
-import { Body, Caption, Loading } from "../components/ui";
+import {
+  View,
+  Text,
+  ScrollView,
+  Alert,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+  FlatList,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../components/ThemeProvider";
 import { useAuth } from "../context/AuthContext";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import Header from "../components/ui/Header";
 import SearchBar from "../components/ui/SearchBar";
-import Card from "../components/ui/Card";
-import Button from "../components/ui/Button";
+import { Loading } from "../components/ui";
 import { router } from "expo-router";
+import { Font, FontSize, Spacing, Radius } from "../constants/colors";
 
 const api_url =
-   process.env.NODE_ENV === "development"
-      ? process.env.EXPO_PUBLIC_API_DEVURL
-      : process.env.EXPO_PUBLIC_API_URL;
+  process.env.NODE_ENV === "development"
+    ? process.env.EXPO_PUBLIC_API_DEVURL
+    : process.env.EXPO_PUBLIC_API_URL;
 
 export default function TransactionScreen() {
-   const { theme } = useTheme();
-   const { authState } = useAuth();
-   const [products, setProducts] = useState([]);
-   const [selectedProducts, setSelectedProducts] = useState([]);
-   const [searchQuery, setSearchQuery] = useState("");
-   const [loading, setLoading] = useState(true);
+  const { theme } = useTheme();
+  const { authState } = useAuth();
+  const [products, setProducts] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [cartExpanded, setCartExpanded] = useState(false);
 
-   useEffect(() => {
-      fetchProducts();
-   }, []);
+  const cartVisible = selectedProducts.length > 0;
 
-   const fetchProducts = async () => {
-      try {
-         const response = await axios.get(`${api_url}/products`, {
-            headers: { Authorization: `Bearer ${authState.token}` },
-            params: { name: searchQuery, limit: 100 },
-         });
-         setProducts(response.data.products);
-         setLoading(false);
-      } catch (error) {
-         Alert.alert("Error", "Failed to fetch products");
-      }
-   };
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
-   const addProduct = (product) => {
-      const existing = selectedProducts.find(
-         (p) => p.product._id === product._id,
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(`${api_url}/products`, {
+        headers: { Authorization: `Bearer ${authState.token}` },
+        params: { name: searchQuery, limit: 100 },
+      });
+      setProducts(response.data.products);
+      setLoading(false);
+    } catch (error) {
+      Alert.alert("Error", "Failed to fetch products");
+    }
+  };
+
+  const addProduct = (product) => {
+    const existing = selectedProducts.find((p) => p.product._id === product._id);
+    if (existing) {
+      setSelectedProducts(
+        selectedProducts.map((p) =>
+          p.product._id === product._id
+            ? { ...p, quantity: Math.min(p.quantity + 1, product.stock) }
+            : p
+        )
       );
-      if (existing) {
-         setSelectedProducts(
-            selectedProducts.map((p) =>
-               p.product._id === product._id
-                  ? { ...p, quantity: Math.min(p.quantity + 1, product.stock) }
-                  : p,
-            ),
-         );
-      } else {
-         setSelectedProducts([...selectedProducts, { product, quantity: 1 }]);
-      }
-   };
+    } else {
+      setSelectedProducts([...selectedProducts, { product, quantity: 1 }]);
+    }
+  };
 
-   const updateQuantity = (productId, quantity) => {
-      if (quantity <= 0) {
-         setSelectedProducts(
-            selectedProducts.filter((p) => p.product._id !== productId),
-         );
-      } else {
-         setSelectedProducts(
-            selectedProducts.map((p) =>
-               p.product._id === productId ? { ...p, quantity } : p,
-            ),
-         );
-      }
-   };
+  const updateQuantity = (productId, quantity) => {
+    if (quantity <= 0) {
+      setSelectedProducts(selectedProducts.filter((p) => p.product._id !== productId));
+    } else {
+      setSelectedProducts(
+        selectedProducts.map((p) =>
+          p.product._id === productId ? { ...p, quantity } : p
+        )
+      );
+    }
+  };
 
-   const createTransaction = async () => {
-      if (selectedProducts.length === 0) {
-         Alert.alert("Error", "Add at least one product");
-         return;
-      }
+  const createTransaction = async () => {
+    if (selectedProducts.length === 0) {
+      Alert.alert("Error", "Add at least one product");
+      return;
+    }
+    try {
+      const productsData = selectedProducts.map((p) => ({
+        product: p.product._id,
+        quantity: p.quantity,
+      }));
+      await axios.post(
+        `${api_url}/sales/transaction`,
+        { products: productsData },
+        { headers: { Authorization: `Bearer ${authState.token}` } }
+      );
+      Alert.alert("Success", "Transaction created");
+      router.push("/sales");
+      setSelectedProducts([]);
+    } catch (error) {
+      Alert.alert(
+        "Error",
+        error.response?.data?.message || "Failed to create transaction"
+      );
+    }
+  };
 
-      try {
-         const productsData = selectedProducts.map((p) => ({
-            product: p.product._id,
-            quantity: p.quantity,
-         }));
+  const total = selectedProducts.reduce(
+    (sum, p) => sum + p.product.price * p.quantity,
+    0
+  );
 
-         await axios.post(
-            `${api_url}/sales/transaction`,
-            { products: productsData },
-            { headers: { Authorization: `Bearer ${authState.token}` } },
-         );
+  const itemCount = selectedProducts.reduce((sum, p) => sum + p.quantity, 0);
 
-         Alert.alert("Success", "Transaction created");
-         router.push("/sales");
-         setSelectedProducts([]);
-      } catch (error) {
-         Alert.alert(
-            "Error",
-            error.response?.data?.message || "Failed to create transaction",
-         );
-      }
-   };
+  const s = StyleSheet.create({
+    container: { flex: 1, backgroundColor: theme.background },
+    headerRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: Spacing.screenPadding,
+      paddingVertical: Spacing.md,
+      gap: Spacing.sm,
+    },
+    backBtn: { padding: 4 },
+    headerTitle: {
+      fontFamily: Font.bold,
+      fontSize: FontSize.screenTitle,
+      color: theme.textPrimary,
+      flex: 1,
+    },
+    sectionLabel: {
+      fontFamily: Font.semiBold,
+      fontSize: FontSize.sectionLabel,
+      color: theme.textSecondary,
+      letterSpacing: 0.8,
+      textTransform: "uppercase",
+      paddingHorizontal: Spacing.screenPadding,
+      marginBottom: Spacing.xs,
+      marginTop: Spacing.sm,
+    },
+    // Product row (receipt style)
+    productRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: Spacing.lg,
+      paddingVertical: Spacing.md,
+    },
+    productName: {
+      fontFamily: Font.medium,
+      fontSize: FontSize.listPrimary,
+      color: theme.textPrimary,
+      flex: 1,
+    },
+    productPrice: {
+      fontFamily: Font.bold,
+      fontSize: FontSize.listSecondary,
+      color: theme.currency,
+      marginRight: Spacing.md,
+    },
+    addBtn: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: theme.isDark ? "#1e3a5f" : "#dbeafe",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    divider: {
+      height: 1,
+      backgroundColor: theme.border,
+      marginHorizontal: Spacing.lg,
+    },
+    // Cart bottom sheet
+    cartSheet: {
+      backgroundColor: theme.surface,
+      borderTopLeftRadius: 16,
+      borderTopRightRadius: 16,
+      borderTopWidth: 1,
+      borderColor: theme.border,
+      paddingBottom: 24,
+    },
+    cartHandle: {
+      alignItems: "center",
+      paddingTop: 10,
+      paddingBottom: 6,
+    },
+    cartHandleBar: {
+      width: 36,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: theme.border,
+    },
+    cartHeaderRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: Spacing.lg,
+      paddingVertical: Spacing.sm,
+    },
+    cartTitle: {
+      fontFamily: Font.semiBold,
+      fontSize: FontSize.body,
+      color: theme.textPrimary,
+      flex: 1,
+    },
+    cartCount: {
+      fontFamily: Font.regular,
+      fontSize: FontSize.listSecondary,
+      color: theme.textSecondary,
+      marginRight: Spacing.md,
+    },
+    cartTotal: {
+      fontFamily: Font.bold,
+      fontSize: FontSize.listPrimary,
+      color: theme.currency,
+      marginRight: Spacing.md,
+    },
+    // Cart item row
+    cartItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: Spacing.lg,
+      paddingVertical: Spacing.sm,
+    },
+    cartItemName: {
+      fontFamily: Font.medium,
+      fontSize: FontSize.body,
+      color: theme.textPrimary,
+      flex: 1,
+    },
+    qtyBtn: {
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      backgroundColor: theme.isDark ? "#374151" : "#f3f4f6",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    qtyText: {
+      fontFamily: Font.semiBold,
+      fontSize: FontSize.body,
+      color: theme.textPrimary,
+      minWidth: 24,
+      textAlign: "center",
+    },
+    confirmBtn: {
+      marginHorizontal: Spacing.lg,
+      marginTop: Spacing.sm,
+      backgroundColor: theme.primary,
+      borderRadius: Radius.button,
+      paddingVertical: 14,
+      alignItems: "center",
+    },
+    confirmBtnText: {
+      fontFamily: Font.bold,
+      fontSize: FontSize.button,
+      color: "#ffffff",
+    },
+    stockNote: {
+      fontFamily: Font.regular,
+      fontSize: FontSize.listSecondary,
+      color: theme.textSecondary,
+    },
+  });
 
-   const total = selectedProducts.reduce(
-      (sum, p) => sum + p.product.price * p.quantity,
-      0,
-   );
+  const filteredProducts = searchQuery
+    ? products.filter((p) =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : products;
 
-   return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
-         <Header title="💰 New Transaction" showBack />
+  return (
+    <SafeAreaView style={s.container}>
+      {/* Header */}
+      <View style={s.headerRow}>
+        <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
+          <MaterialIcons name="arrow-back" size={24} color={theme.textPrimary} />
+        </TouchableOpacity>
+        <Text style={s.headerTitle}>New Transaction</Text>
+      </View>
 
-         <SearchBar
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Search products..."
-            style={{ margin: 20 }}
-         />
+      {/* Search */}
+      <SearchBar
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        placeholder="Search products..."
+        style={{ marginHorizontal: Spacing.screenPadding, marginBottom: Spacing.sm }}
+      />
 
-         <View style={{ flex: 1 }}>
-            <ScrollView style={{ flex: 1 }}>
-               <Caption style={{ paddingHorizontal: 20, marginBottom: 12 }}>
-                  Available Products
-               </Caption>
-               <View style={{ paddingHorizontal: 20 }}>
-                  <Loading isLoading={loading} message="Loading products...">
-                     {products.map((product) => (
-                        <Card
-                           key={product._id}
-                           style={{
-                              marginBottom: 12,
-                              flexDirection: "row",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                           }}
-                        >
-                           <View style={{ flex: 1 }}>
-                              <Body style={{ fontWeight: "600" }}>
-                                 {product.name}
-                              </Body>
-                              <Caption>
-                                 ₱{product.price} • Stock: {product.stock}
-                              </Caption>
-                           </View>
-                           <Button
-                              title="Add"
-                              variant="success"
-                              onPress={() => addProduct(product)}
-                              style={{
-                                 paddingHorizontal: 16,
-                                 paddingVertical: 8,
-                              }}
-                           />
-                        </Card>
-                     ))}
-                  </Loading>
-               </View>
-            </ScrollView>
+      <Text style={s.sectionLabel}>PRODUCTS</Text>
 
-            {selectedProducts.length > 0 && (
-               <View
-                  style={{
-                     borderTopWidth: 1,
-                     borderTopColor: theme.border,
-                     paddingTop: 16,
-                  }}
-               >
-                  <Caption style={{ paddingHorizontal: 20, marginBottom: 12 }}>
-                     Selected Items
-                  </Caption>
-                  <ScrollView style={{ paddingHorizontal: 20, maxHeight: 200 }}>
-                     {selectedProducts.map((item) => (
-                        <Card
-                           key={item.product._id}
-                           style={{
-                              marginBottom: 12,
-                              flexDirection: "row",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                           }}
-                        >
-                           <View style={{ flex: 1 }}>
-                              <Body style={{ fontWeight: "600" }}>
-                                 {item.product.name}
-                              </Body>
-                              <Caption>₱{item.product.price}</Caption>
-                           </View>
-                           <View
-                              style={{
-                                 flexDirection: "row",
-                                 alignItems: "center",
-                                 gap: 12,
-                              }}
-                           >
-                              <TouchableOpacity
-                                 style={{
-                                    backgroundColor: theme.gray,
-                                    width: 32,
-                                    height: 32,
-                                    borderRadius: 16,
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                 }}
-                                 onPress={() =>
-                                    updateQuantity(
-                                       item.product._id,
-                                       item.quantity - 1,
-                                    )
-                                 }
-                              >
-                                 <MaterialIcons
-                                    name="remove"
-                                    size={20}
-                                    color="#FFFFFF"
-                                 />
-                              </TouchableOpacity>
-                              <Body
-                                 style={{
-                                    minWidth: 30,
-                                    textAlign: "center",
-                                    fontWeight: "600",
-                                 }}
-                              >
-                                 {item.quantity}
-                              </Body>
-                              <TouchableOpacity
-                                 style={{
-                                    backgroundColor: theme.gray,
-                                    width: 32,
-                                    height: 32,
-                                    borderRadius: 16,
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                 }}
-                                 onPress={() =>
-                                    updateQuantity(
-                                       item.product._id,
-                                       Math.min(
-                                          item.quantity + 1,
-                                          item.product.stock,
-                                       ),
-                                    )
-                                 }
-                              >
-                                 <MaterialIcons
-                                    name="add"
-                                    size={20}
-                                    color="#FFFFFF"
-                                 />
-                              </TouchableOpacity>
-                           </View>
-                        </Card>
-                     ))}
-                  </ScrollView>
-               </View>
-            )}
-         </View>
-
-         <View
-            style={{
-               borderTopWidth: 1,
-               borderTopColor: theme.border,
-               padding: 20,
-               backgroundColor: theme.background,
-            }}
-         >
-            <View
-               style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: 16,
-               }}
+      {/* Product list — receipt-style */}
+      <Loading isLoading={loading} message="Loading products...">
+        <FlatList
+          data={filteredProducts}
+          keyExtractor={(item) => item._id}
+          style={{ flex: 1 }}
+          renderItem={({ item, index }) => {
+            const inCart = selectedProducts.find(
+              (p) => p.product._id === item._id
+            );
+            return (
+              <View>
+                {index > 0 && <View style={s.divider} />}
+                <View style={s.productRow}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={s.productName}>{item.name}</Text>
+                    <Text style={s.stockNote}>Stock: {item.stock}</Text>
+                  </View>
+                  <Text style={s.productPrice}>₱{item.price.toFixed(2)}</Text>
+                  <TouchableOpacity
+                    style={s.addBtn}
+                    onPress={() => addProduct(item)}
+                    disabled={item.stock === 0}
+                  >
+                    <MaterialIcons
+                      name="add"
+                      size={20}
+                      color={theme.isDark ? "#93c5fd" : "#1d4ed8"}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            );
+          }}
+          ListEmptyComponent={
+            <Text
+              style={{
+                textAlign: "center",
+                color: theme.textSecondary,
+                padding: Spacing.xl,
+                fontFamily: Font.regular,
+                fontSize: FontSize.body,
+              }}
             >
-               <Body style={{ fontWeight: "600" }}>Total:</Body>
-               <Body
-                  style={{
-                     fontSize: 24,
-                     fontWeight: "bold",
-                     color: theme.success,
-                  }}
-               >
-                  ₱{total.toFixed(2)}
-               </Body>
+              No products found.
+            </Text>
+          }
+        />
+      </Loading>
+
+      {/* Cart bottom sheet */}
+      {cartVisible && (
+        <View style={s.cartSheet}>
+          {/* Drag handle — tap to expand/collapse */}
+          <TouchableOpacity
+            style={s.cartHandle}
+            onPress={() => setCartExpanded((v) => !v)}
+          >
+            <View style={s.cartHandleBar} />
+          </TouchableOpacity>
+
+          {/* Collapsed header: count + total + confirm */}
+          {!cartExpanded ? (
+            <View style={s.cartHeaderRow}>
+              <Text style={s.cartTitle}>Cart</Text>
+              <Text style={s.cartCount}>{itemCount} item{itemCount !== 1 ? "s" : ""}</Text>
+              <Text style={s.cartTotal}>₱{total.toFixed(2)}</Text>
+              <TouchableOpacity style={s.confirmBtn} onPress={createTransaction}>
+                <Text style={s.confirmBtnText}>Confirm</Text>
+              </TouchableOpacity>
             </View>
-            <Button
-               title="Create Transaction"
-               variant="primary"
-               onPress={createTransaction}
-               style={{ width: "100%" }}
-            />
-         </View>
-      </SafeAreaView>
-   );
+          ) : (
+            /* Expanded: itemized list + confirm */
+            <>
+              <View style={s.cartHeaderRow}>
+                <Text style={s.cartTitle}>Cart  ·  {itemCount} item{itemCount !== 1 ? "s" : ""}</Text>
+                <Text style={s.cartTotal}>₱{total.toFixed(2)}</Text>
+              </View>
+              <ScrollView style={{ maxHeight: 220 }}>
+                {selectedProducts.map((item, i) => (
+                  <View key={item.product._id}>
+                    {i > 0 && <View style={s.divider} />}
+                    <View style={s.cartItem}>
+                      <Text style={s.cartItemName} numberOfLines={1}>
+                        {item.product.name}
+                      </Text>
+                      <TouchableOpacity
+                        style={s.qtyBtn}
+                        onPress={() =>
+                          updateQuantity(item.product._id, item.quantity - 1)
+                        }
+                      >
+                        <MaterialIcons
+                          name="remove"
+                          size={16}
+                          color={theme.textPrimary}
+                        />
+                      </TouchableOpacity>
+                      <Text style={s.qtyText}>{item.quantity}</Text>
+                      <TouchableOpacity
+                        style={s.qtyBtn}
+                        onPress={() =>
+                          updateQuantity(
+                            item.product._id,
+                            Math.min(item.quantity + 1, item.product.stock)
+                          )
+                        }
+                      >
+                        <MaterialIcons
+                          name="add"
+                          size={16}
+                          color={theme.textPrimary}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ))}
+              </ScrollView>
+              <TouchableOpacity style={s.confirmBtn} onPress={createTransaction}>
+                <Text style={s.confirmBtnText}>Confirm Transaction</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
+      )}
+    </SafeAreaView>
+  );
 }
