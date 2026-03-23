@@ -11,6 +11,10 @@ Format:
 
 ---
 
+### `0f2ec9b` · 2026-03-23 · docs: update UI spec with structural layout decisions (tab bar, headers, grid, receipt, cart sheet)
+- `PLAN.md`
+- `PHASES.md`
+
 ### `0c31bd1` · 2026-03-23 · docs: update typography spec to reference Outfit font and mark design system tasks done
 - `PLAN.md`
 - `PHASES.md`
