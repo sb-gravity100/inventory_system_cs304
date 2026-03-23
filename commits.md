@@ -11,6 +11,16 @@ Format:
 
 ---
 
+### `84937d4` · 2026-03-24 · feat: overhaul Users screen and unmodified UI components
+- `frontend/app/users.jsx`
+- `frontend/components/ui/Card.jsx`
+- `frontend/components/ui/Modal.jsx`
+- `frontend/components/ui/Dropdown.jsx`
+- `frontend/components/ui/FormField.jsx`
+- `frontend/components/PasswordInput.jsx`
+- `frontend/components/UpdateStockModal.jsx`
+- `frontend/components/AddProductModal.jsx`
+
 ### `bdef47b` · 2026-03-24 · fix: update all Log writes to new event/actor schema across auth, products, sales routes
 - `backend/routes/auth.js`
 - `backend/routes/products.js`
