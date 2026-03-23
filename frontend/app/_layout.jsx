@@ -15,18 +15,19 @@ function RootContent() {
       screenOptions={{
         headerShown: false,
         animation: "slide_from_right",
+        gestureEnabled: true,
       }}
     >
-      {/* Auth gate — fade, no directional slide */}
-      <Stack.Screen name="(auth)" options={{ animation: "fade" }} />
+      {/* Auth gate — fade both ways, no directional slide */}
+      <Stack.Screen name="(auth)" options={{ animation: "fade", gestureEnabled: false }} />
       {/* Main app — fade in after login */}
-      <Stack.Screen name="(tabs)" options={{ animation: "fade" }} />
-      {/* Action screen — slides up like a modal (you're creating something) */}
-      <Stack.Screen name="transaction" options={{ animation: "slide_from_bottom" }} />
-      {/* Detail drill-down — standard forward push */}
-      <Stack.Screen name="transactions/[transactionId]/index" options={{ animation: "slide_from_right" }} />
-      {/* Admin utility — standard forward push */}
-      <Stack.Screen name="users" options={{ animation: "slide_from_right" }} />
+      <Stack.Screen name="(tabs)" options={{ animation: "fade", gestureEnabled: false }} />
+      {/* Action screen — modal presentation: slides up, swipe-down dismisses */}
+      <Stack.Screen name="transaction" options={{ presentation: "modal", gestureEnabled: true }} />
+      {/* Detail drill-down — slide right in, swipe-left-edge to go back */}
+      <Stack.Screen name="transactions/[transactionId]/index" options={{ animation: "slide_from_right", gestureEnabled: true }} />
+      {/* Admin utility — same drill-down pattern */}
+      <Stack.Screen name="users" options={{ animation: "slide_from_right", gestureEnabled: true }} />
     </Stack>
   );
 }
