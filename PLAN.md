@@ -282,15 +282,25 @@ Constants exported from `constants/colors.js`: `Font` (family names), `FontSize`
 
 ### Component Patterns
 
-**Stat cards** — Three equal-width cards in a row. Each has a colored background tint and matching text color per token table above. No shadow. No border.
+**Tab bar** — Icon-only. Active tab has a pill/capsule highlight behind the icon. No labels. No full-width separator line.
 
-**List rows (Sales, Inventory)** — No card wrapping. Each row is flat: primary text + value on one line, secondary info on the second line. Separated by a 1px `border` divider. No left-border accent. Status shown as colored text inline, not a badge.
+**Screen headers** — No colored header bar. Screen title sits at the top of the scrollable body content (same `background` color). Title left-aligned, action icons (theme toggle, logout) right-aligned inline.
 
-**Section headers** — Uppercase label style (13px, 600, letter-spacing). Used above list sections, not as screen titles.
+**Stat cards (Home + Sales)** — 2+1 stacked layout: two equal cards on top row, one full-width card below. Color-coded by meaning: neutral tint for counts, blue tint for stock value, green tint for today's sales.
 
-**Home screen** — No hint banner. No Quick Actions. Header + stat cards + "Recent Transactions" section (last 5, flat row style) + floating action button (bottom-right) for new transaction.
+**Inventory list** — 2-column product tile grid. Each tile shows: product name, price (`currency` green), stock count. Tapping a tile opens a detail modal (shows image placeholder, full details, stock actions).
 
-**Buttons** — Primary: `primary` bg + white text. Destructive: `danger` bg + white text. No rounded pill shapes.
+**Sales list** — Flat rows with right chevron (`›`). Two lines per row: seller + amount on line 1, item count + date + status text on line 2. Divider between rows. Status as inline colored text.
+
+**Section headers** — Uppercase label style (13px, SemiBold, letter-spacing 0.8). Used above list sections.
+
+**Home screen** — No hint banner. No Quick Actions. Title in body + stat cards (2+1) + "Recent Transactions" flat rows (last 5) + FAB (bottom-right) for new transaction.
+
+**New Transaction screen** — Full-screen product list with `[+]` button per row. Cart slides up as a bottom sheet when items are added (handle drag + summary line). Confirm button in the sheet footer.
+
+**Transaction Detail screen** — Receipt layout. Single rounded card: header block (status, seller, ID truncated, date) → divider → itemized products (name, unit price × qty, line total) → divider → subtotal / discount / TOTAL. Actions (finalize/cancel) below the receipt card if pending.
+
+**Buttons** — Primary: `primary` bg + white text. Destructive: `danger` bg + white text. Radius 4px.
 
 **Inputs / Search bars** — `surface` bg, `border` border (1px), radius 4px.
 
