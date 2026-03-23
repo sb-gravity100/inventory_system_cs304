@@ -7,6 +7,7 @@ import connectDB from "./db.js";
 import authRoutes from "./routes/auth.js";
 import salesRoutes from "./routes/sales.js";
 import productRoutes from "./routes/products.js";
+import categoryRoutes from "./routes/categories.js";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/auth", authRoutes);
 app.use("/sales", salesRoutes);
 app.use("/products", productRoutes);
+app.use("/categories", categoryRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to the API" });
