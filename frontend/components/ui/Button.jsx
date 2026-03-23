@@ -1,6 +1,7 @@
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import { useTheme } from "../ThemeProvider";
 import { MaterialIcons } from "@expo/vector-icons";
+import { Font, FontSize, Radius } from "../../constants/colors";
 
 export default function Button({
    title,
@@ -20,7 +21,7 @@ export default function Button({
          justifyContent: "center",
          paddingVertical: 12,
          paddingHorizontal: 12,
-         borderRadius: 8,
+         borderRadius: Radius.button,
          gap: 8,
       },
       primary: {
@@ -48,8 +49,8 @@ export default function Button({
       },
       buttonText: {
          color: "#FFFFFF",
-         fontSize: 16,
-         fontWeight: "600",
+         fontFamily: Font.semiBold,
+         fontSize: FontSize.button,
       },
       outlineText: {
          color: theme.primary,

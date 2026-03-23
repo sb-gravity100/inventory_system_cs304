@@ -1,100 +1,103 @@
-import { Text, StyleSheet } from "react-native";
+import { Text } from "react-native";
 import { useTheme } from "../ThemeProvider";
+import { Font, FontSize } from "../../constants/colors";
 
 export function Title({ children, style, align = "left", ...props }) {
-   const { theme } = useTheme();
-   return (
-      <Text
-         style={[
-            {
-               fontSize: 24,
-               fontWeight: "bold",
-               color: theme.textPrimary,
-               textAlign: align || "left",
-            },
-            style,
-         ]}
-         {...props}
-      >
-         {children}
-      </Text>
-   );
+  const { theme } = useTheme();
+  return (
+    <Text
+      style={[
+        {
+          fontFamily: Font.bold,
+          fontSize: FontSize.screenTitle,
+          color: theme.textPrimary,
+          textAlign: align,
+        },
+        style,
+      ]}
+      {...props}
+    >
+      {children}
+    </Text>
+  );
 }
 
 export function Subtitle({ children, style, align = "left", ...props }) {
-   const { theme } = useTheme();
-   return (
-      <Text
-         style={[
-            {
-               fontSize: 18,
-               fontWeight: "600",
-               color: theme.textPrimary,
-               textAlign: align || "left",
-            },
-            style,
-         ]}
-         {...props}
-      >
-         {children}
-      </Text>
-   );
+  const { theme } = useTheme();
+  return (
+    <Text
+      style={[
+        {
+          fontFamily: Font.semiBold,
+          fontSize: FontSize.listPrimary,
+          color: theme.textPrimary,
+          textAlign: align,
+        },
+        style,
+      ]}
+      {...props}
+    >
+      {children}
+    </Text>
+  );
 }
 
 export function Body({ children, style, align = "left", ...props }) {
-   const { theme } = useTheme();
-   return (
-      <Text
-         style={[
-            {
-               fontSize: 16,
-               color: theme.textPrimary,
-               textAlign: align || "left",
-            },
-            style,
-         ]}
-         {...props}
-      >
-         {children}
-      </Text>
-   );
+  const { theme } = useTheme();
+  return (
+    <Text
+      style={[
+        {
+          fontFamily: Font.regular,
+          fontSize: FontSize.body,
+          color: theme.textPrimary,
+          textAlign: align,
+        },
+        style,
+      ]}
+      {...props}
+    >
+      {children}
+    </Text>
+  );
 }
 
 export function Caption({ children, style, align = "left", ...props }) {
-   const { theme } = useTheme();
-   return (
-      <Text
-         style={[
-            {
-               fontSize: 14,
-               color: theme.textSecondary,
-               textAlign: align || "left",
-            },
-            style,
-         ]}
-         {...props}
-      >
-         {children}
-      </Text>
-   );
+  const { theme } = useTheme();
+  return (
+    <Text
+      style={[
+        {
+          fontFamily: Font.regular,
+          fontSize: FontSize.listSecondary,
+          color: theme.textSecondary,
+          textAlign: align,
+        },
+        style,
+      ]}
+      {...props}
+    >
+      {children}
+    </Text>
+  );
 }
 
 export function Label({ children, style, align = "left", ...props }) {
-   const { theme } = useTheme();
-   return (
-      <Text
-         style={[
-            {
-               fontSize: 14,
-               fontWeight: "600",
-               color: theme.textPrimary,
-               textAlign: align || "left",
-            },
-            style,
-         ]}
-         {...props}
-      >
-         {children}
-      </Text>
-   );
+  const { theme } = useTheme();
+  return (
+    <Text
+      style={[
+        {
+          fontFamily: Font.medium,
+          fontSize: FontSize.body,
+          color: theme.textPrimary,
+          textAlign: align,
+        },
+        style,
+      ]}
+      {...props}
+    >
+      {children}
+    </Text>
+  );
 }

@@ -1,5 +1,6 @@
 import { TextInput, StyleSheet } from "react-native";
 import { useTheme } from "../ThemeProvider";
+import { Font, FontSize, Radius } from "../../constants/colors";
 
 export default function Input({
    value,
@@ -13,13 +14,14 @@ export default function Input({
 
    const styles = StyleSheet.create({
       input: {
-         backgroundColor: theme.bg2,
+         backgroundColor: theme.surface,
          borderWidth: 1,
          borderColor: theme.border,
-         borderRadius: 8,
+         borderRadius: Radius.input,
          paddingHorizontal: 16,
          paddingVertical: 12,
-         fontSize: 16,
+         fontFamily: Font.regular,
+         fontSize: FontSize.body,
          color: theme.textPrimary,
       },
    });
