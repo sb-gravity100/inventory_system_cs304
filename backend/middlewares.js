@@ -26,3 +26,12 @@ export const verifyAdmin = (req, res, next) => {
   }
   next();
 };
+
+export const verifyManager = (req, res, next) => {
+  if (!req.user || (req.user.role !== "manager" && req.user.role !== "admin")) {
+    return res
+      .status(403)
+      .json({ message: "Forbidden: Manager access required" });
+  }
+  next();
+};
