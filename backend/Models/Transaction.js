@@ -23,8 +23,25 @@ const transactionSchema = new mongoose.Schema(
           type: Number,
           required: true,
         },
+        price_at_sale: {
+          type: Number,
+          default: null,
+        },
       },
     ],
+    payment_method: {
+      type: String,
+      enum: ["cash", "card", "other"],
+      default: "cash",
+    },
+    discount: {
+      type: Number,
+      default: 0,
+    },
+    notes: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,
