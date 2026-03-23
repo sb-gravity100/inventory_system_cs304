@@ -54,7 +54,6 @@ export default function FAB({ actions = [] }) {
   };
 
   const close = (callback) => {
-    if (isAnimating.current) return;
     isAnimating.current = true;
     isOpenRef.current = false;
     // Fire action immediately — no waiting for animation
