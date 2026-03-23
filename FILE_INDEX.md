@@ -30,6 +30,12 @@ File system index for Il Vento inventory management system. Read this before ope
 | `backend/package.json` | Dependencies, npm scripts (`start`, `dev`), ES module type | config |
 | `backend/mock_data.json` | Sample product data for manual seeding/testing | data, dev |
 
+### Scripts (`/backend/scripts`)
+
+| File | Purpose | Tags |
+|---|---|---|
+| `backend/scripts/reset-db.js` | Drops all collections and re-seeds the default admin user; run with `npm run reset-db` from `/backend` | dev, script, db |
+
 ### Models (`/backend/Models`)
 
 | File | Purpose | Tags |
