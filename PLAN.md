@@ -217,6 +217,82 @@ Outside tabs (push navigation):
 
 ---
 
+## UI Design System
+
+### Color Palette
+
+| Token | Value | Usage |
+|---|---|---|
+| `background` | `#fafafa` | Screen background |
+| `surface` | `#ffffff` | Cards, modals, inputs |
+| `primary` | `#1a2235` | Header, nav, primary buttons, UI chrome |
+| `currency` | `#16a34a` | All monetary values (₱ amounts) only |
+| `statBlue` | `#dbeafe` / `#1d4ed8` | Stock value stat card (bg / text) |
+| `statGreen` | `#dcfce7` / `#15803d` | Today's sales stat card (bg / text) |
+| `statNeutral` | `#f3f4f6` / `#374151` | Count-based stat cards (bg / text) |
+| `border` | `#e5e7eb` | Dividers, input borders |
+| `textPrimary` | `#111827` | Main body text |
+| `textSecondary` | `#6b7280` | Labels, subtitles, metadata |
+| `danger` | `#dc2626` | Destructive actions, errors |
+| `warning` | `#d97706` | Low-stock alerts |
+| `statusCompleted` | `#16a34a` | Status text: completed |
+| `statusPending` | `#d97706` | Status text: pending |
+| `statusCancelled` | `#6b7280` | Status text: cancelled |
+
+Header background: `#1a2235` (dark navy) — header text and icons: `#ffffff`.
+
+### Spacing
+
+| Token | Value |
+|---|---|
+| `xs` | 4px |
+| `sm` | 8px |
+| `md` | 12px |
+| `lg` | 16px |
+| `xl` | 24px |
+| `screenPadding` | 12px (horizontal screen edge padding) |
+| `cardPadding` | 12px |
+| `listGap` | 8px |
+| `sectionGap` | 16px |
+
+### Border Radius
+
+| Element | Value |
+|---|---|
+| Cards | 6px |
+| Buttons | 4px |
+| Inputs / search bars | 4px |
+| Badges / chips | 4px |
+| Modals | 8px |
+
+### Typography
+
+| Role | Size | Weight | Transform |
+|---|---|---|---|
+| Screen title (in header) | 24px | Bold | — |
+| Section header / label | 13px | 600 | Uppercase + letter-spacing 0.8 |
+| Body text | 14px | Regular | — |
+| Numeric values (stats) | 20px | Bold | — |
+| List primary text | 15px | 600 | — |
+| List secondary text | 13px | Regular | — |
+| Button label | 14px | 600 | — |
+
+### Component Patterns
+
+**Stat cards** — Three equal-width cards in a row. Each has a colored background tint and matching text color per token table above. No shadow. No border.
+
+**List rows (Sales, Inventory)** — No card wrapping. Each row is flat: primary text + value on one line, secondary info on the second line. Separated by a 1px `border` divider. No left-border accent. Status shown as colored text inline, not a badge.
+
+**Section headers** — Uppercase label style (13px, 600, letter-spacing). Used above list sections, not as screen titles.
+
+**Home screen** — No hint banner. No Quick Actions. Header + stat cards + "Recent Transactions" section (last 5, flat row style) + floating action button (bottom-right) for new transaction.
+
+**Buttons** — Primary: `primary` bg + white text. Destructive: `danger` bg + white text. No rounded pill shapes.
+
+**Inputs / Search bars** — `surface` bg, `border` border (1px), radius 4px.
+
+---
+
 ## Known Issues / Tech Debt
 
 1. `backend/routes/products.js` — log writes use `req.userId` (undefined); should be `req.user.id`.

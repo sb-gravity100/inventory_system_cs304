@@ -96,6 +96,48 @@ Status legend: `[ ]` todo · `[x]` done · `[-]` in progress
 
 ---
 
+## Phase 5.5 — UI Overhaul
+*Redesign frontend to the new design system defined in PLAN.md.*
+
+### Design System Foundation
+- [ ] Update `constants/colors.js` with full token set (background, surface, primary, currency, statBlue, statGreen, statNeutral, border, textPrimary, textSecondary, danger, warning, status colors)
+- [ ] Add spacing constants to `constants/colors.js` or a new `constants/spacing.js` (xs/sm/md/lg/xl/screenPadding/cardPadding/listGap/sectionGap)
+- [ ] Add border radius constants (card: 6, button: 4, input: 4, modal: 8)
+
+### Header
+- [ ] All screen headers: navy (`primary`) background, white title + icons — no emoji in header titles
+- [ ] Home header: show role badge inline with username (e.g. "sb · manager")
+
+### Home Screen
+- [ ] Remove hint banner entirely
+- [ ] Remove Quick Actions section
+- [ ] Add "Recent Transactions" section — last 5 transactions, flat row style, with FAB (+) for new transaction
+- [ ] Stat cards: color-coded (neutral / blue / green tints per token table)
+
+### Inventory Screen
+- [ ] List rows: flat (no card borders), divider lines only, price in `currency` green, stock right-aligned
+- [ ] Fix text overflow on any labels
+
+### Sales Screen
+- [ ] Remove left-border accent on transaction cards
+- [ ] Flat rows with dividers; status as inline colored text (no badge boxes)
+- [ ] Stat cards: same color-coded style as home
+
+### Transaction Creation & Detail Screens
+- [ ] Apply tight spacing (screenPadding: 12, cardPadding: 12, listGap: 8)
+- [ ] Buttons: radius 4px, primary navy bg
+- [ ] Inputs / search bars: radius 4px, 1px border
+
+### Global
+- [ ] Section headers: 13px uppercase + letter-spacing throughout
+- [ ] Numeric/currency values: 20px bold, `currency` green
+- [ ] Truncate raw ObjectId on transaction detail (show last 8 chars, e.g. `…bc33cde`)
+- [ ] Audit any screen still using hardcoded hex values and replace with tokens
+
+**Done criteria:** All screens use token colors; no hardcoded hex values in screen files; stat cards color-coded; home shows recent transactions; sales list is flat rows; all border radii and spacing match spec.
+
+---
+
 ## Phase 6 — Reports & Analytics
 *Replace the Reports stub with real data and export UI.*
 
