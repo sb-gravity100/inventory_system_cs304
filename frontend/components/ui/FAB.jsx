@@ -1,152 +1,159 @@
-import { TouchableOpacity, View, Animated, StyleSheet } from "react-native";
-import { useState } from "react";
+import { TouchableOpacity, View, Animated, StyleSheet, Text, Pressable } from "react-native";
+import { useRef, useState } from "react";
 import { useTheme } from "../ThemeProvider";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Text } from "react-native";
+import { Font, FontSize, Spacing, Radius } from "../../constants/colors";
 
 export default function FAB({ actions = [] }) {
-   const { theme } = useTheme();
-   const [fabOpen, setFabOpen] = useState(false);
-   const [fabAnimation] = useState(new Animated.Value(0));
+  const { theme } = useTheme();
+  const [fabOpen, setFabOpen] = useState(false);
+  const animation = useRef(new Animated.Value(0)).current;
 
-   const toggleFab = () => {
-      const toValue = fabOpen ? 0 : 1;
-      Animated.spring(fabAnimation, {
-         toValue,
-         friction: 5,
-         useNativeDriver: true,
-      }).start();
-      setFabOpen(!fabOpen);
-   };
+  const toggle = () => {
+    const toValue = fabOpen ? 0 : 1;
+    Animated.spring(animation, {
+      toValue,
+      friction: 6,
+      useNativeDriver: true,
+    }).start();
+    setFabOpen((v) => !v);
+  };
 
-   const styles = StyleSheet.create({
-      fab: {
-         position: "absolute",
-         bottom: 20,
-         right: 20,
-         backgroundColor: theme.primary,
-         width: 56,
-         height: 56,
-         borderRadius: 28,
-         alignItems: "center",
-         justifyContent: "center",
-         elevation: 6,
-         shadowColor: "#000",
-         shadowOffset: { width: 0, height: 4 },
-         shadowOpacity: 0.3,
-         shadowRadius: 4,
-      },
-      fabActions: {
-         position: "absolute",
-         bottom: 90,
-         right: 20,
-         gap: 12,
-      },
-      fabAction: {
-         flexDirection: "row",
-         alignItems: "center",
-         justifyContent: "flex-end",
-         gap: 12,
-      },
-      fabActionButton: {
-         backgroundColor: theme.secondary,
-         width: 48,
-         height: 48,
-         borderRadius: 24,
-         alignItems: "center",
-         justifyContent: "center",
-         elevation: 4,
-         shadowColor: "#000",
-         shadowOffset: { width: 0, height: 2 },
-         shadowOpacity: 0.2,
-         shadowRadius: 2,
-      },
-      fabActionLabel: {
-         backgroundColor: theme.secondary,
-         paddingHorizontal: 12,
-         paddingVertical: 6,
-         borderRadius: 4,
-         elevation: 2,
-         shadowColor: "#000",
-         shadowOffset: { width: 0, height: 1 },
-         shadowOpacity: 0.2,
-         shadowRadius: 1,
-      },
-      fabActionLabelDark: {
-         backgroundColor: "#3A3A3A",
-      },
-      fabActionText: {
-         fontSize: 14,
-         color: theme.textPrimary,
-         fontWeight: "600",
-      },
-   });
+  const close = () => {
+    Animated.spring(animation, {
+      toValue: 0,
+      friction: 6,
+      useNativeDriver: true,
+    }).start(() => setFabOpen(false));
+  };
 
-   return (
-      <>
-         {fabOpen && (
-            <View style={styles.fabActions}>
-               {actions.map((action, index) => {
-                  const translateY = fabAnimation.interpolate({
-                     inputRange: [0, 1],
-                     outputRange: [50, 0],
-                  });
-                  const opacity = fabAnimation.interpolate({
-                     inputRange: [0, 1],
-                     outputRange: [0, 1],
-                  });
+  const iconRotate = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "45deg"],
+  });
 
-                  return (
-                     <Animated.View
-                        key={index}
-                        style={[
-                           styles.fabAction,
-                           {
-                              transform: [{ translateY }],
-                              opacity,
-                           },
-                        ]}
-                     >
-                        <View style={styles.fabActionLabel}>
-                           <Text style={styles.fabActionText}>
-                              {action.label}
-                           </Text>
-                        </View>
-                        <TouchableOpacity
-                           style={styles.fabActionButton}
-                           onPress={() => {
-                              setFabOpen(false);
-                              action.onPress();
-                           }}
-                        >
-                           <MaterialIcons
-                              name={action.icon}
-                              size={24}
-                              color={theme.textPrimary}
-                           />
-                        </TouchableOpacity>
-                     </Animated.View>
-                  );
-               })}
-            </View>
-         )}
+  const s = StyleSheet.create({
+    backdrop: {
+      ...StyleSheet.absoluteFillObject,
+    },
+    actionsContainer: {
+      position: "absolute",
+      bottom: 80,
+      right: Spacing.lg,
+      alignItems: "flex-end",
+      gap: Spacing.sm,
+    },
+    actionRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: Spacing.sm,
+    },
+    label: {
+      backgroundColor: theme.surface,
+      borderWidth: 1,
+      borderColor: theme.border,
+      paddingHorizontal: Spacing.md,
+      paddingVertical: 6,
+      borderRadius: Radius.button,
+      elevation: 2,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.12,
+      shadowRadius: 2,
+    },
+    labelText: {
+      fontFamily: Font.medium,
+      fontSize: FontSize.body,
+      color: theme.textPrimary,
+    },
+    actionBtn: {
+      backgroundColor: theme.surface,
+      borderWidth: 1,
+      borderColor: theme.border,
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      alignItems: "center",
+      justifyContent: "center",
+      elevation: 4,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.15,
+      shadowRadius: 3,
+    },
+    fab: {
+      position: "absolute",
+      bottom: Spacing.lg,
+      right: Spacing.lg,
+      backgroundColor: theme.primary,
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      alignItems: "center",
+      justifyContent: "center",
+      elevation: 6,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+    },
+  });
 
-         <TouchableOpacity style={styles.fab} onPress={toggleFab}>
-            <Animated.View
-               style={{
-                  transform: [
-                     {
-                        rotate: fabAnimation.interpolate({
-                           inputRange: [0, 1],
-                           outputRange: ["0deg", "45deg"],
-                        }),
-                     },
-                  ],
-               }}
-            >
-               <MaterialIcons name="add" size={24} color="#FFFFFF" />
-            </Animated.View>
-         </TouchableOpacity>
-      </>
-   );
+  return (
+    <>
+      {/* Tap-outside backdrop */}
+      {fabOpen && (
+        <Pressable style={s.backdrop} onPress={close} />
+      )}
+
+      {/* Action items */}
+      {fabOpen && (
+        <View style={s.actionsContainer} pointerEvents="box-none">
+          {actions.map((action, index) => {
+            const delay = index * 30;
+            const translateY = animation.interpolate({
+              inputRange: [0, 1],
+              outputRange: [20, 0],
+            });
+            const opacity = animation.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, 1],
+            });
+
+            return (
+              <Animated.View
+                key={action.label}
+                style={[s.actionRow, { opacity, transform: [{ translateY }] }]}
+              >
+                <View style={s.label}>
+                  <Text style={s.labelText}>{action.label}</Text>
+                </View>
+                <TouchableOpacity
+                  style={s.actionBtn}
+                  onPress={() => {
+                    close();
+                    action.onPress();
+                  }}
+                  activeOpacity={0.75}
+                >
+                  <MaterialIcons
+                    name={action.icon}
+                    size={22}
+                    color={theme.textPrimary}
+                  />
+                </TouchableOpacity>
+              </Animated.View>
+            );
+          })}
+        </View>
+      )}
+
+      {/* Main FAB */}
+      <TouchableOpacity style={s.fab} onPress={toggle} activeOpacity={0.85}>
+        <Animated.View style={{ transform: [{ rotate: iconRotate }] }}>
+          <MaterialIcons name="add" size={26} color="#ffffff" />
+        </Animated.View>
+      </TouchableOpacity>
+    </>
+  );
 }
