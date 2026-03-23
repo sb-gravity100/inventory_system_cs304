@@ -1,0 +1,527 @@
+[
+  {
+    "name": "Wireless Mouse",
+    "price": 299.99,
+    "stock": 45
+  },
+  {
+    "name": "Mechanical Keyboard",
+    "price": 1299.99,
+    "stock": 28
+  },
+  {
+    "name": "USB-C Cable 2m",
+    "price": 149.99,
+    "stock": 120
+  },
+  {
+    "name": "Laptop Stand",
+    "price": 599.99,
+    "stock": 35
+  },
+  {
+    "name": "Webcam HD 1080p",
+    "price": 899.99,
+    "stock": 18
+  },
+  {
+    "name": "Bluetooth Headphones",
+    "price": 1499.99,
+    "stock": 52
+  },
+  {
+    "name": "Phone Case Clear",
+    "price": 199.99,
+    "stock": 89
+  },
+  {
+    "name": "Screen Protector",
+    "price": 99.99,
+    "stock": 150
+  },
+  {
+    "name": "Portable SSD 1TB",
+    "price": 2999.99,
+    "stock": 22
+  },
+  {
+    "name": "USB Hub 7-Port",
+    "price": 449.99,
+    "stock": 40
+  },
+  {
+    "name": "HDMI Cable 3m",
+    "price": 249.99,
+    "stock": 75
+  },
+  {
+    "name": "Desk Lamp LED",
+    "price": 799.99,
+    "stock": 31
+  },
+  {
+    "name": "Ergonomic Chair",
+    "price": 4999.99,
+    "stock": 12
+  },
+  {
+    "name": "Monitor 24 inch",
+    "price": 6999.99,
+    "stock": 15
+  },
+  {
+    "name": "Gaming Mouse Pad",
+    "price": 349.99,
+    "stock": 67
+  },
+  {
+    "name": "Microphone USB",
+    "price": 1899.99,
+    "stock": 25
+  },
+  {
+    "name": "Speakers 2.1",
+    "price": 2499.99,
+    "stock": 19
+  },
+  {
+    "name": "Power Bank 20000mAh",
+    "price": 999.99,
+    "stock": 58
+  },
+  {
+    "name": "Wireless Charger",
+    "price": 699.99,
+    "stock": 44
+  },
+  {
+    "name": "Smart Watch",
+    "price": 3999.99,
+    "stock": 27
+  },
+  {
+    "name": "Fitness Tracker",
+    "price": 1599.99,
+    "stock": 36
+  },
+  {
+    "name": "Tablet 10 inch",
+    "price": 8999.99,
+    "stock": 14
+  },
+  {
+    "name": "Stylus Pen",
+    "price": 899.99,
+    "stock": 41
+  },
+  {
+    "name": "Router WiFi 6",
+    "price": 2799.99,
+    "stock": 23
+  },
+  {
+    "name": "Ethernet Cable 5m",
+    "price": 179.99,
+    "stock": 92
+  },
+  {
+    "name": "Surge Protector 6-Outlet",
+    "price": 499.99,
+    "stock": 55
+  },
+  {
+    "name": "Extension Cord 3m",
+    "price": 299.99,
+    "stock": 71
+  },
+  {
+    "name": "Cable Organizer",
+    "price": 149.99,
+    "stock": 103
+  },
+  {
+    "name": "Laptop Sleeve 15 inch",
+    "price": 449.99,
+    "stock": 38
+  },
+  {
+    "name": "Backpack Tech",
+    "price": 1299.99,
+    "stock": 29
+  },
+  {
+    "name": "Messenger Bag",
+    "price": 899.99,
+    "stock": 33
+  },
+  {
+    "name": "Water Bottle 500ml",
+    "price": 249.99,
+    "stock": 86
+  },
+  {
+    "name": "Notebook A5",
+    "price": 99.99,
+    "stock": 124
+  },
+  {
+    "name": "Pen Set 10pcs",
+    "price": 149.99,
+    "stock": 98
+  },
+  {
+    "name": "Sticky Notes Pack",
+    "price": 79.99,
+    "stock": 145
+  },
+  {
+    "name": "Highlighter Set 4pcs",
+    "price": 119.99,
+    "stock": 87
+  },
+  {
+    "name": "Stapler Heavy Duty",
+    "price": 199.99,
+    "stock": 62
+  },
+  {
+    "name": "Tape Dispenser",
+    "price": 129.99,
+    "stock": 74
+  },
+  {
+    "name": "Scissors Office",
+    "price": 89.99,
+    "stock": 95
+  },
+  {
+    "name": "Paper Clips 100pcs",
+    "price": 49.99,
+    "stock": 156
+  },
+  {
+    "name": "Binder Clips Assorted",
+    "price": 69.99,
+    "stock": 132
+  },
+  {
+    "name": "Desk Organizer",
+    "price": 349.99,
+    "stock": 48
+  },
+  {
+    "name": "File Folder 10pcs",
+    "price": 199.99,
+    "stock": 81
+  },
+  {
+    "name": "Whiteboard A4",
+    "price": 299.99,
+    "stock": 56
+  },
+  {
+    "name": "Marker Set 6pcs",
+    "price": 159.99,
+    "stock": 73
+  },
+  {
+    "name": "Eraser Whiteboard",
+    "price": 79.99,
+    "stock": 118
+  },
+  {
+    "name": "Calculator Scientific",
+    "price": 599.99,
+    "stock": 34
+  },
+  {
+    "name": "Planner 2026",
+    "price": 399.99,
+    "stock": 47
+  },
+  {
+    "name": "Calendar Wall 2026",
+    "price": 249.99,
+    "stock": 64
+  },
+  {
+    "name": "Mousepad Gel Wrist",
+    "price": 299.99,
+    "stock": 51
+  },
+  {
+    "name": "Keyboard Wrist Rest",
+    "price": 349.99,
+    "stock": 43
+  },
+  {
+    "name": "Monitor Stand Wood",
+    "price": 799.99,
+    "stock": 26
+  },
+  {
+    "name": "Cable Clips 20pcs",
+    "price": 99.99,
+    "stock": 137
+  },
+  {
+    "name": "Phone Holder Desk",
+    "price": 199.99,
+    "stock": 69
+  },
+  {
+    "name": "Tablet Stand Adjustable",
+    "price": 449.99,
+    "stock": 37
+  },
+  {
+    "name": "Laptop Cooler Fan",
+    "price": 699.99,
+    "stock": 32
+  },
+  {
+    "name": "USB Flash Drive 64GB",
+    "price": 399.99,
+    "stock": 78
+  },
+  {
+    "name": "Memory Card 128GB",
+    "price": 599.99,
+    "stock": 54
+  },
+  {
+    "name": "Card Reader USB",
+    "price": 249.99,
+    "stock": 66
+  },
+  {
+    "name": "Bluetooth Speaker",
+    "price": 1199.99,
+    "stock": 39
+  },
+  {
+    "name": "Earbuds Wireless",
+    "price": 899.99,
+    "stock": 61
+  },
+  {
+    "name": "Headset Gaming",
+    "price": 1899.99,
+    "stock": 24
+  },
+  {
+    "name": "Ring Light 10 inch",
+    "price": 1299.99,
+    "stock": 28
+  },
+  {
+    "name": "Tripod Adjustable",
+    "price": 799.99,
+    "stock": 31
+  },
+  {
+    "name": "Phone Gimbal",
+    "price": 2499.99,
+    "stock": 17
+  },
+  {
+    "name": "Action Camera",
+    "price": 4999.99,
+    "stock": 13
+  },
+  {
+    "name": "Drone Mini",
+    "price": 6999.99,
+    "stock": 9
+  },
+  {
+    "name": "VR Headset",
+    "price": 8999.99,
+    "stock": 11
+  },
+  {
+    "name": "Smart Speaker",
+    "price": 1999.99,
+    "stock": 21
+  },
+  {
+    "name": "Smart Bulb RGB",
+    "price": 499.99,
+    "stock": 57
+  },
+  {
+    "name": "Smart Plug",
+    "price": 399.99,
+    "stock": 68
+  },
+  {
+    "name": "Security Camera",
+    "price": 1799.99,
+    "stock": 26
+  },
+  {
+    "name": "Doorbell Camera",
+    "price": 2299.99,
+    "stock": 19
+  },
+  {
+    "name": "Thermostat Smart",
+    "price": 3499.99,
+    "stock": 15
+  },
+  {
+    "name": "Air Purifier",
+    "price": 2999.99,
+    "stock": 18
+  },
+  {
+    "name": "Humidifier",
+    "price": 1299.99,
+    "stock": 30
+  },
+  {
+    "name": "Fan Desk USB",
+    "price": 299.99,
+    "stock": 72
+  },
+  {
+    "name": "Heater Portable",
+    "price": 1599.99,
+    "stock": 23
+  },
+  {
+    "name": "Coffee Maker",
+    "price": 2499.99,
+    "stock": 20
+  },
+  {
+    "name": "Electric Kettle",
+    "price": 899.99,
+    "stock": 42
+  },
+  {
+    "name": "Blender Personal",
+    "price": 1199.99,
+    "stock": 27
+  },
+  {
+    "name": "Toaster 2-Slice",
+    "price": 799.99,
+    "stock": 35
+  },
+  {
+    "name": "Microwave 20L",
+    "price": 3999.99,
+    "stock": 14
+  },
+  {
+    "name": "Rice Cooker 1.5L",
+    "price": 1499.99,
+    "stock": 25
+  },
+  {
+    "name": "Air Fryer 3L",
+    "price": 2799.99,
+    "stock": 22
+  },
+  {
+    "name": "Pressure Cooker 6L",
+    "price": 2999.99,
+    "stock": 16
+  },
+  {
+    "name": "Slow Cooker 4L",
+    "price": 1899.99,
+    "stock": 21
+  },
+  {
+    "name": "Food Processor",
+    "price": 3499.99,
+    "stock": 13
+  },
+  {
+    "name": "Hand Mixer",
+    "price": 699.99,
+    "stock": 38
+  },
+  {
+    "name": "Kitchen Scale Digital",
+    "price": 499.99,
+    "stock": 49
+  },
+  {
+    "name": "Measuring Cups Set",
+    "price": 199.99,
+    "stock": 84
+  },
+  {
+    "name": "Knife Set 5pcs",
+    "price": 1299.99,
+    "stock": 29
+  },
+  {
+    "name": "Cutting Board Bamboo",
+    "price": 399.99,
+    "stock": 53
+  },
+  {
+    "name": "Mixing Bowl Set",
+    "price": 599.99,
+    "stock": 46
+  },
+  {
+    "name": "Storage Containers 10pcs",
+    "price": 799.99,
+    "stock": 40
+  },
+  {
+    "name": "Lunch Box",
+    "price": 299.99,
+    "stock": 65
+  },
+  {
+    "name": "Thermos 500ml",
+    "price": 499.99,
+    "stock": 58
+  },
+  {
+    "name": "Travel Mug",
+    "price": 349.99,
+    "stock": 71
+  },
+  {
+    "name": "Plate Set 6pcs",
+    "price": 899.99,
+    "stock": 33
+  },
+  {
+    "name": "Bowl Set 6pcs",
+    "price": 799.99,
+    "stock": 36
+  },
+  {
+    "name": "Glass Set 6pcs",
+    "price": 599.99,
+    "stock": 44
+  },
+  {
+    "name": "Mug Set 4pcs",
+    "price": 499.99,
+    "stock": 52
+  },
+  {
+    "name": "Cutlery Set 24pcs",
+    "price": 1199.99,
+    "stock": 28
+  },
+  {
+    "name": "Dish Rack",
+    "price": 699.99,
+    "stock": 37
+  },
+  {
+    "name": "Sponge Pack 10pcs",
+    "price": 149.99,
+    "stock": 112
+  }
+]
