@@ -11,6 +11,22 @@ Format:
 
 ---
 
+### `bd35c69` · 2026-03-24 · docs: reflect product schema overhaul in PLAN, PHASES, FILE_INDEX
+- `PLAN.md`
+- `PHASES.md`
+- `FILE_INDEX.md`
+
+### `c712be6` · 2026-03-24 · feat: update ProductCard and add-product screen for new schema
+- `frontend/components/ProductCard.jsx`
+- `frontend/app/add-product.jsx`
+
+### `f16d385` · 2026-03-24 · feat: product schema overhaul + Category model
+- `backend/Models/Category.js` *(new)*
+- `backend/Models/Product.js`
+- `backend/routes/categories.js` *(new)*
+- `backend/routes/products.js`
+- `backend/server.js`
+
 ### `a2adb49` · 2026-03-24 · feat: replace AddProductModal with add-product modal screen
 - `frontend/app/add-product.jsx` *(new)*
 - `frontend/app/_layout.jsx`
