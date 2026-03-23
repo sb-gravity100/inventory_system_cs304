@@ -4,6 +4,7 @@ import {
    ScrollView,
    Alert,
    Modal,
+   RefreshControl,
 } from "react-native";
 import { Title, Subtitle, Body, Caption, Loading } from "../components/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -29,6 +30,7 @@ export default function UsersScreen() {
    const { authState, user } = useAuth();
    const [users, setUsers] = useState([]);
    const [loading, setLoading] = useState(true);
+   const [refreshing, setRefreshing] = useState(false);
    const [modalVisible, setModalVisible] = useState(false);
    const [editModalVisible, setEditModalVisible] = useState(false);
    const [selectedUser, setSelectedUser] = useState(null);
@@ -61,6 +63,12 @@ export default function UsersScreen() {
    useEffect(() => {
       fetchUsers();
    }, []);
+
+   const onRefresh = async () => {
+      setRefreshing(true);
+      await fetchUsers();
+      setRefreshing(false);
+   };
 
    const handleCreateUser = async () => {
       if (!newUsername || !newPassword) {
@@ -225,7 +233,16 @@ export default function UsersScreen() {
          />
 
          <Loading isLoading={loading} message="Loading users...">
-            <ScrollView style={{ paddingHorizontal: 20 }}>
+            <ScrollView
+               style={{ paddingHorizontal: 20 }}
+               refreshControl={
+                  <RefreshControl
+                     refreshing={refreshing}
+                     onRefresh={onRefresh}
+                     tintColor={theme.primary}
+                  />
+               }
+            >
                {users.length > 0 ? (
                   users.map((userItem) => (
                      <Card key={userItem._id} style={{ marginBottom: 12 }}>
