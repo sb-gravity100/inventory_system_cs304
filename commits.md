@@ -11,6 +11,32 @@ Format:
 
 ---
 
+### `2fbc06e` · 2026-03-23 · scripts: add run-backend and run-frontend bat scripts
+- `run-backend.bat`
+- `run-frontend.bat`
+
+---
+
+### `6f1df03` · 2026-03-23 · docs: add PHASES.md with 7-phase development plan
+- `PHASES.md`
+
+---
+
+### `e933e73` · 2026-03-23 · docs: add PLAN.md with POS schema, endpoints, and event types
+- `PLAN.md`
+
+---
+
+### `587829e` · 2026-03-23 · docs: update commits.md
+- `commits.md`
+
+---
+
+### `734b671` · 2026-03-23 · docs: add FILE_INDEX.md
+- `FILE_INDEX.md`
+
+---
+
 ### `7114d91` · 2026-03-23 · docs: rewrite CLAUDE.md with general session rules and project context
 - `CLAUDE.md`
 
