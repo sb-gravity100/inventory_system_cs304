@@ -58,12 +58,12 @@ Status legend: `[ ]` todo · `[x]` done · `[-]` in progress
 ## Phase 4 — Bug Fixes & Polish
 *Resolve known issues, tighten RBAC, improve UX.*
 
-- [ ] Fix `req.userId` → `req.user.id` in `backend/routes/products.js` log writes
-- [ ] Fix ObjectId vs string comparison in `transaction-update-products` (`.toString()`)
-- [ ] Add manager-role middleware or consistent in-route role checks
-- [ ] Add request validation/sanitization (express-validator or zod) on all backend routes
-- [ ] Make dev/prod API URL switch in AuthContext driven by an env flag
-- [ ] Pull-to-refresh on all list screens
+- [x] Fix `req.userId` → `req.user.id` in `backend/routes/products.js` log writes
+- [x] Fix ObjectId vs string comparison in `transaction-update-products` (`.toString()`)
+- [x] Add manager-role middleware or consistent in-route role checks
+- [x] Add request validation/sanitization (express-validator or zod) on all backend routes
+- [x] Make dev/prod API URL switch in AuthContext driven by an env flag
+- [x] Pull-to-refresh on all list screens
 - [ ] Error boundary or graceful error screens on frontend
 
 **Done criteria:** All known bugs fixed; no undefined `req.userId` references; role checks consistent.
