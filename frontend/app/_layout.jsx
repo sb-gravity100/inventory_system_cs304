@@ -18,7 +18,8 @@ function RootContent() {
     <Stack
       screenOptions={{
         headerShown: false,
-        animation: "none",
+        animation: "slide_from_right",
+        animationDuration: 200,
         gestureEnabled: true,
         contentStyle: { backgroundColor: theme.background },
       }}
@@ -29,8 +30,8 @@ function RootContent() {
       <Stack.Screen name="(tabs)" options={{ animation: "fade", gestureEnabled: false }} />
       {/* Action screen — modal presentation: slides up, swipe-down dismisses */}
       <Stack.Screen name="transaction" options={{ presentation: "modal", gestureEnabled: true }} />
-      <Stack.Screen name="transactions/[transactionId]/index" options={{ animation: "none", gestureEnabled: true }} />
-      <Stack.Screen name="users" options={{ animation: "none", gestureEnabled: true }} />
+      <Stack.Screen name="transactions/[transactionId]/index" options={{ animation: "slide_from_right", gestureEnabled: true }} />
+      <Stack.Screen name="users" options={{ animation: "slide_from_right", gestureEnabled: true }} />
     </Stack>
     </View>
   );
