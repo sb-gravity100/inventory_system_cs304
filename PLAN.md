@@ -267,15 +267,18 @@ Header background: `#1a2235` (dark navy) — header text and icons: `#ffffff`.
 
 ### Typography
 
-| Role | Size | Weight | Transform |
+Font family: **Outfit** (loaded via `expo-font` from `frontend/assets/fonts/`).
+Constants exported from `constants/colors.js`: `Font` (family names), `FontSize` (sizes).
+
+| Role | Size | Font variant | Transform |
 |---|---|---|---|
-| Screen title (in header) | 24px | Bold | — |
-| Section header / label | 13px | 600 | Uppercase + letter-spacing 0.8 |
-| Body text | 14px | Regular | — |
-| Numeric values (stats) | 20px | Bold | — |
-| List primary text | 15px | 600 | — |
-| List secondary text | 13px | Regular | — |
-| Button label | 14px | 600 | — |
+| Screen title (in header) | 24px | `Outfit-Bold` | — |
+| Section header / label | 13px | `Outfit-SemiBold` | Uppercase + letter-spacing 0.8 |
+| Body text | 14px | `Outfit-Regular` | — |
+| Numeric values (stats) | 20px | `Outfit-Bold` | — |
+| List primary text | 15px | `Outfit-SemiBold` | — |
+| List secondary text | 13px | `Outfit-Regular` | — |
+| Button label | 14px | `Outfit-SemiBold` | — |
 
 ### Component Patterns
 

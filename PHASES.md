@@ -100,9 +100,10 @@ Status legend: `[ ]` todo · `[x]` done · `[-]` in progress
 *Redesign frontend to the new design system defined in PLAN.md.*
 
 ### Design System Foundation
-- [ ] Update `constants/colors.js` with full token set (background, surface, primary, currency, statBlue, statGreen, statNeutral, border, textPrimary, textSecondary, danger, warning, status colors)
-- [ ] Add spacing constants to `constants/colors.js` or a new `constants/spacing.js` (xs/sm/md/lg/xl/screenPadding/cardPadding/listGap/sectionGap)
-- [ ] Add border radius constants (card: 6, button: 4, input: 4, modal: 8)
+- [x] Update `constants/colors.js` with full token set (background, surface, primary, currency, statBlue, statGreen, statNeutral, border, textPrimary, textSecondary, danger, warning, status colors)
+- [x] Add spacing constants (`Spacing`) and border radius constants (`Radius`) to `constants/colors.js`
+- [x] Add `Font` and `FontSize` constants to `constants/colors.js`
+- [x] Copy Outfit font files to `frontend/assets/fonts/` and load via `useFonts` in `_layout.jsx`
 
 ### Header
 - [ ] All screen headers: navy (`primary`) background, white title + icons — no emoji in header titles
