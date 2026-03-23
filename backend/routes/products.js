@@ -64,13 +64,12 @@ router.post("/:id/increase-stock", verifyToken, async (req, res) => {
   if (!product) {
     return res.status(404).json({ message: "Product not found" });
   }
-  const log = new Log({
+  await Log.create({
+    event: "STOCK_INCREASE",
     message: `Increased stock of ${product.name} by ${quantity}`,
-    type: "inventory",
-    user: req.user.id,
+    actor: req.user.id,
     products_involved: [product._id],
   });
-  await log.save();
   await product.increaseStock(quantity);
   res.json(product);
 });
@@ -85,13 +84,12 @@ router.post("/:id/decrease-stock", verifyToken, async (req, res) => {
   if (!product) {
     return res.status(404).json({ message: "Product not found" });
   }
-  const log = new Log({
+  await Log.create({
+    event: "STOCK_DECREASE",
     message: `Decreased stock of ${product.name} by ${quantity}`,
-    type: "inventory",
-    user: req.user.id,
+    actor: req.user.id,
     products_involved: [product._id],
   });
-  await log.save();
   await product.decreaseStock(quantity);
   res.json(product);
 });
@@ -106,13 +104,12 @@ router.post("/:id/update-stocks", verifyToken, async (req, res) => {
   if (!product) {
     return res.status(404).json({ message: "Product not found" });
   }
-  const log = new Log({
+  await Log.create({
+    event: "STOCK_SET",
     message: `Updated stock of ${product.name} to ${quantity}`,
-    type: "inventory",
-    user: req.user.id,
+    actor: req.user.id,
     products_involved: [product._id],
   });
-  await log.save();
   await product.updateStocks(quantity);
   res.json(product);
 });

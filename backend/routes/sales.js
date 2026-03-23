@@ -15,14 +15,13 @@ router.post("/transaction", verifyToken, async (req, res) => {
     seller: req.user.id,
     products,
   });
-  const log = new Log({
+  await Log.create({
+    event: "TRANSACTION_CREATED",
     message: `Transaction created with ${products.length} products`,
-    type: "transaction",
-    user: req.user.id,
+    actor: req.user.id,
     transaction_id: tr.id,
     products_involved: products.map((p) => p.product),
   });
-  await log.save();
   await tr.save();
   res.json(tr);
 });
@@ -46,14 +45,13 @@ router.post("/transaction-update-products", verifyToken, async (req, res) => {
   }
   tr.products = products;
   await tr.save();
-  const log = new Log({
+  await Log.create({
+    event: "TRANSACTION_UPDATED",
     message: `Transaction updated with ${products.length} products`,
-    type: "transaction",
-    user: req.user._id,
+    actor: req.user.id,
     products_involved: products.map((p) => p.product),
     transaction_id: tr._id,
   });
-  await log.save();
   res.json(tr);
 });
 
@@ -73,13 +71,12 @@ router.post("/transaction-finalize", verifyToken, async (req, res) => {
   }
   tr.status = "completed";
   await tr.save();
-  const log = new Log({
+  await Log.create({
+    event: "TRANSACTION_COMPLETED",
     message: `Transaction completed`,
-    type: "transaction",
-    user: req.user._id,
+    actor: req.user.id,
     transaction_id: tr._id,
   });
-  await log.save();
   res.json(tr);
 });
 
@@ -111,13 +108,14 @@ router.get("/transaction/:id", verifyToken, async (req, res) => {
 
 router.get("/transaction-logs", verifyToken, async (req, res) => {
   let logs;
+  const txEvents = ["TRANSACTION_CREATED", "TRANSACTION_UPDATED", "TRANSACTION_COMPLETED", "TRANSACTION_CANCELLED"];
   if (req.user.role === "staff") {
-    logs = await Log.find({ user: req.user._id, type: "transaction" })
-      .populate("user", "username")
+    logs = await Log.find({ actor: req.user._id, event: { $in: txEvents } })
+      .populate("actor", "username")
       .populate("products_involved", "name");
   } else {
-    logs = await Log.find({ type: "transaction" })
-      .populate("user", "username")
+    logs = await Log.find({ event: { $in: txEvents } })
+      .populate("actor", "username")
       .populate("products_involved", "name");
   }
   res.json(logs);
@@ -138,13 +136,12 @@ router.post("/transaction-cancel", verifyToken, async (req, res) => {
     return res.status(400).json({ message: "Transaction already finalized" });
   tr.status = "cancelled";
   await tr.save();
-  const log = new Log({
+  await Log.create({
+    event: "TRANSACTION_CANCELLED",
     message: `Transaction cancelled`,
-    type: "transaction",
-    user: req.user.id,
+    actor: req.user.id,
     transaction_id: tr._id,
   });
-  await log.save();
   res.json(tr);
 });
 

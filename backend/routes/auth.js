@@ -38,9 +38,9 @@ router.post("/login", async (req, res) => {
     { expiresIn: "1d" },
   );
   const log = new Log({
+    event: "USER_LOGIN",
     message: `User ${username} logged in`,
-    type: "user_action",
-    user: user._id,
+    actor: user._id,
   });
   await log.save();
   res.json({ token, user: { username: user.username, role: user.role } });
@@ -103,6 +103,12 @@ router.post(
     }
     user.password = newPassword;
     await user.save();
+    await Log.create({
+      event: "USER_PASSWORD_CHANGED",
+      message: `Admin ${req.user.username} changed password for ${username}`,
+      actor: req.user.id,
+      target_user: user._id,
+    });
     res.json({ message: "Password changed successfully by admin" });
   },
 );
@@ -130,12 +136,12 @@ router.post(
       role: role || "staff",
     });
     await newUser.save();
-    const log = new Log({
+    await Log.create({
+      event: "USER_CREATED",
       message: `Admin ${req.user.username} created user ${username}`,
-      type: "user_action",
-      user: req.user._id,
+      actor: req.user.id,
+      target_user: newUser._id,
     });
-    await log.save();
     res.status(201).json({ message: "User created successfully by admin" });
   },
 );
@@ -154,12 +160,12 @@ router.post(
       return res.status(404).json({ message: "User not found" });
     }
     await User.deleteOne({ username });
-    const log = new Log({
+    await Log.create({
+      event: "USER_DELETED",
       message: `Admin ${req.user.username} deleted user ${username}`,
-      type: "user_action",
-      user: req.user._id,
+      actor: req.user.id,
+      target_user: user._id,
     });
-    await log.save();
     res.json({ message: "User deleted successfully by admin" });
   },
 );
@@ -192,12 +198,12 @@ router.post(
       user.role = newRole;
     }
     await user.save();
-    const log = new Log({
+    await Log.create({
+      event: "USER_UPDATED",
       message: `Admin ${req.user.username} updated user ${username} to ${newUsername || username} with role ${newRole || user.role}`,
-      type: "user_action",
-      user: req.user._id,
+      actor: req.user.id,
+      target_user: user._id,
     });
-    await log.save();
     res.json({ message: "User updated successfully by admin" });
   },
 );
@@ -228,12 +234,6 @@ router.post("/manager-admin-request", verifyToken, async (req, res) => {
   if (!message || !message.trim()) {
     return res.status(400).json({ message: "Message is required" });
   }
-  const log = new Log({
-    message: `Manager ${req.user.username} requested admin action: ${message}`,
-    type: "manager_request",
-    user: req.user._id,
-  });
-  await log.save();
   res.json({ message: "Manager admin request logged successfully" });
 });
 
