@@ -1,166 +1,171 @@
 import {
-   View,
-   Text,
-   StyleSheet,
-   FlatList,
-   RefreshControl,
-   Alert,
-   ActivityIndicator,
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  RefreshControl,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../components/ThemeProvider";
 import { useAuth } from "../../context/AuthContext";
-import Header from "../../components/ui/Header";
-import { Caption, Subtitle, Body, Loading } from "../../components/ui";
-import Card from "../../components/ui/Card";
+import { Loading } from "../../components/ui";
 import StatCard from "../../components/home/StatCard";
 import TransactionItem from "../../components/TransactionItem";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Font, FontSize, Spacing, Radius } from "../../constants/colors";
 
 const api_url =
-   process.env.NODE_ENV === "development"
-      ? process.env.EXPO_PUBLIC_API_DEVURL
-      : process.env.EXPO_PUBLIC_API_URL;
+  process.env.NODE_ENV === "development"
+    ? process.env.EXPO_PUBLIC_API_DEVURL
+    : process.env.EXPO_PUBLIC_API_URL;
 
 export default function SalesScreen() {
-   const { theme } = useTheme();
-   const { authState, user } = useAuth();
-   const [transactions, setTransactions] = useState([]);
-   const [loading, setLoading] = useState(true);
-   const [refreshing, setRefreshing] = useState(false);
-   const [stats, setStats] = useState({
-      totalItemsSold: 0,
-      totalStocks: 0,
-      todaysSales: 0,
-   });
-   const [loadingStats, setLoadingStats] = useState(true);
+  const { theme } = useTheme();
+  const { authState } = useAuth();
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [stats, setStats] = useState({
+    totalItemsSold: 0,
+    totalStocks: 0,
+    todaysSales: 0,
+  });
 
-   useEffect(() => {
-      fetchTransactions();
-      fetchStats();
-   }, []);
+  useEffect(() => {
+    fetchAll();
+  }, []);
 
-   const fetchTransactions = async () => {
-      try {
-         setLoading(true);
-         const response = await axios.get(`${api_url}/sales/transactions`, {
-            headers: { Authorization: `Bearer ${authState.token}` },
-         });
-         setTransactions(response.data);
-      } catch (error) {
-         console.error("Error fetching transactions:", error);
-         Alert.alert("Error", "Failed to fetch transactions");
-      } finally {
-         setLoading(false);
-      }
-   };
+  const fetchAll = async () => {
+    try {
+      setLoading(true);
+      const headers = { Authorization: `Bearer ${authState.token}` };
+      const [txRes, statsRes] = await Promise.all([
+        axios.get(`${api_url}/sales/transactions`, { headers }),
+        axios.get(`${api_url}/sales/stats`, { headers }),
+      ]);
+      setTransactions(txRes.data || []);
+      setStats(statsRes.data);
+    } catch (error) {
+      console.error("Error fetching sales data:", error);
+      Alert.alert("Error", "Failed to fetch sales data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-   const fetchStats = async () => {
-      try {
-         setLoadingStats(true);
-         const response = await axios.get(`${api_url}/sales/stats`, {
-            headers: { Authorization: `Bearer ${authState.token}` },
-         });
-         setStats(response.data);
-      } catch (error) {
-         console.error("Error fetching stats:", error);
-      } finally {
-         setLoadingStats(false);
-      }
-   };
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchAll();
+    setRefreshing(false);
+  };
 
-   const onRefresh = async () => {
-      setRefreshing(true);
-      await Promise.all([fetchTransactions(), fetchStats()]);
-      setRefreshing(false);
-   };
+  const s = StyleSheet.create({
+    container: { flex: 1, backgroundColor: theme.background },
+    header: {
+      paddingHorizontal: Spacing.screenPadding,
+      paddingTop: Spacing.lg,
+      paddingBottom: Spacing.sm,
+    },
+    screenTitle: {
+      fontFamily: Font.bold,
+      fontSize: FontSize.screenTitle,
+      color: theme.textPrimary,
+    },
+    statsSection: {
+      paddingHorizontal: Spacing.screenPadding,
+      marginBottom: Spacing.sectionGap,
+    },
+    statsRow: { flexDirection: "row" },
+    sectionLabel: {
+      fontFamily: Font.semiBold,
+      fontSize: FontSize.sectionLabel,
+      color: theme.textSecondary,
+      letterSpacing: 0.8,
+      textTransform: "uppercase",
+      paddingHorizontal: Spacing.screenPadding,
+      marginBottom: Spacing.sm,
+    },
+    listWrapper: {
+      flex: 1,
+      marginHorizontal: Spacing.screenPadding,
+      backgroundColor: theme.surface,
+      borderRadius: Radius.card,
+      borderWidth: 1,
+      borderColor: theme.border,
+      overflow: "hidden",
+    },
+    divider: {
+      height: 1,
+      backgroundColor: theme.border,
+      marginHorizontal: Spacing.lg,
+    },
+    empty: {
+      fontFamily: Font.regular,
+      fontSize: FontSize.body,
+      color: theme.textSecondary,
+      textAlign: "center",
+      paddingVertical: Spacing.xl,
+    },
+    listContent: { paddingBottom: 16 },
+  });
 
+  return (
+    <SafeAreaView style={s.container}>
+      <View style={s.header}>
+        <Text style={s.screenTitle}>Sales</Text>
+      </View>
 
+      <View style={s.statsSection}>
+        <View style={s.statsRow}>
+          <StatCard
+            value={stats.totalItemsSold}
+            label="Items Sold"
+            colorScheme="blue"
+          />
+          <View style={{ width: Spacing.listGap }} />
+          <StatCard
+            value={transactions.length}
+            label="Transactions"
+            colorScheme="neutral"
+          />
+        </View>
+        <View style={{ height: Spacing.listGap }} />
+        <StatCard
+          value={`₱${stats.todaysSales?.toLocaleString() || 0}`}
+          label="Today's Sales"
+          colorScheme="green"
+          fullWidth
+        />
+      </View>
 
-   const styles = StyleSheet.create({
-      container: {
-         flex: 1,
-         backgroundColor: theme.background,
-      },
-      statsContainer: {
-         flexDirection: "row",
-         gap: 12,
-         paddingHorizontal: 20,
-         paddingVertical: 16,
-      },
+      <Text style={s.sectionLabel}>TRANSACTIONS</Text>
 
-      emptyState: {
-         flex: 1,
-         justifyContent: "center",
-         alignItems: "center",
-         paddingVertical: 60,
-      },
-      scrollContent: {
-         paddingBottom: 40,
-      },
-   });
-
-
-
-   return (
-      <SafeAreaView style={styles.container}>
-         <Header title="🛒 Sales" subtitle="Transaction Management" />
-
-         {loadingStats ? (
-            <Card
-               style={{
-                  marginHorizontal: 20,
-                  marginVertical: 16,
-                  padding: 20,
-                  backgroundColor: theme.secondary,
-               }}
-            >
-               <Body style={{ textAlign: "center" }}>Loading stats...</Body>
-            </Card>
-         ) : (
-            <View style={styles.statsContainer}>
-               <StatCard
-                  value={stats.totalItemsSold}
-                  label="Items Sold"
-                  backgroundColor={theme.bg2}
-               />
-               <StatCard
-                  value={transactions.length}
-                  label="Transactions"
-                  backgroundColor={theme.card}
-               />
-               <StatCard
-                  value={`₱${stats.todaysSales?.toLocaleString() || 0}`}
-                  label="Today's Sales"
-                  backgroundColor={theme.success}
-               />
-            </View>
-         )}
-
-         <Loading isLoading={loading} message="Loading transactions...">
-            <FlatList
-               data={transactions}
-               keyExtractor={(item) => item._id}
-               refreshControl={
-                  <RefreshControl
-                     refreshing={refreshing}
-                     onRefresh={onRefresh}
-                     tintColor={theme.primary}
-                  />
-               }
-               renderItem={({ item }) => <TransactionItem transaction={item} />}
-               contentContainerStyle={styles.scrollContent}
-               ListEmptyComponent={
-                  <View style={styles.emptyState}>
-                     <Caption style={{ textAlign: "center" }}>
-                        No transactions yet.{"\n"}Start creating sales
-                        transactions to see them here.
-                     </Caption>
-                  </View>
-               }
-            />
-         </Loading>
-      </SafeAreaView>
-   );
+      <Loading isLoading={loading} message="Loading transactions...">
+        <View style={s.listWrapper}>
+          <FlatList
+            data={transactions}
+            keyExtractor={(item) => item._id}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor={theme.primary}
+              />
+            }
+            contentContainerStyle={s.listContent}
+            renderItem={({ item }) => <TransactionItem transaction={item} />}
+            ItemSeparatorComponent={() => <View style={s.divider} />}
+            ListEmptyComponent={
+              <Text style={s.empty}>
+                No transactions yet.{"\n"}Start creating sales transactions to
+                see them here.
+              </Text>
+            }
+          />
+        </View>
+      </Loading>
+    </SafeAreaView>
+  );
 }
