@@ -11,6 +11,10 @@ Format:
 
 ---
 
+### `c89a24b` · 2026-03-23 · docs: add UI design system spec and Phase 5.5 UI overhaul tasks
+- `PLAN.md`
+- `PHASES.md`
+
 ### `f016811` · 2026-03-23 · feat: rename bat scripts to underscore case and add reset_db.bat
 - `run_backend.bat`
 - `run_frontend.bat`
