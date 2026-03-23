@@ -11,6 +11,10 @@ Format:
 
 ---
 
+### `2129520` · 2026-03-24 · feat: bcrypt pre-save hook on User model; remove manual hashing from auth routes
+- `backend/Models/User.js`
+- `backend/routes/auth.js`
+
 ### `89c8df6` · 2026-03-24 · feat: apply Outfit font and design tokens to UI components
 - `frontend/components/ui/Typography.jsx`
 - `frontend/components/ui/Button.jsx`
