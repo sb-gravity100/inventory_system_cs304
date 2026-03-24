@@ -2,6 +2,11 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `a6598f0` · 2026-03-24 · docs: replace use case Mermaid block with SVG (stick figures, blue ovals)
+- `docs/use_case_diagram.svg`
+- `README.md`
+- `FILE_INDEX.md`
+
 ### `9081bdc` · 2026-03-24 · docs: restructure use case diagram with System in center, Admin on right
 - `README.md`
 
