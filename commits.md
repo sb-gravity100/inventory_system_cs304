@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `7f3deb7` · 2026-03-24 · docs: use distinct line colors per actor in use case diagram
+- `docs/use_case_diagram.svg`
+
 ### `a6598f0` · 2026-03-24 · docs: replace use case Mermaid block with SVG (stick figures, blue ovals)
 - `docs/use_case_diagram.svg`
 - `README.md`
