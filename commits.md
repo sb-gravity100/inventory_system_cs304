@@ -2,6 +2,10 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `96c0e87` · 2026-03-24 · feat: add 7-day sales trend chart to manager reports view
+- `backend/routes/sales.js`
+- `frontend/app/(tabs)/reports.jsx`
+
 ### `6abc857` · 2026-03-24 · feat: add staff sales performance view with bar chart to reports screen
 - `frontend/app/(tabs)/reports.jsx`
 
