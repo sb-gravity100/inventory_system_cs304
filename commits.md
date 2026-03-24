@@ -2,6 +2,10 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `6334e54` · 2026-03-24 · docs: increase font size in use case SVG and sequence diagram
+- `docs/use_case_diagram.svg`
+- `README.md`
+
 ### `7f3deb7` · 2026-03-24 · docs: use distinct line colors per actor in use case diagram
 - `docs/use_case_diagram.svg`
 
