@@ -74,6 +74,13 @@ After every `git commit`, **prepend** a new entry to `commits.md`:
 ```
 Use the real short hash from the commit output. Include `commits.md` itself in the same commit.
 
+### Git backup rule
+After every `git commit`, run the backup script:
+```bash
+bash scripts/backup_git.sh
+```
+This copies `.git` to `.backup/git_<timestamp>` and retains the 10 most recent snapshots. The `.backup/` directory is gitignored — never commit it.
+
 ### Commit granularity
 Every distinguishable change gets its own commit. Never bundle unrelated changes. If you need "and" in the commit message, it should be two commits.
 
