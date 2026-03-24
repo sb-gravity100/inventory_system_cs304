@@ -97,9 +97,9 @@ export default function InventoryScreen() {
     const role = user?.role?.toLowerCase();
     const actions = [
       {
-        label: "Create Transaction",
-        icon: "add-shopping-cart",
-        onPress: () => router.push("/transaction"),
+        label: "POS Mode",
+        icon: "point-of-sale",
+        onPress: () => router.push("/pos"),
       },
     ];
     if (role === "manager" || role === "admin") {

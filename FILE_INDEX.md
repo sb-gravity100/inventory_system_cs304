@@ -82,7 +82,7 @@ File system index for Il Vento inventory management system. Read this before ope
 | `frontend/app/(tabs)/inventory.jsx` | Paginated product tile grid, search, FAB (Add Product → /add-product, Create Transaction); tapping a tile navigates to product detail; useFocusEffect refresh | screen, inventory |
 | `frontend/app/(tabs)/sales.jsx` | Transaction list, stats cards, pull-to-refresh; taps navigate to transaction detail | screen, sales |
 | `frontend/app/(tabs)/reports.jsx` | Stub — "coming soon" placeholder | screen, reports |
-| `frontend/app/transaction.jsx` | New transaction creation: product search, cart, quantity controls, POST to /sales/transaction | screen, sales |
+| `frontend/app/pos.jsx` | POS Mode screen: 3-col product grid, always-visible cart panel, charge button, success modal with New Sale / View Sales actions | screen, sales |
 | `frontend/app/users.jsx` | Admin-only user management: list, create, edit, delete users | screen, admin |
 | `frontend/app/products/[productId].jsx` | Product detail screen: view info, toggleable edit mode (manager/admin), inline stock adjustment (all roles), archive/restore | screen, inventory |
 | `frontend/app/transactions/[transactionId]/index.jsx` | Transaction detail/edit: view info, edit products (pending only), finalize, cancel; permission: isOwner or manager+ | screen, sales |

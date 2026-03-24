@@ -109,9 +109,9 @@ export default function HomeScreen() {
     const role = user?.role?.toLowerCase();
     const actions = [
       {
-        label: "New Transaction",
-        icon: "add-shopping-cart",
-        onPress: () => router.push("/transaction"),
+        label: "POS Mode",
+        icon: "point-of-sale",
+        onPress: () => router.push("/pos"),
       },
     ];
     if (role === "manager" || role === "admin") {

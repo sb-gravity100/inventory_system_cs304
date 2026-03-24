@@ -33,10 +33,10 @@ export const getQuickActions = (role) => {
    const roleSpecificActions = {
       staff: [
          {
-            title: "Start Transaction",
-            icon: "💰",
-            route: "/transaction",
-            description: "Create new sale",
+            title: "POS Mode",
+            icon: "🛒",
+            route: "/pos",
+            description: "Open point of sale",
          },
          {
             title: "Quick Stock Check",
