@@ -1,9 +1,9 @@
 # Software Engineering Project Documentation
 
 **Project Title:** Il Vento — Inventory Management System
-**Student Name:** [Your Name]
+**Student Name:** Sheidrix Bill T. Ducao
 **Course:** Software Engineering 1 (CS304)
-**Instructor:** [Instructor Name]
+**Instructor:** Michaelangelo R. Serrano
 **Date:** March 24, 2026
 
 ---
