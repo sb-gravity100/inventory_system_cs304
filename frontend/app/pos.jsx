@@ -302,13 +302,13 @@ export default function POSScreen() {
     },
     tileDisabled: { opacity: 0.38 },
     imageArea: {
-      height: 90,
+      height: 60,
       backgroundColor: theme.background,
       alignItems: "center",
       justifyContent: "center",
     },
     tileImage: { width: "100%", height: "100%" },
-    tileEmoji: { fontSize: 36 },
+    tileEmoji: { fontSize: 24 },
     qtyBadge: {
       position: "absolute",
       top: 6,
@@ -326,23 +326,23 @@ export default function POSScreen() {
       fontSize: 12,
       color: theme.isDark ? "#0f172a" : "#ffffff",
     },
-    tileBody: { padding: Spacing.sm },
+    tileBody: { padding: Spacing.xs + 2 },
     tileName: {
       fontFamily: Font.semiBold,
-      fontSize: FontSize.body,
+      fontSize: 12,
       color: theme.textPrimary,
-      marginBottom: 4,
+      marginBottom: 2,
     },
     catBadge: {
       alignSelf: "flex-start",
-      paddingHorizontal: 6,
-      paddingVertical: 2,
+      paddingHorizontal: 4,
+      paddingVertical: 1,
       borderRadius: Radius.button,
-      marginBottom: 4,
+      marginBottom: 2,
     },
     catBadgeText: {
       fontFamily: Font.medium,
-      fontSize: 10,
+      fontSize: 9,
       color: "#ffffff",
     },
     tileFooter: {
@@ -352,12 +352,12 @@ export default function POSScreen() {
     },
     tilePrice: {
       fontFamily: Font.bold,
-      fontSize: FontSize.listPrimary,
+      fontSize: 12,
       color: theme.currency,
     },
     tileStock: {
       fontFamily: Font.regular,
-      fontSize: 11,
+      fontSize: 10,
       color: theme.textSecondary,
     },
 
@@ -793,7 +793,7 @@ export default function POSScreen() {
         <FlatList
           data={products}
           keyExtractor={(item) => item._id}
-          numColumns={2}
+          numColumns={3}
           columnWrapperStyle={s.colWrapper}
           contentContainerStyle={s.gridContent}
           keyboardShouldPersistTaps="handled"
