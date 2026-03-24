@@ -237,11 +237,12 @@ export default function ReportsScreen() {
 
   const isMounted = useRef(false);
 
-  // ── init on mount ──────────────────────────────────────────────────────────
+  // ── init once the role is known ───────────────────────────────────────────
   useEffect(() => {
+    if (!authState.user) return; // wait for auth context to load
     isMounted.current = true;
     init();
-  }, []);
+  }, [authState.user?.role]); // re-run if role changes (login/logout)
 
   // ── reload logs when group changes (skip first render) ────────────────────
   const isFirstGroupChange = useRef(true);
@@ -256,13 +257,13 @@ export default function ReportsScreen() {
   // ── refresh on tab focus ───────────────────────────────────────────────────
   useFocusEffect(
     useCallback(() => {
-      if (!isMounted.current) return;
+      if (!isMounted.current || !authState.user) return;
       if (isManagerOrAdmin) {
         fetchRevenueStats();
       } else {
         fetchMyTransactions();
       }
-    }, [])
+    }, [isManagerOrAdmin]) // must not be [] — captures correct role on every change
   );
 
   const init = async () => {
