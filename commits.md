@@ -2,6 +2,10 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `dfe10e7` · 2026-03-24 · docs: update FILE_INDEX and PLAN for reports screen implementation
+- `FILE_INDEX.md`
+- `PLAN.md`
+
 ### `7e299a6` · 2026-03-24 · feat: implement full reports screen with stats, PDF export, and audit log viewer
 - `frontend/app/(tabs)/reports.jsx`
 - `commits.md`
