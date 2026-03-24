@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   StyleSheet,
+  TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
@@ -258,6 +259,27 @@ export default function ProductDetailScreen() {
     stockLabel: { fontFamily: Font.regular, fontSize: FontSize.listSecondary, marginBottom: 4 },
     stockValue: { fontFamily: Font.black, fontSize: 40, lineHeight: 44 },
     stockRow: { flexDirection: "row", gap: Spacing.sm, marginTop: Spacing.md, alignItems: "center" },
+    stepperRow: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, flex: 1 },
+    stepBtn: {
+      width: 34,
+      height: 34,
+      borderRadius: 17,
+      backgroundColor: theme.isDark ? "#374151" : "#f3f4f6",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    stepInput: {
+      flex: 1,
+      height: 34,
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: Radius.input,
+      textAlign: "center",
+      fontFamily: Font.semiBold,
+      fontSize: FontSize.body,
+      color: theme.textPrimary,
+      backgroundColor: theme.background,
+    },
     editSection: { marginBottom: Spacing.sectionGap },
     actionRow: { flexDirection: "row", gap: Spacing.sm, marginTop: Spacing.sm },
     chipRow: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.sm },
@@ -444,13 +466,35 @@ export default function ProductDetailScreen() {
               <Text style={[s.stockLabel, { color: theme.textSecondary }]}>Current Stock</Text>
               <Text style={[s.stockValue, { color: theme.textPrimary }]}>{product.stock}</Text>
               <View style={s.stockRow}>
-                <Input
-                  value={stockQty}
-                  onChangeText={setStockQty}
-                  placeholder="Qty"
-                  keyboardType="number-pad"
-                  style={{ flex: 1 }}
-                />
+                <View style={s.stepperRow}>
+                  <TouchableOpacity
+                    style={s.stepBtn}
+                    onPress={() => {
+                      const n = parseInt(stockQty) || 0;
+                      if (n > 1) setStockQty(String(n - 1));
+                    }}
+                  >
+                    <MaterialIcons name="remove" size={16} color={theme.textPrimary} />
+                  </TouchableOpacity>
+                  <TextInput
+                    style={s.stepInput}
+                    value={stockQty}
+                    onChangeText={setStockQty}
+                    placeholder="Qty"
+                    placeholderTextColor={theme.textSecondary}
+                    keyboardType="number-pad"
+                    selectTextOnFocus
+                  />
+                  <TouchableOpacity
+                    style={s.stepBtn}
+                    onPress={() => {
+                      const n = parseInt(stockQty) || 0;
+                      setStockQty(String(n + 1));
+                    }}
+                  >
+                    <MaterialIcons name="add" size={16} color={theme.textPrimary} />
+                  </TouchableOpacity>
+                </View>
                 <Button
                   title="Add"
                   variant="success"
