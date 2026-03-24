@@ -152,30 +152,6 @@ export default function TransactionDetail() {
     }
   };
 
-  const handleFinalize = () => {
-    Alert.alert("Finalize Transaction", "This cannot be undone.", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Finalize",
-        onPress: async () => {
-          try {
-            await axios.post(
-              `${api_url}/sales/transaction-finalize`,
-              { transaction: { id: transactionId, seller: transaction.seller } },
-              { headers: { Authorization: `Bearer ${authState.token}` } }
-            );
-            fetchTransaction();
-          } catch (e) {
-            Alert.alert(
-              "Error",
-              e.response?.data?.message || "Failed to finalize"
-            );
-          }
-        },
-      },
-    ]);
-  };
-
   const handleCancel = () => {
     Alert.alert("Cancel Transaction", "Are you sure?", [
       { text: "No", style: "cancel" },
@@ -352,24 +328,12 @@ export default function TransactionDetail() {
       gap: Spacing.sm,
       marginTop: Spacing.sectionGap,
     },
-    finalizeBtn: {
-      flex: 1,
-      backgroundColor: theme.primary,
-      borderRadius: Radius.button,
-      paddingVertical: 14,
-      alignItems: "center",
-    },
     cancelBtn: {
       flex: 1,
       backgroundColor: theme.isDark ? "#374151" : "#fee2e2",
       borderRadius: Radius.button,
       paddingVertical: 14,
       alignItems: "center",
-    },
-    btnText: {
-      fontFamily: Font.semiBold,
-      fontSize: FontSize.button,
-      color: "#ffffff",
     },
     cancelBtnText: {
       fontFamily: Font.semiBold,
@@ -555,20 +519,17 @@ export default function TransactionDetail() {
               </TouchableOpacity>
             )}
 
-            {/* Action buttons — only for pending + authorized */}
-            {isPending && canEdit && (
-              <View style={s.actionRow}>
-                <TouchableOpacity
-                  style={s.finalizeBtn}
-                  onPress={handleFinalize}
-                >
-                  <Text style={s.btnText}>Finalize</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={s.cancelBtn} onPress={handleCancel}>
-                  <Text style={s.cancelBtnText}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            )}
+            {/* Cancel button — available to owner/manager/admin on non-cancelled transactions */}
+            {transaction.status !== "cancelled" &&
+              (isOwner ||
+                user?.role === "admin" ||
+                user?.role === "manager") && (
+                <View style={s.actionRow}>
+                  <TouchableOpacity style={s.cancelBtn} onPress={handleCancel}>
+                    <Text style={s.cancelBtnText}>Cancel Transaction</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
           </ScrollView>
         )}
       </Loading>

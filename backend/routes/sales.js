@@ -16,6 +16,7 @@ router.post("/transaction", verifyToken, async (req, res) => {
     products,
     discount,
     notes,
+    status: "completed",
   });
   await Log.create({
     event: "TRANSACTION_CREATED",
@@ -57,30 +58,6 @@ router.post("/transaction-update-products", verifyToken, async (req, res) => {
   res.json(tr);
 });
 
-router.post("/transaction-finalize", verifyToken, async (req, res) => {
-  const { transaction } = req.body;
-  if (!transaction || !transaction.id) {
-    return res.status(400).json({ message: "Transaction is required" });
-  }
-  const isOwner = transaction.seller._id.toString() === req.user.id;
-  const isManagerOrAdmin = req.user.role === "manager" || req.user.role === "admin";
-  if (!isOwner && !isManagerOrAdmin) {
-    return res.status(403).json({ message: "Forbidden: Not the seller" });
-  }
-  const tr = await Transaction.findById(transaction.id);
-  if (!tr) {
-    return res.status(404).json({ message: "Transaction not found" });
-  }
-  tr.status = "completed";
-  await tr.save();
-  await Log.create({
-    event: "TRANSACTION_COMPLETED",
-    message: `Transaction completed`,
-    actor: req.user.id,
-    transaction_id: tr._id,
-  });
-  res.json(tr);
-});
 
 router.get("/transactions", verifyToken, async (req, res) => {
   // if staff only return transactions where req.user._id is the seller. if manager or admin return all transactions
