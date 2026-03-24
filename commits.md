@@ -2,6 +2,10 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `7e299a6` · 2026-03-24 · feat: implement full reports screen with stats, PDF export, and audit log viewer
+- `frontend/app/(tabs)/reports.jsx`
+- `commits.md`
+
 ### `dfa0414` · 2026-03-24 · feat: add revenue-stats and audit-logs endpoints to sales routes
 - `backend/routes/sales.js`
 
