@@ -68,17 +68,15 @@ This diagram illustrates how the three user roles (Staff, Manager, Admin) intera
 sequenceDiagram
     actor Staff
     actor Manager
-    actor Admin
     participant System as Il Vento System
+    actor Admin
 
-    Note over Staff, System: Staff Access
     Staff->>System: Login / Logout
     Staff->>System: View Inventory
     Staff->>System: Adjust Stock
     Staff->>System: Create Transaction
     Staff->>System: Finalize Own Transaction
 
-    Note over Manager, System: Manager Access
     Manager->>System: Login / Logout
     Manager->>System: View Inventory
     Manager->>System: Adjust Stock
@@ -89,13 +87,12 @@ sequenceDiagram
     Manager->>System: Export Reports
     Manager->>System: Send Admin Request
 
-    Note over Admin, System: Admin Access
-    Admin->>System: Login / Logout
-    Admin->>System: Manage Products and Categories
-    Admin->>System: View All Transactions and Stats
-    Admin->>System: Export Reports
-    Admin->>System: Manage Users
-    Admin->>System: Export Audit Log
+    Admin-->>System: Login / Logout
+    Admin-->>System: Manage Products and Categories
+    Admin-->>System: View All Transactions and Stats
+    Admin-->>System: Export Reports
+    Admin-->>System: Manage Users
+    Admin-->>System: Export Audit Log
 ```
 
 ---
