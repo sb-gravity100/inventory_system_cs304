@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `9081bdc` · 2026-03-24 · docs: restructure use case diagram with System in center, Admin on right
+- `README.md`
+
 ### `8dd6b58` · 2026-03-24 · fix: rewrite use case diagram as sequenceDiagram for native stick figure actors
 - `README.md`
 
