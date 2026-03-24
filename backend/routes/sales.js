@@ -158,4 +158,118 @@ router.get("/stats", verifyToken, async (req, res) => {
 });
 
 
+router.get("/revenue-stats", verifyToken, async (req, res) => {
+  console.info("[sales] GET /revenue-stats user:", req.user.id);
+  const now = new Date();
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - now.getDay());
+  startOfWeek.setHours(0, 0, 0, 0);
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const completed = await Transaction.find({ status: "completed" }).populate(
+    "products.product",
+    "price"
+  );
+
+  const calcRevenue = (txs) =>
+    txs.reduce((sum, tr) => {
+      const trTotal = tr.products.reduce((s, item) => {
+        const price = item.price_at_sale ?? item.product?.price ?? 0;
+        return s + price * item.quantity;
+      }, 0);
+      return sum + trTotal - (tr.discount || 0);
+    }, 0);
+
+  const totalRevenue = calcRevenue(completed);
+  const weekRevenue = calcRevenue(
+    completed.filter((t) => new Date(t.createdAt) >= startOfWeek)
+  );
+  const monthRevenue = calcRevenue(
+    completed.filter((t) => new Date(t.createdAt) >= startOfMonth)
+  );
+
+  const [completedCount, cancelledCount, pendingCount] = await Promise.all([
+    Transaction.countDocuments({ status: "completed" }),
+    Transaction.countDocuments({ status: "cancelled" }),
+    Transaction.countDocuments({ status: "pending" }),
+  ]);
+
+  const topProducts = await Transaction.aggregate([
+    { $match: { status: "completed" } },
+    { $unwind: "$products" },
+    { $group: { _id: "$products.product", qty: { $sum: "$products.quantity" } } },
+    { $sort: { qty: -1 } },
+    { $limit: 5 },
+    {
+      $lookup: {
+        from: "products",
+        localField: "_id",
+        foreignField: "_id",
+        as: "product",
+      },
+    },
+    { $unwind: "$product" },
+    { $project: { name: "$product.name", qty: 1, _id: 0 } },
+  ]);
+
+  res.json({
+    totalRevenue,
+    weekRevenue,
+    monthRevenue,
+    completedCount,
+    cancelledCount,
+    pendingCount,
+    topProducts,
+  });
+});
+
+router.get("/audit-logs", verifyToken, async (req, res) => {
+  console.info("[sales] GET /audit-logs user:", req.user.id, "group:", req.query.group);
+  const { group, from, to, page = 1, limit = 20 } = req.query;
+
+  const EVENT_GROUPS = {
+    transactions: [
+      "TRANSACTION_CREATED",
+      "TRANSACTION_UPDATED",
+      "TRANSACTION_COMPLETED",
+      "TRANSACTION_CANCELLED",
+    ],
+    inventory: [
+      "PRODUCT_CREATED",
+      "PRODUCT_UPDATED",
+      "PRODUCT_DELETED",
+      "STOCK_INCREASE",
+      "STOCK_DECREASE",
+      "STOCK_SET",
+      "STOCK_SOLD",
+    ],
+    users: [
+      "USER_LOGIN",
+      "USER_LOGOUT",
+      "USER_CREATED",
+      "USER_UPDATED",
+      "USER_DELETED",
+      "USER_PASSWORD_CHANGED",
+    ],
+  };
+
+  const filter = {};
+  if (group && EVENT_GROUPS[group]) filter.event = { $in: EVENT_GROUPS[group] };
+  if (from || to) {
+    filter.timestamp = {};
+    if (from) filter.timestamp.$gte = new Date(from);
+    if (to) filter.timestamp.$lte = new Date(to);
+  }
+  if (req.user.role === "staff") filter.actor = req.user._id;
+
+  const total = await Log.countDocuments(filter);
+  const logs = await Log.find(filter)
+    .sort({ timestamp: -1 })
+    .skip((parseInt(page) - 1) * parseInt(limit))
+    .limit(parseInt(limit))
+    .populate("actor", "username");
+
+  res.json({ logs, total, page: parseInt(page), limit: parseInt(limit) });
+});
+
 export default router;
