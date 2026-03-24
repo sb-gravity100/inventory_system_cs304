@@ -14,6 +14,8 @@ Before writing any code or reading any source file, always do this first:
 
 **Do not scan directories or read source files until you have identified the target files via `FILE_INDEX.md`.**
 
+Feel free to ask clarifying questions (AskUserQuestion tool) before starting work when the task is ambiguous.
+
 ---
 
 ## Token efficiency — CRITICAL
