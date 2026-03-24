@@ -2,6 +2,11 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `29ff39c` · 2026-03-24 · chore: add .git backup script and post-commit rule
+- `scripts/backup_git.sh`
+- `CLAUDE.md`
+- `.gitignore`
+
 ### `0e4ea19` · 2026-03-24 · fix: POS product grid 3-col compact tiles
 - `frontend/app/pos.jsx`
 
