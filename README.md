@@ -70,19 +70,19 @@ flowchart LR
     M@{ shape: person, label: "Manager" }
     A@{ shape: person, label: "Admin" }
 
-    subgraph sys ["  Il Vento System  "]
+    subgraph sys ["Il Vento System"]
         direction TB
-        UC1([Login / Logout])
-        UC2([View Inventory])
-        UC3([Adjust Stock])
-        UC4([Create Transaction])
-        UC5([Finalize Own Transaction])
-        UC6([Manage Products & Categories])
-        UC7([View All Transactions & Stats])
-        UC8([Export Reports CSV / PDF])
-        UC9([Send Admin Request])
-        UC10([Manage Users])
-        UC11([Export Audit Log])
+        UC1(["Login and Logout"])
+        UC2(["View Inventory"])
+        UC3(["Adjust Stock"])
+        UC4(["Create Transaction"])
+        UC5(["Finalize Own Transaction"])
+        UC6(["Manage Products and Categories"])
+        UC7(["View All Transactions and Stats"])
+        UC8(["Export Reports"])
+        UC9(["Send Admin Request"])
+        UC10(["Manage Users"])
+        UC11(["Export Audit Log"])
     end
 
     S --> UC1
