@@ -8,6 +8,7 @@ File system index for Il Vento inventory management system. Read this before ope
 
 | File | Purpose | Tags |
 |---|---|---|
+| `README.md` | Project documentation (CS304 template): overview, objectives, requirements, system design, tech stack | docs |
 | `CLAUDE.md` | AI assistant instructions, session rules, architecture notes | docs, meta |
 | `PLAN.md` | Tech stack, API endpoints, DB schema | docs, architecture |
 | `PHASES.md` | Per-phase task lists and done criteria | docs, planning |
