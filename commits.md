@@ -2,6 +2,10 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `c7bcbf4` · 2026-03-24 · fix: use req.user.id instead of req.user._id in sales routes; fix authState.user in sales screen
+- `backend/routes/sales.js`
+- `frontend/app/(tabs)/sales.jsx`
+
 ### `3d12896` · 2026-03-24 · fix: use correct user from useAuth and add edges top to all tab SafeAreaViews
 - `frontend/app/(tabs)/reports.jsx`
 - `frontend/app/(tabs)/sales.jsx`
