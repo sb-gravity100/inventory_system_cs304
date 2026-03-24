@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `7e787c2` · 2026-03-24 · refactor: simplify transaction detail to read-only receipt view
+- `frontend/app/transactions/[transactionId]/index.jsx`
+
 ### `6f9491b` · 2026-03-24 · refactor: remove pending/finalize flow — transactions complete on creation
 - `backend/routes/sales.js`
 - `frontend/app/transactions/[transactionId]/index.jsx`
