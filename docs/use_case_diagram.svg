@@ -55,56 +55,56 @@
 
   <!-- ═══ ASSOCIATION LINES ═══ -->
 
-  <!-- Staff (body midpoint 238) → UC1–UC5 (left edge x=335) -->
-  <line x1="92" y1="238" x2="335" y2="115" stroke="#374151" stroke-width="1.2"/>
-  <line x1="92" y1="238" x2="335" y2="180" stroke="#374151" stroke-width="1.2"/>
-  <line x1="92" y1="238" x2="335" y2="245" stroke="#374151" stroke-width="1.2"/>
-  <line x1="92" y1="238" x2="335" y2="310" stroke="#374151" stroke-width="1.2"/>
-  <line x1="92" y1="238" x2="335" y2="375" stroke="#374151" stroke-width="1.2"/>
+  <!-- Staff lines — blue #2563eb -->
+  <line x1="92" y1="238" x2="335" y2="115" stroke="#2563eb" stroke-width="1.4"/>
+  <line x1="92" y1="238" x2="335" y2="180" stroke="#2563eb" stroke-width="1.4"/>
+  <line x1="92" y1="238" x2="335" y2="245" stroke="#2563eb" stroke-width="1.4"/>
+  <line x1="92" y1="238" x2="335" y2="310" stroke="#2563eb" stroke-width="1.4"/>
+  <line x1="92" y1="238" x2="335" y2="375" stroke="#2563eb" stroke-width="1.4"/>
 
-  <!-- Manager (body midpoint 518) → UC1–UC9 (left edge x=335) -->
-  <line x1="92" y1="518" x2="335" y2="115" stroke="#374151" stroke-width="1.2"/>
-  <line x1="92" y1="518" x2="335" y2="180" stroke="#374151" stroke-width="1.2"/>
-  <line x1="92" y1="518" x2="335" y2="245" stroke="#374151" stroke-width="1.2"/>
-  <line x1="92" y1="518" x2="335" y2="310" stroke="#374151" stroke-width="1.2"/>
-  <line x1="92" y1="518" x2="335" y2="375" stroke="#374151" stroke-width="1.2"/>
-  <line x1="92" y1="518" x2="335" y2="440" stroke="#374151" stroke-width="1.2"/>
-  <line x1="92" y1="518" x2="335" y2="505" stroke="#374151" stroke-width="1.2"/>
-  <line x1="92" y1="518" x2="335" y2="570" stroke="#374151" stroke-width="1.2"/>
-  <line x1="92" y1="518" x2="335" y2="635" stroke="#374151" stroke-width="1.2"/>
+  <!-- Manager lines — amber #d97706 -->
+  <line x1="92" y1="518" x2="335" y2="115" stroke="#d97706" stroke-width="1.4"/>
+  <line x1="92" y1="518" x2="335" y2="180" stroke="#d97706" stroke-width="1.4"/>
+  <line x1="92" y1="518" x2="335" y2="245" stroke="#d97706" stroke-width="1.4"/>
+  <line x1="92" y1="518" x2="335" y2="310" stroke="#d97706" stroke-width="1.4"/>
+  <line x1="92" y1="518" x2="335" y2="375" stroke="#d97706" stroke-width="1.4"/>
+  <line x1="92" y1="518" x2="335" y2="440" stroke="#d97706" stroke-width="1.4"/>
+  <line x1="92" y1="518" x2="335" y2="505" stroke="#d97706" stroke-width="1.4"/>
+  <line x1="92" y1="518" x2="335" y2="570" stroke="#d97706" stroke-width="1.4"/>
+  <line x1="92" y1="518" x2="335" y2="635" stroke="#d97706" stroke-width="1.4"/>
 
-  <!-- Admin (body midpoint 478) → UC1, UC6–UC8, UC10–UC11 (right edge x=605) -->
-  <line x1="863" y1="478" x2="605" y2="115" stroke="#374151" stroke-width="1.2"/>
-  <line x1="863" y1="478" x2="605" y2="440" stroke="#374151" stroke-width="1.2"/>
-  <line x1="863" y1="478" x2="605" y2="505" stroke="#374151" stroke-width="1.2"/>
-  <line x1="863" y1="478" x2="605" y2="570" stroke="#374151" stroke-width="1.2"/>
-  <line x1="863" y1="478" x2="605" y2="700" stroke="#374151" stroke-width="1.2"/>
-  <line x1="863" y1="478" x2="605" y2="765" stroke="#374151" stroke-width="1.2"/>
+  <!-- Admin lines — purple #7c3aed -->
+  <line x1="863" y1="478" x2="605" y2="115" stroke="#7c3aed" stroke-width="1.4"/>
+  <line x1="863" y1="478" x2="605" y2="440" stroke="#7c3aed" stroke-width="1.4"/>
+  <line x1="863" y1="478" x2="605" y2="505" stroke="#7c3aed" stroke-width="1.4"/>
+  <line x1="863" y1="478" x2="605" y2="570" stroke="#7c3aed" stroke-width="1.4"/>
+  <line x1="863" y1="478" x2="605" y2="700" stroke="#7c3aed" stroke-width="1.4"/>
+  <line x1="863" y1="478" x2="605" y2="765" stroke="#7c3aed" stroke-width="1.4"/>
 
   <!-- ═══ ACTOR STICK FIGURES ═══ -->
 
-  <!-- Staff — head center (70, 210) -->
-  <circle cx="70" cy="210" r="14" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
-  <line x1="70" y1="224" x2="70" y2="252" stroke="#6b7280" stroke-width="1.5"/>
-  <line x1="48" y1="237" x2="92" y2="237" stroke="#6b7280" stroke-width="1.5"/>
-  <line x1="70" y1="252" x2="55" y2="274" stroke="#6b7280" stroke-width="1.5"/>
-  <line x1="70" y1="252" x2="85" y2="274" stroke="#6b7280" stroke-width="1.5"/>
-  <text x="70" y="292" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2937">Staff</text>
+  <!-- Staff — blue #2563eb -->
+  <circle cx="70" cy="210" r="14" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <line x1="70" y1="224" x2="70" y2="252" stroke="#2563eb" stroke-width="1.5"/>
+  <line x1="48" y1="237" x2="92" y2="237" stroke="#2563eb" stroke-width="1.5"/>
+  <line x1="70" y1="252" x2="55" y2="274" stroke="#2563eb" stroke-width="1.5"/>
+  <line x1="70" y1="252" x2="85" y2="274" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="70" y="292" text-anchor="middle" font-size="13" font-weight="bold" fill="#2563eb">Staff</text>
 
-  <!-- Manager — head center (70, 490) -->
-  <circle cx="70" cy="490" r="14" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
-  <line x1="70" y1="504" x2="70" y2="532" stroke="#6b7280" stroke-width="1.5"/>
-  <line x1="48" y1="517" x2="92" y2="517" stroke="#6b7280" stroke-width="1.5"/>
-  <line x1="70" y1="532" x2="55" y2="554" stroke="#6b7280" stroke-width="1.5"/>
-  <line x1="70" y1="532" x2="85" y2="554" stroke="#6b7280" stroke-width="1.5"/>
-  <text x="70" y="572" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2937">Manager</text>
+  <!-- Manager — amber #d97706 -->
+  <circle cx="70" cy="490" r="14" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <line x1="70" y1="504" x2="70" y2="532" stroke="#d97706" stroke-width="1.5"/>
+  <line x1="48" y1="517" x2="92" y2="517" stroke="#d97706" stroke-width="1.5"/>
+  <line x1="70" y1="532" x2="55" y2="554" stroke="#d97706" stroke-width="1.5"/>
+  <line x1="70" y1="532" x2="85" y2="554" stroke="#d97706" stroke-width="1.5"/>
+  <text x="70" y="572" text-anchor="middle" font-size="13" font-weight="bold" fill="#d97706">Manager</text>
 
-  <!-- Admin — head center (885, 450) -->
-  <circle cx="885" cy="450" r="14" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
-  <line x1="885" y1="464" x2="885" y2="492" stroke="#6b7280" stroke-width="1.5"/>
-  <line x1="863" y1="477" x2="907" y2="477" stroke="#6b7280" stroke-width="1.5"/>
-  <line x1="885" y1="492" x2="870" y2="514" stroke="#6b7280" stroke-width="1.5"/>
-  <line x1="885" y1="492" x2="900" y2="514" stroke="#6b7280" stroke-width="1.5"/>
-  <text x="885" y="532" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2937">Admin</text>
+  <!-- Admin — purple #7c3aed -->
+  <circle cx="885" cy="450" r="14" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+  <line x1="885" y1="464" x2="885" y2="492" stroke="#7c3aed" stroke-width="1.5"/>
+  <line x1="863" y1="477" x2="907" y2="477" stroke="#7c3aed" stroke-width="1.5"/>
+  <line x1="885" y1="492" x2="870" y2="514" stroke="#7c3aed" stroke-width="1.5"/>
+  <line x1="885" y1="492" x2="900" y2="514" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="885" y="532" text-anchor="middle" font-size="13" font-weight="bold" fill="#7c3aed">Admin</text>
 
 </svg>
