@@ -65,53 +65,37 @@ To build a mobile-first, role-based inventory management and POS system that uni
 This diagram illustrates how the three user roles (Staff, Manager, Admin) interact with the system's core features: authentication, inventory management, transaction processing, reporting, and user administration.
 
 ```mermaid
-flowchart LR
-    S@{ shape: person, label: "Staff" }
-    M@{ shape: person, label: "Manager" }
-    A@{ shape: person, label: "Admin" }
+sequenceDiagram
+    actor Staff
+    actor Manager
+    actor Admin
+    participant System as Il Vento System
 
-    subgraph sys ["Il Vento System"]
-        direction TB
-        UC1(["Login and Logout"])
-        UC2(["View Inventory"])
-        UC3(["Adjust Stock"])
-        UC4(["Create Transaction"])
-        UC5(["Finalize Own Transaction"])
-        UC6(["Manage Products and Categories"])
-        UC7(["View All Transactions and Stats"])
-        UC8(["Export Reports"])
-        UC9(["Send Admin Request"])
-        UC10(["Manage Users"])
-        UC11(["Export Audit Log"])
-    end
+    Note over Staff, System: Staff Access
+    Staff->>System: Login / Logout
+    Staff->>System: View Inventory
+    Staff->>System: Adjust Stock
+    Staff->>System: Create Transaction
+    Staff->>System: Finalize Own Transaction
 
-    S --> UC1
-    S --> UC2
-    S --> UC3
-    S --> UC4
-    S --> UC5
+    Note over Manager, System: Manager Access
+    Manager->>System: Login / Logout
+    Manager->>System: View Inventory
+    Manager->>System: Adjust Stock
+    Manager->>System: Create Transaction
+    Manager->>System: Finalize Any Transaction
+    Manager->>System: Manage Products and Categories
+    Manager->>System: View All Transactions and Stats
+    Manager->>System: Export Reports
+    Manager->>System: Send Admin Request
 
-    M --> UC1
-    M --> UC2
-    M --> UC3
-    M --> UC4
-    M --> UC5
-    M --> UC6
-    M --> UC7
-    M --> UC8
-    M --> UC9
-
-    A --> UC1
-    A --> UC6
-    A --> UC7
-    A --> UC8
-    A --> UC10
-    A --> UC11
-
-    classDef actor fill:#e5e7eb,stroke:#6b7280,color:#1f2937
-    classDef usecase fill:#bfdbfe,stroke:#3b82f6,color:#1e3a5f
-    class S,M,A actor
-    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10,UC11 usecase
+    Note over Admin, System: Admin Access
+    Admin->>System: Login / Logout
+    Admin->>System: Manage Products and Categories
+    Admin->>System: View All Transactions and Stats
+    Admin->>System: Export Reports
+    Admin->>System: Manage Users
+    Admin->>System: Export Audit Log
 ```
 
 ---
