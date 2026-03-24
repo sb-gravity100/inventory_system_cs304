@@ -2,6 +2,10 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `4fc9341` · 2026-03-24 · feat: add run_all.bat to launch backend + frontend in split panes
+- `run_all.bat`
+- `FILE_INDEX.md`
+
 ### `143a99d` · 2026-03-24 · fix: use ISO B7 paper size for print (88×125mm)
 - `frontend/app/transactions/[transactionId]/index.jsx`
 
