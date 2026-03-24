@@ -31,7 +31,7 @@ const DATE_FILTERS = [
 
 export default function SalesScreen() {
   const { theme } = useTheme();
-  const { authState } = useAuth();
+  const { authState, user } = useAuth();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -44,7 +44,7 @@ export default function SalesScreen() {
   const [sellerFilter, setSellerFilter] = useState("all");
 
   const isManagerOrAdmin =
-    authState.user?.role === "manager" || authState.user?.role === "admin";
+    user?.role === "manager" || user?.role === "admin";
 
   useEffect(() => {
     fetchAll();

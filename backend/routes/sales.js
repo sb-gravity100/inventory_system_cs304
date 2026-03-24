@@ -60,10 +60,10 @@ router.post("/transaction-update-products", verifyToken, async (req, res) => {
 
 
 router.get("/transactions", verifyToken, async (req, res) => {
-  // if staff only return transactions where req.user._id is the seller. if manager or admin return all transactions
+  // if staff only return transactions where req.user.id is the seller. if manager or admin return all transactions
   let transactions;
   if (req.user.role === "staff") {
-    transactions = await Transaction.find({ seller: req.user._id })
+    transactions = await Transaction.find({ seller: req.user.id })
       .sort({ createdAt: -1 })
       .populate("seller", "username")
       .populate("products.product", "name price");
@@ -91,7 +91,7 @@ router.get("/transaction-logs", verifyToken, async (req, res) => {
   let logs;
   const txEvents = ["TRANSACTION_CREATED", "TRANSACTION_UPDATED", "TRANSACTION_COMPLETED", "TRANSACTION_CANCELLED"];
   if (req.user.role === "staff") {
-    logs = await Log.find({ actor: req.user._id, event: { $in: txEvents } })
+    logs = await Log.find({ actor: req.user.id, event: { $in: txEvents } })
       .populate("actor", "username")
       .populate("products_involved", "name");
   } else {
@@ -281,7 +281,7 @@ router.get("/audit-logs", verifyToken, async (req, res) => {
     if (from) filter.timestamp.$gte = new Date(from);
     if (to) filter.timestamp.$lte = new Date(to);
   }
-  if (req.user.role === "staff") filter.actor = req.user._id;
+  if (req.user.role === "staff") filter.actor = req.user.id;
 
   const total = await Log.countDocuments(filter);
   const logs = await Log.find(filter)
