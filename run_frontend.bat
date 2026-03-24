@@ -1,11 +1,18 @@
 @echo off
-setlocal
+setlocal enabledelayedexpansion
 
-REM ── 1. Check for connected Android device ──────────────────────────────────
-adb devices 2>nul | findstr /r "device$" >nul
-if errorlevel 1 (
+REM ── 1. Check for connected Android device (3 attempts) ──────────────────────
+set DEVICE_FOUND=0
+for /l %%i in (1,1,3) do (
+    if "!DEVICE_FOUND!"=="0" (
+        echo [Il Vento] adb devices attempt %%i of 3...
+        adb devices 2>nul | findstr /r "device$" >nul
+        if not errorlevel 1 set DEVICE_FOUND=1
+    )
+)
+if "!DEVICE_FOUND!"=="0" (
     echo.
-    echo [Il Vento] ERROR: No Android device detected.
+    echo [Il Vento] ERROR: No Android device detected after 3 attempts.
     echo            Connect a device via USB with USB debugging enabled, then retry.
     echo.
     pause
