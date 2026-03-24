@@ -3,7 +3,6 @@ import { useLocalSearchParams } from "expo-router";
 import { useTheme } from "../../../components/ThemeProvider";
 import { useAuth } from "../../../context/AuthContext";
 import { Loading } from "../../../components/ui";
-import { AddProductPanel } from "../../../components/transaction";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -17,7 +16,6 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Font, FontSize, Spacing, Radius } from "../../../constants/colors";
-import SearchBar from "../../../components/ui/SearchBar";
 
 const api_url =
   process.env.NODE_ENV === "development"
@@ -42,37 +40,14 @@ function formatDate(dateString) {
 
 export default function TransactionDetail() {
   const { theme } = useTheme();
-  const { authState, user } = useAuth();
+  const { authState } = useAuth();
   const { transactionId } = useLocalSearchParams();
 
   const [transaction, setTransaction] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [allProducts, setAllProducts] = useState([]);
-  const [editedProducts, setEditedProducts] = useState([]);
-  const [showAddPanel, setShowAddPanel] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [saving, setSaving] = useState(false);
-
-  const isPending = transaction?.status === "pending";
-  const isOwner = transaction?.seller?.username === user?.username;
-  const canEdit =
-    isPending &&
-    (isOwner || user?.role === "admin" || user?.role === "manager");
-
-  const hasChanges =
-    JSON.stringify(
-      editedProducts.map((p) => ({ id: p.product?._id, q: p.quantity }))
-    ) !==
-    JSON.stringify(
-      (transaction?.products || []).map((p) => ({
-        id: p.product?._id,
-        q: p.quantity,
-      }))
-    );
 
   useEffect(() => {
     fetchTransaction();
-    fetchAllProducts();
   }, [transactionId]);
 
   const fetchTransaction = async () => {
@@ -83,7 +58,6 @@ export default function TransactionDetail() {
         { headers: { Authorization: `Bearer ${authState.token}` } }
       );
       setTransaction(res.data);
-      setEditedProducts(res.data.products);
     } catch {
       Alert.alert("Error", "Failed to fetch transaction details");
     } finally {
@@ -91,100 +65,10 @@ export default function TransactionDetail() {
     }
   };
 
-  const fetchAllProducts = async () => {
-    try {
-      const res = await axios.get(`${api_url}/products`, {
-        headers: { Authorization: `Bearer ${authState.token}` },
-        params: { limit: 100 },
-      });
-      setAllProducts(res.data.products);
-    } catch {}
-  };
-
-  const handleChangeQty = (index, qty) => {
-    if (qty < 1) return handleRemove(index);
-    setEditedProducts((prev) =>
-      prev.map((p, i) => (i === index ? { ...p, quantity: qty } : p))
-    );
-  };
-
-  const handleRemove = (index) => {
-    setEditedProducts((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleAddProduct = (product) => {
-    const existing = editedProducts.findIndex(
-      (p) => p.product?._id === product._id
-    );
-    if (existing >= 0) {
-      setEditedProducts((prev) =>
-        prev.map((p, i) =>
-          i === existing ? { ...p, quantity: p.quantity + 1 } : p
-        )
-      );
-    } else {
-      setEditedProducts((prev) => [...prev, { product, quantity: 1 }]);
-    }
-    setShowAddPanel(false);
-    setSearchQuery("");
-  };
-
-  const handleSaveProducts = async () => {
-    try {
-      setSaving(true);
-      await axios.post(
-        `${api_url}/sales/transaction-update-products`,
-        {
-          transaction: { id: transactionId, seller: transaction.seller },
-          products: editedProducts.map((p) => ({
-            product: p.product._id,
-            quantity: p.quantity,
-          })),
-        },
-        { headers: { Authorization: `Bearer ${authState.token}` } }
-      );
-      await fetchTransaction();
-      Alert.alert("Saved", "Transaction updated.");
-    } catch (e) {
-      Alert.alert("Error", e.response?.data?.message || "Failed to update");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleCancel = () => {
-    Alert.alert("Cancel Transaction", "Are you sure?", [
-      { text: "No", style: "cancel" },
-      {
-        text: "Yes, Cancel",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            await axios.post(
-              `${api_url}/sales/transaction-cancel`,
-              { transactionId },
-              { headers: { Authorization: `Bearer ${authState.token}` } }
-            );
-            fetchTransaction();
-          } catch (e) {
-            Alert.alert(
-              "Error",
-              e.response?.data?.message || "Failed to cancel"
-            );
-          }
-        },
-      },
-    ]);
-  };
-
-  const total = editedProducts.reduce(
+  const total = (transaction?.products || []).reduce(
     (sum, item) => sum + (item.product?.price || 0) * (item.quantity || 0),
     0
   );
-
-  const shortId = transactionId
-    ? `…${transactionId.slice(-8)}`
-    : "—";
 
   const statusColors = STATUS_COLORS(theme);
 
@@ -216,7 +100,6 @@ export default function TransactionDetail() {
       marginBottom: Spacing.sm,
       marginTop: Spacing.sectionGap,
     },
-    // Receipt card
     receiptCard: {
       backgroundColor: theme.surface,
       borderRadius: Radius.modal,
@@ -254,7 +137,6 @@ export default function TransactionDetail() {
       fontFamily: Font.semiBold,
       fontSize: FontSize.listSecondary,
     },
-    // Receipt rows
     receiptRow: {
       flexDirection: "row",
       alignItems: "center",
@@ -280,30 +162,11 @@ export default function TransactionDetail() {
       minWidth: 72,
       textAlign: "right",
     },
-    // Edit qty controls
-    qtyBtn: {
-      width: 24,
-      height: 24,
-      borderRadius: 12,
-      backgroundColor: theme.isDark ? "#374151" : "#f3f4f6",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    qtyRow: { flexDirection: "row", alignItems: "center", gap: 4 },
-    qtyText: {
-      fontFamily: Font.semiBold,
-      fontSize: FontSize.body,
-      color: theme.textPrimary,
-      minWidth: 22,
-      textAlign: "center",
-    },
-    removeBtn: { padding: 4, marginLeft: 4 },
     divider: {
       height: 1,
       backgroundColor: theme.border,
       marginHorizontal: Spacing.lg,
     },
-    // Total row
     totalRow: {
       flexDirection: "row",
       justifyContent: "space-between",
@@ -322,52 +185,10 @@ export default function TransactionDetail() {
       fontSize: FontSize.statValue,
       color: theme.currency,
     },
-    // Action buttons
-    actionRow: {
-      flexDirection: "row",
-      gap: Spacing.sm,
-      marginTop: Spacing.sectionGap,
-    },
-    cancelBtn: {
-      flex: 1,
-      backgroundColor: theme.isDark ? "#374151" : "#fee2e2",
-      borderRadius: Radius.button,
-      paddingVertical: 14,
-      alignItems: "center",
-    },
-    cancelBtnText: {
-      fontFamily: Font.semiBold,
-      fontSize: FontSize.button,
-      color: theme.danger,
-    },
-    saveBtn: {
-      backgroundColor: theme.primary,
-      borderRadius: Radius.button,
-      paddingVertical: 13,
-      alignItems: "center",
-      marginTop: Spacing.sm,
-    },
-    saveBtnText: {
-      fontFamily: Font.semiBold,
-      fontSize: FontSize.button,
-      color: "#ffffff",
-    },
-    addPanelToggle: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 6,
-      paddingVertical: Spacing.sm,
-    },
-    addPanelLabel: {
-      fontFamily: Font.medium,
-      fontSize: FontSize.body,
-      color: theme.statusCompleted,
-    },
   });
 
   return (
     <SafeAreaView style={s.container}>
-      {/* Header */}
       <View style={s.headerRow}>
         <TouchableOpacity onPress={() => router.back()}>
           <MaterialIcons name="arrow-back" size={24} color={theme.textPrimary} />
@@ -378,11 +199,9 @@ export default function TransactionDetail() {
       <Loading isLoading={loading} message="Loading transaction...">
         {transaction && (
           <ScrollView contentContainerStyle={s.content}>
-            {/* Receipt card */}
             <View style={s.receiptCard}>
-              {/* Header block */}
               <View style={s.receiptHeader}>
-                <Text style={s.receiptId}>{shortId}</Text>
+                <Text style={s.receiptId}>{transactionId}</Text>
                 <Text style={s.receiptSeller}>
                   {transaction.seller?.username || "Unknown"}
                 </Text>
@@ -405,55 +224,14 @@ export default function TransactionDetail() {
                 </View>
               </View>
 
-              {/* Itemized products */}
-              {editedProducts.map((item, index) => (
+              {transaction.products.map((item, index) => (
                 <View key={`${item.product?._id}-${index}`}>
                   {index > 0 && <View style={s.divider} />}
                   <View style={s.receiptRow}>
                     <Text style={s.receiptRowName} numberOfLines={1}>
                       {item.product?.name || "Unknown"}
                     </Text>
-                    {canEdit ? (
-                      <View style={s.qtyRow}>
-                        <TouchableOpacity
-                          style={s.qtyBtn}
-                          onPress={() =>
-                            handleChangeQty(index, item.quantity - 1)
-                          }
-                        >
-                          <MaterialIcons
-                            name="remove"
-                            size={14}
-                            color={theme.textPrimary}
-                          />
-                        </TouchableOpacity>
-                        <Text style={s.qtyText}>{item.quantity}</Text>
-                        <TouchableOpacity
-                          style={s.qtyBtn}
-                          onPress={() =>
-                            handleChangeQty(index, item.quantity + 1)
-                          }
-                        >
-                          <MaterialIcons
-                            name="add"
-                            size={14}
-                            color={theme.textPrimary}
-                          />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          style={s.removeBtn}
-                          onPress={() => handleRemove(index)}
-                        >
-                          <MaterialIcons
-                            name="close"
-                            size={16}
-                            color={theme.danger}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    ) : (
-                      <Text style={s.receiptRowQty}>×{item.quantity}</Text>
-                    )}
+                    <Text style={s.receiptRowQty}>×{item.quantity}</Text>
                     <Text style={s.receiptRowPrice}>
                       ₱
                       {(
@@ -464,72 +242,11 @@ export default function TransactionDetail() {
                 </View>
               ))}
 
-              {/* Add product toggle (edit mode) */}
-              {canEdit && (
-                <View style={{ paddingHorizontal: Spacing.lg, paddingBottom: Spacing.sm }}>
-                  <View style={s.divider} />
-                  <TouchableOpacity
-                    style={s.addPanelToggle}
-                    onPress={() => setShowAddPanel((v) => !v)}
-                  >
-                    <MaterialIcons
-                      name={showAddPanel ? "close" : "add-circle-outline"}
-                      size={20}
-                      color={theme.statusCompleted}
-                    />
-                    <Text style={s.addPanelLabel}>
-                      {showAddPanel ? "Close" : "Add Product"}
-                    </Text>
-                  </TouchableOpacity>
-                  {showAddPanel && (
-                    <AddProductPanel
-                      allProducts={allProducts}
-                      onAdd={handleAddProduct}
-                      searchQuery={searchQuery}
-                      setSearchQuery={setSearchQuery}
-                      styles={{
-                        sectionTitle: { display: "none" },
-                        detailCard: {},
-                        productName: s.receiptRowName,
-                        productMeta: {},
-                        addBtn: s.qtyBtn,
-                      }}
-                    />
-                  )}
-                </View>
-              )}
-
-              {/* Total */}
               <View style={s.totalRow}>
                 <Text style={s.totalLabel}>Total</Text>
                 <Text style={s.totalValue}>₱{total.toFixed(2)}</Text>
               </View>
             </View>
-
-            {/* Save changes button */}
-            {canEdit && hasChanges && (
-              <TouchableOpacity
-                style={s.saveBtn}
-                onPress={handleSaveProducts}
-                disabled={saving}
-              >
-                <Text style={s.saveBtnText}>
-                  {saving ? "Saving…" : "Save Changes"}
-                </Text>
-              </TouchableOpacity>
-            )}
-
-            {/* Cancel button — available to owner/manager/admin on non-cancelled transactions */}
-            {transaction.status !== "cancelled" &&
-              (isOwner ||
-                user?.role === "admin" ||
-                user?.role === "manager") && (
-                <View style={s.actionRow}>
-                  <TouchableOpacity style={s.cancelBtn} onPress={handleCancel}>
-                    <Text style={s.cancelBtnText}>Cancel Transaction</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
           </ScrollView>
         )}
       </Loading>
