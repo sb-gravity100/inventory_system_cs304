@@ -59,6 +59,7 @@ function buildReceiptHtml(transaction, subtotal, discount, total) {
 <head>
   <meta charset="utf-8"/>
   <style>
+    @page { size: 80mm auto; margin: 4mm; }
     body {
       font-family: 'Courier New', Courier, monospace;
       font-size: 13px;
@@ -148,7 +149,7 @@ export default function TransactionDetail() {
       setPrinting(true);
       console.info("[TransactionDetail] printing receipt:", transactionId);
       const html = buildReceiptHtml(transaction, subtotal, discount, total);
-      await Print.printAsync({ html });
+      await Print.printAsync({ html, width: 227 }); // 80mm receipt paper
     } catch (err) {
       console.error("[TransactionDetail] print error:", err.message);
       Alert.alert("Print failed", err.message);
