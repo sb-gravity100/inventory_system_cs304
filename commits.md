@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `f36de74` · 2026-03-24 · docs: use person shape actors and clean up use case diagram lines
+- `README.md`
+
 ### `1a271db` · 2026-03-24 · fix: replace \n with <br/> in Mermaid node labels
 - `README.md`
 
