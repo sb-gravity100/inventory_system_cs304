@@ -24,7 +24,7 @@ export default function Loading({
    });
 
    return (
-      <View>
+      <View style={{ flex: 1 }}>
          {isLoading ? (
             <View style={styles.container}>
                <ActivityIndicator size={size} color={theme.primary} />
