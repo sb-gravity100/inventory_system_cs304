@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `8dd6b58` · 2026-03-24 · fix: rewrite use case diagram as sequenceDiagram for native stick figure actors
+- `README.md`
+
 ### `6e53182` · 2026-03-24 · fix: quote use case labels to resolve Mermaid syntax error
 - `README.md`
 
