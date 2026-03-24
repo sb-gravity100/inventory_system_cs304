@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `434b524` · 2026-03-24 · fix: reuse current WT window instead of opening new one in run_all.bat
+- `run_all.bat`
+
 ### `c7bcbf4` · 2026-03-24 · fix: use req.user.id instead of req.user._id in sales routes; fix authState.user in sales screen
 - `backend/routes/sales.js`
 - `frontend/app/(tabs)/sales.jsx`
