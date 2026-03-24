@@ -10,6 +10,8 @@ import {
   Image,
   TextInput,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../components/ThemeProvider";
@@ -718,6 +720,10 @@ export default function POSScreen() {
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
     <SafeAreaView style={s.container}>
       {/* Header */}
       <View style={s.header}>
@@ -1052,5 +1058,6 @@ export default function POSScreen() {
         </View>
       </Modal>
     </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
