@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Software Engineering Project Documentation — Il Vento</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Calibri, Arial, sans-serif;
+      font-size: 11pt;
+      color: #000;
+      background: #d0d0d0;
+    }
+
+    .page {
+      background: #fff;
+      width: 8.5in;
+      min-height: 11in;
+      margin: 0.4in auto;
+      padding: 1in 1.25in;
+    }
+
+    /* ── Header ── */
+    .doc-title {
+      text-align: center;
+      font-size: 13pt;
+      font-weight: bold;
+      margin-bottom: 14px;
+    }
+
+    .meta p {
+      margin: 3px 0;
+      font-size: 11pt;
+    }
+
+    /* ── Section headers (underlined bold, matching template) ── */
+    .sec {
+      font-weight: bold;
+      text-decoration: underline;
+      font-size: 11pt;
+      margin-top: 18px;
+      margin-bottom: 6px;
+    }
+
+    /* ── Body text and lists ── */
+    p { margin: 5px 0; }
+
+    ul {
+      margin: 4px 0 4px 22px;
+      padding: 0;
+    }
+
+    li { margin: 4px 0; line-height: 1.45; }
+
+    /* ── Italic sub-headers (Functional Requirements:, etc.) ── */
+    .sub {
+      font-style: italic;
+      margin-top: 10px;
+      margin-bottom: 2px;
+    }
+
+    /* ── Numbered diagram sub-sections ── */
+    .diag-num {
+      font-style: italic;
+      margin-top: 14px;
+      margin-bottom: 4px;
+    }
+
+    /* ── Diagram containers ── */
+    .diagram {
+      margin: 10px auto;
+      text-align: center;
+      page-break-inside: avoid;
+    }
+
+    .diagram svg { max-width: 100%; height: auto; }
+
+    .diagram pre.mermaid { display: block; }
+
+    /* ── Print button (hidden on print) ── */
+    .print-btn {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      padding: 9px 20px;
+      background: #1a2235;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: Calibri, Arial, sans-serif;
+      cursor: pointer;
+      z-index: 999;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    /* ── Print styles ── */
+    @media print {
+      body { background: #fff; }
+      .page { margin: 0; padding: 0.85in 1.1in; width: 100%; box-shadow: none; }
+      .print-btn { display: none; }
+      .diagram { page-break-inside: avoid; }
+      .no-break { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<button class="print-btn" onclick="setTimeout(()=>window.print(),600)">&#128438; Print / Save as PDF</button>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: { fontSize: '14px' }
+  });
+</script>
+
+<div class="page">
+
+  <!-- ═══════════════════════════════════════
+       HEADER
+  ════════════════════════════════════════ -->
+  <div class="doc-title">Software Engineering Project Documentation</div>
+
+  <div class="meta">
+    <p><strong>Project Title:</strong> Il Vento &mdash; Inventory Management System</p>
+    <p><strong>Student Name:</strong> Sheidrix Bill T. Ducao</p>
+    <p><strong>Course:</strong> Software Engineering 1</p>
+    <p><strong>Instructor:</strong> Michaelangelo R. Serrano</p>
+    <p><strong>Date:</strong> March 24, 2026</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       INTRODUCTION
+  ════════════════════════════════════════ -->
+  <div class="sec">Introduction</div>
+  <ul>
+    <li>
+      <strong>Overview:</strong> Il Vento is a full-stack inventory and point-of-sale (POS)
+      management system built for retail businesses. It allows staff to process sales
+      transactions, managers to control inventory and generate reports, and administrators
+      to manage users &mdash; all from a mobile app built with React Native and backed by a
+      Node.js/Express REST API connected to MongoDB Atlas.
+    </li>
+    <li>
+      <strong>Problem Statement:</strong> Small retail businesses often rely on manual records
+      or disconnected tools for inventory tracking and sales processing. This makes it
+      difficult to maintain accurate stock counts, audit financial activity, and make
+      data-driven decisions in real time.
+    </li>
+    <li>
+      <strong>Purpose:</strong> To build a mobile-first, role-based inventory management and
+      POS system that unifies product management, transaction processing, and reporting into a
+      single application &mdash; reducing manual errors and providing management with
+      real-time operational visibility.
+    </li>
+  </ul>
+
+  <!-- ═══════════════════════════════════════
+       OBJECTIVES
+  ════════════════════════════════════════ -->
+  <div class="sec">Objectives</div>
+  <p>List the main goals of your system:</p>
+  <ul>
+    <li>
+      <strong>Objective 1:</strong> Allow users to log in with role-based access control
+      (admin, manager, staff) that gates features at both the API and UI levels.
+    </li>
+    <li>
+      <strong>Objective 2:</strong> Enable managers and admins to create, update, archive,
+      and restore products and categories, with full stock adjustment history.
+    </li>
+    <li>
+      <strong>Objective 3:</strong> Let all authenticated users create and manage sales
+      transactions through a full lifecycle (pending &rarr; completed / cancelled), with a
+      dedicated POS mode for fast entry.
+    </li>
+    <li>
+      <strong>Objective 4:</strong> Provide managers and admins with revenue statistics,
+      top-selling products, low-stock alerts, and downloadable CSV/PDF reports.
+    </li>
+    <li>
+      <strong>Objective 5:</strong> Record every significant system action (user events,
+      inventory changes, transaction events) to a structured audit log for accountability.
+    </li>
+  </ul>
+
+  <!-- ═══════════════════════════════════════
+       SYSTEM REQUIREMENTS
+  ════════════════════════════════════════ -->
+  <div class="sec">System Requirements</div>
+  <p>Outline both the functional and non-functional requirements of the system.</p>
+
+  <p class="sub">Functional Requirements:</p>
+  <ul>
+    <li>The system must allow users to log in and validate their session on every app launch via a stored JWT.</li>
+    <li>The system must enforce role-based permissions: staff can create and own transactions and adjust stock; managers can additionally manage products, categories, and view all data; admins additionally manage users and export audit logs.</li>
+    <li>The system must support full product CRUD with soft-delete (archive/restore) and paginated, searchable product listings.</li>
+    <li>The system must allow transactions to be created, edited while pending, finalized (which decrements stock and snapshots prices), or cancelled.</li>
+    <li>The system must display a real-time dashboard with stats: total items sold, total stock value, today&rsquo;s sales, and total revenue.</li>
+    <li>The system must generate exportable reports in CSV and PDF formats for transactions, inventory, low-stock items, and audit logs.</li>
+  </ul>
+
+  <p class="sub">Non-Functional Requirements:</p>
+  <ul>
+    <li>The system must be mobile-first, targeting Android via a native APK built with EAS Build.</li>
+    <li>All API routes (except login) must be protected by JWT authentication.</li>
+    <li>The backend must be stateless and deployable to a cloud host (Render).</li>
+    <li>The database must be hosted on MongoDB Atlas with no local storage of production data.</li>
+    <li>The UI must support light and dark themes, respecting the system preference by default.</li>
+    <li>Passwords must never be logged or stored in plaintext (bcrypt hashing required).</li>
+  </ul>
+
+  <!-- ═══════════════════════════════════════
+       SYSTEM DESIGN
+  ════════════════════════════════════════ -->
+  <div class="sec">System Design (Diagrams)</div>
+
+  <!-- 1. Use Case -->
+  <p class="diag-num">1. Use Case Diagram</p>
+  <ul class="no-break">
+    <li>
+      <strong>What It Shows:</strong> The key features of the system and how the three user
+      roles (Staff, Manager, Admin) interact with them &mdash; authentication, inventory
+      management, transaction processing, reporting, and user administration.
+    </li>
+  </ul>
+  <div class="diagram">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 840" font-family="Arial, sans-serif">
+      <rect width="960" height="840" fill="#ffffff"/>
+      <rect x="145" y="50" width="650" height="775" fill="#f9fafb" stroke="#374151" stroke-width="2" rx="4"/>
+      <text x="470" y="78" text-anchor="middle" font-size="17" font-weight="bold" fill="#111827">Il Vento System</text>
+      <ellipse cx="470" cy="115" rx="150" ry="22" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="470" y="120" text-anchor="middle" font-size="15" fill="#1e3a5f">Login / Logout</text>
+      <ellipse cx="470" cy="180" rx="150" ry="22" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="470" y="185" text-anchor="middle" font-size="15" fill="#1e3a5f">View Inventory</text>
+      <ellipse cx="470" cy="245" rx="150" ry="22" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="470" y="250" text-anchor="middle" font-size="15" fill="#1e3a5f">Adjust Stock</text>
+      <ellipse cx="470" cy="310" rx="150" ry="22" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="470" y="315" text-anchor="middle" font-size="15" fill="#1e3a5f">Create Transaction</text>
+      <ellipse cx="470" cy="375" rx="150" ry="22" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="470" y="380" text-anchor="middle" font-size="15" fill="#1e3a5f">Finalize Own Transaction</text>
+      <ellipse cx="470" cy="440" rx="150" ry="22" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="470" y="445" text-anchor="middle" font-size="15" fill="#1e3a5f">Manage Products and Categories</text>
+      <ellipse cx="470" cy="505" rx="150" ry="22" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="470" y="510" text-anchor="middle" font-size="15" fill="#1e3a5f">View All Transactions and Stats</text>
+      <ellipse cx="470" cy="570" rx="150" ry="22" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="470" y="575" text-anchor="middle" font-size="15" fill="#1e3a5f">Export Reports</text>
+      <ellipse cx="470" cy="635" rx="150" ry="22" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="470" y="640" text-anchor="middle" font-size="15" fill="#1e3a5f">Send Admin Request</text>
+      <ellipse cx="470" cy="700" rx="150" ry="22" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="470" y="705" text-anchor="middle" font-size="15" fill="#1e3a5f">Manage Users</text>
+      <ellipse cx="470" cy="765" rx="150" ry="22" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="470" y="770" text-anchor="middle" font-size="15" fill="#1e3a5f">Export Audit Log</text>
+      <!-- Staff lines -->
+      <line x1="92" y1="238" x2="320" y2="115" stroke="#2563eb" stroke-width="1.4"/>
+      <line x1="92" y1="238" x2="320" y2="180" stroke="#2563eb" stroke-width="1.4"/>
+      <line x1="92" y1="238" x2="320" y2="245" stroke="#2563eb" stroke-width="1.4"/>
+      <line x1="92" y1="238" x2="320" y2="310" stroke="#2563eb" stroke-width="1.4"/>
+      <line x1="92" y1="238" x2="320" y2="375" stroke="#2563eb" stroke-width="1.4"/>
+      <!-- Manager lines -->
+      <line x1="92" y1="518" x2="320" y2="115" stroke="#d97706" stroke-width="1.4"/>
+      <line x1="92" y1="518" x2="320" y2="180" stroke="#d97706" stroke-width="1.4"/>
+      <line x1="92" y1="518" x2="320" y2="245" stroke="#d97706" stroke-width="1.4"/>
+      <line x1="92" y1="518" x2="320" y2="310" stroke="#d97706" stroke-width="1.4"/>
+      <line x1="92" y1="518" x2="320" y2="375" stroke="#d97706" stroke-width="1.4"/>
+      <line x1="92" y1="518" x2="320" y2="440" stroke="#d97706" stroke-width="1.4"/>
+      <line x1="92" y1="518" x2="320" y2="505" stroke="#d97706" stroke-width="1.4"/>
+      <line x1="92" y1="518" x2="320" y2="570" stroke="#d97706" stroke-width="1.4"/>
+      <line x1="92" y1="518" x2="320" y2="635" stroke="#d97706" stroke-width="1.4"/>
+      <!-- Admin lines -->
+      <line x1="863" y1="478" x2="620" y2="115" stroke="#7c3aed" stroke-width="1.4"/>
+      <line x1="863" y1="478" x2="620" y2="440" stroke="#7c3aed" stroke-width="1.4"/>
+      <line x1="863" y1="478" x2="620" y2="505" stroke="#7c3aed" stroke-width="1.4"/>
+      <line x1="863" y1="478" x2="620" y2="570" stroke="#7c3aed" stroke-width="1.4"/>
+      <line x1="863" y1="478" x2="620" y2="700" stroke="#7c3aed" stroke-width="1.4"/>
+      <line x1="863" y1="478" x2="620" y2="765" stroke="#7c3aed" stroke-width="1.4"/>
+      <!-- Staff figure -->
+      <circle cx="70" cy="210" r="14" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+      <line x1="70" y1="224" x2="70" y2="252" stroke="#2563eb" stroke-width="1.5"/>
+      <line x1="48" y1="237" x2="92" y2="237" stroke="#2563eb" stroke-width="1.5"/>
+      <line x1="70" y1="252" x2="55" y2="274" stroke="#2563eb" stroke-width="1.5"/>
+      <line x1="70" y1="252" x2="85" y2="274" stroke="#2563eb" stroke-width="1.5"/>
+      <text x="70" y="292" text-anchor="middle" font-size="15" font-weight="bold" fill="#2563eb">Staff</text>
+      <!-- Manager figure -->
+      <circle cx="70" cy="490" r="14" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+      <line x1="70" y1="504" x2="70" y2="532" stroke="#d97706" stroke-width="1.5"/>
+      <line x1="48" y1="517" x2="92" y2="517" stroke="#d97706" stroke-width="1.5"/>
+      <line x1="70" y1="532" x2="55" y2="554" stroke="#d97706" stroke-width="1.5"/>
+      <line x1="70" y1="532" x2="85" y2="554" stroke="#d97706" stroke-width="1.5"/>
+      <text x="70" y="572" text-anchor="middle" font-size="15" font-weight="bold" fill="#d97706">Manager</text>
+      <!-- Admin figure -->
+      <circle cx="885" cy="450" r="14" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+      <line x1="885" y1="464" x2="885" y2="492" stroke="#7c3aed" stroke-width="1.5"/>
+      <line x1="863" y1="477" x2="907" y2="477" stroke="#7c3aed" stroke-width="1.5"/>
+      <line x1="885" y1="492" x2="870" y2="514" stroke="#7c3aed" stroke-width="1.5"/>
+      <line x1="885" y1="492" x2="900" y2="514" stroke="#7c3aed" stroke-width="1.5"/>
+      <text x="885" y="532" text-anchor="middle" font-size="15" font-weight="bold" fill="#7c3aed">Admin</text>
+    </svg>
+  </div>
+
+  <!-- 2. Sequence Diagram -->
+  <p class="diag-num">2. Sequence Diagram</p>
+  <ul class="no-break">
+    <li>
+      <strong>What It Shows:</strong> The sequence of events when a user finalizes a sales
+      transaction &mdash; from the frontend request through JWT verification, stock decrement,
+      price snapshot, audit log creation, and the final response returned to the client.
+    </li>
+  </ul>
+  <div class="diagram">
+    <pre class="mermaid">
+sequenceDiagram
+    actor User
+    participant App as Frontend (React Native)
+    participant API as Backend (Express)
+    participant DB as MongoDB Atlas
+    User->>App: Tap Finalize Transaction
+    App->>API: POST /sales/transaction-finalize
+    API->>API: verifyToken - get req.user
+    API->>DB: Find Transaction by ID
+    DB-->>API: Transaction document
+    API->>API: Check ownership or manager/admin role
+    loop For each product in transaction
+        API->>DB: product.decreaseStock(qty)
+        API->>DB: Set price_at_sale snapshot
+    end
+    API->>DB: Transaction.status = completed
+    API->>DB: Log.create(TRANSACTION_COMPLETED)
+    DB-->>API: Saved
+    API-->>App: success - transaction data
+    App-->>User: Navigate to Sales Tab
+    </pre>
+  </div>
+
+  <!-- 3. Activity Diagram -->
+  <p class="diag-num">3. Activity Diagram</p>
+  <ul class="no-break">
+    <li>
+      <strong>What It Shows:</strong> The flow of tasks during app launch and authentication
+      &mdash; JWT validation on startup, login credential check, token issuance, and
+      role-based navigation to the appropriate screens.
+    </li>
+  </ul>
+  <div class="diagram">
+    <pre class="mermaid">
+flowchart TD
+    A([Open App - Android]) --> B{JWT Stored in Device?}
+    B -- No --> C[Login: Username and Password]
+    B -- Yes --> D[Validate Token via GET /auth/me]
+    D -- Invalid or Expired --> C
+    D -- Valid --> G
+    C --> E{Credentials Valid?}
+    E -- No --> C
+    E -- Yes --> F[Issue JWT - Store in Secure Store]
+    F --> G{Role?}
+    G -- Staff --> H[Sales and Inventory Tabs]
+    G -- Manager --> I[Dashboard + Inventory + Reports]
+    G -- Admin --> J[All Features + User Management]
+    H & I & J --> K([Done])
+    classDef terminal fill:#9ca3af,stroke:#6b7280,color:#fff
+    classDef process fill:#bfdbfe,stroke:#3b82f6,color:#1e3a5f
+    classDef decision fill:#f9a8d4,stroke:#ec4899,color:#831843
+    class A,K terminal
+    class C,D,F,H,I,J process
+    class B,E,G decision
+    </pre>
+  </div>
+
+  <!-- 4. Database Design -->
+  <p class="diag-num">4. Database Design</p>
+  <ul class="no-break">
+    <li>
+      <strong>Description:</strong> The system uses five MongoDB collections. Products
+      reference Categories; Transactions reference Users (seller) and embed product
+      references with quantity and price_at_sale; Logs reference Users, Transactions,
+      and Products for a complete audit trail.
+    </li>
+    <li><strong>Snapshot / Diagram:</strong></li>
+  </ul>
+  <div class="diagram">
+    <pre class="mermaid">
+erDiagram
+    USER {
+        ObjectId _id PK
+        String username
+        String password
+        String role
+    }
+    CATEGORY {
+        ObjectId _id PK
+        String name
+        String color
+    }
+    PRODUCT {
+        ObjectId _id PK
+        String name
+        String sku
+        Number price
+        Number costPrice
+        Number stock
+        Number low_stock_threshold
+        Boolean isActive
+    }
+    TRANSACTION {
+        ObjectId _id PK
+        String status
+        String payment_method
+        Number discount
+        Date createdAt
+    }
+    TRANSACTION_PRODUCT {
+        ObjectId product FK
+        Number quantity
+        Number price_at_sale
+    }
+    LOG {
+        ObjectId _id PK
+        String event
+        String message
+        Date timestamp
+    }
+    USER ||--o{ TRANSACTION : "seller"
+    TRANSACTION ||--o{ TRANSACTION_PRODUCT : "contains"
+    PRODUCT ||--o{ TRANSACTION_PRODUCT : "referenced in"
+    CATEGORY ||--o{ PRODUCT : "categorizes"
+    USER ||--o{ LOG : "actor"
+    TRANSACTION ||--o{ LOG : "logged in"
+    PRODUCT ||--o{ LOG : "products involved"
+    </pre>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CONCLUSION
+  ════════════════════════════════════════ -->
+  <div class="sec">Conclusion</div>
+  <ul>
+    <li>
+      <strong>Summary:</strong> Il Vento is a mobile-first inventory management and POS
+      system that centralizes product management, sales transaction processing, and
+      operational reporting under a single role-based application. It gives staff a fast
+      interface for recording sales, gives managers full control over inventory and
+      visibility into revenue data, and gives administrators complete oversight of users
+      and the audit trail.
+    </li>
+    <li>
+      <strong>Future Work:</strong> Future versions may include barcode scanning for faster
+      POS entry, push notifications for low-stock alerts, iOS support via EAS Build,
+      an order tracking feature with printable receipts, and automated testing for backend
+      route handlers and business logic.
+    </li>
+  </ul>
+
+  <!-- ═══════════════════════════════════════
+       REFERENCES
+  ════════════════════════════════════════ -->
+  <div class="sec">References</div>
+  <ul>
+    <li>Expo Documentation &mdash; https://docs.expo.dev</li>
+    <li>React Native Documentation &mdash; https://reactnative.dev/docs</li>
+    <li>Mongoose Documentation &mdash; https://mongoosejs.com/docs</li>
+    <li>Express.js Documentation &mdash; https://expressjs.com</li>
+    <li>MongoDB Atlas Documentation &mdash; https://www.mongodb.com/docs/atlas</li>
+    <li>JSON Web Tokens (JWT) &mdash; https://jwt.io/introduction</li>
+    <li>EAS Build &mdash; https://docs.expo.dev/build/introduction</li>
+    <li>react-native-paper &mdash; https://callstack.github.io/react-native-paper</li>
+  </ul>
+
+</div>
+</body>
+</html>
