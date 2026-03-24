@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `1a271db` · 2026-03-24 · fix: replace \n with <br/> in Mermaid node labels
+- `README.md`
+
 ### `e5840be` · 2026-03-24 · docs: add Mermaid diagrams to README (use case, sequence, activity, ER)
 - `README.md`
 
