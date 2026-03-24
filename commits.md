@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `73b003b` · 2026-03-24 · docs: fill in student and instructor names in README
+- `README.md`
+
 ### `0e26ac9` · 2026-03-24 · docs: add README.md from CS304 template; gitignore PDF template
 - `.gitignore`
 - `README.md`
