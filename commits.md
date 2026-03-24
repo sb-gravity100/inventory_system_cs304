@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `dfa0414` · 2026-03-24 · feat: add revenue-stats and audit-logs endpoints to sales routes
+- `backend/routes/sales.js`
+
 ### `821bc2d` · 2026-03-24 · feat: replace status chips with user/seller chip filter on sales screen
 - `frontend/app/(tabs)/sales.jsx`
 
