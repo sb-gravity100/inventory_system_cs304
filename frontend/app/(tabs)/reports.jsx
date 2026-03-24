@@ -370,6 +370,15 @@ export default function ReportsScreen() {
     [myTransactions, chartMode]
   );
 
+  const managerDailyData = useMemo(() => {
+    if (!revenueStats?.dailyData) return [];
+    return revenueStats.dailyData.map((d) => ({
+      label: d.label,
+      value: chartMode === "revenue" ? d.revenue : d.count,
+      isToday: d.isToday,
+    }));
+  }, [revenueStats, chartMode]);
+
   const recentTxs = useMemo(() => myTransactions.slice(0, 5), [myTransactions]);
 
   // ── export helpers ────────────────────────────────────────────────────────
@@ -879,6 +888,87 @@ export default function ReportsScreen() {
                       <Text style={s.breakdownLabel}>Cancelled</Text>
                     </View>
                   </View>
+                </View>
+              </>
+            )}
+
+            {/* Sales trend chart */}
+            {managerDailyData.length > 0 && (
+              <>
+                <Text style={s.sectionLabel}>SALES TREND</Text>
+                <View style={s.chartCard}>
+                  <View style={s.chartHeader}>
+                    <Text style={s.chartTitle}>Last 7 Days</Text>
+                    <View style={s.chartToggleRow}>
+                      {[
+                        { key: "revenue", label: "Revenue" },
+                        { key: "count", label: "Count" },
+                      ].map(({ key, label }) => {
+                        const active = chartMode === key;
+                        return (
+                          <TouchableOpacity
+                            key={key}
+                            onPress={() => setChartMode(key)}
+                            style={[
+                              s.chartToggle,
+                              {
+                                backgroundColor: active
+                                  ? theme.primary
+                                  : theme.surface,
+                                borderColor: active
+                                  ? theme.primary
+                                  : theme.border,
+                              },
+                            ]}
+                            activeOpacity={0.7}
+                          >
+                            <Text
+                              style={[
+                                s.chartToggleText,
+                                {
+                                  color: active ? "#fff" : theme.textSecondary,
+                                  fontFamily: active
+                                    ? Font.semiBold
+                                    : Font.regular,
+                                },
+                              ]}
+                            >
+                              {label}
+                            </Text>
+                          </TouchableOpacity>
+                        );
+                      })}
+                    </View>
+                  </View>
+                  <BarChart
+                    data={managerDailyData}
+                    barColor={
+                      chartMode === "revenue" ? theme.currency : theme.primary
+                    }
+                    primaryText={theme.textPrimary}
+                    secondaryText={theme.textSecondary}
+                    labelFn={
+                      chartMode === "revenue"
+                        ? (v) =>
+                            v >= 1000
+                              ? `${(v / 1000).toFixed(1)}K`
+                              : String(Math.round(v))
+                        : undefined
+                    }
+                  />
+                  <Text
+                    style={{
+                      fontFamily: Font.regular,
+                      fontSize: 10,
+                      color: theme.textSecondary,
+                      textAlign: "right",
+                      marginTop: 2,
+                    }}
+                  >
+                    {chartMode === "revenue"
+                      ? "Revenue (₱) · all sellers"
+                      : "Completed transactions · all sellers"}
+                  </Text>
                 </View>
               </>
             )}

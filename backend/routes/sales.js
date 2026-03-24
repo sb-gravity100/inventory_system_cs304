@@ -194,6 +194,26 @@ router.get("/revenue-stats", verifyToken, async (req, res) => {
     Transaction.countDocuments({ status: "pending" }),
   ]);
 
+  // Daily data for last 7 days (reuse the completed array already fetched)
+  const DAY_ABBR = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+  const dailyData = Array.from({ length: 7 }, (_, i) => {
+    const dayStart = new Date(now);
+    dayStart.setDate(now.getDate() - (6 - i));
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(dayStart);
+    dayEnd.setDate(dayStart.getDate() + 1);
+    const dayTxs = completed.filter((t) => {
+      const d = new Date(t.createdAt);
+      return d >= dayStart && d < dayEnd;
+    });
+    return {
+      label: DAY_ABBR[dayStart.getDay()],
+      revenue: calcRevenue(dayTxs),
+      count: dayTxs.length,
+      isToday: i === 6,
+    };
+  });
+
   const topProducts = await Transaction.aggregate([
     { $match: { status: "completed" } },
     { $unwind: "$products" },
@@ -220,6 +240,7 @@ router.get("/revenue-stats", verifyToken, async (req, res) => {
     cancelledCount,
     pendingCount,
     topProducts,
+    dailyData,
   });
 });
 
