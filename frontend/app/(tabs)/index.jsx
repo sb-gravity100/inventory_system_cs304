@@ -134,7 +134,7 @@ export default function HomeScreen() {
   const s = styles(theme);
 
   return (
-    <SafeAreaView style={s.container}>
+    <SafeAreaView style={s.container} edges={["top"]}>
       <ScrollView
         contentContainerStyle={s.scrollContent}
         refreshControl={

@@ -203,7 +203,7 @@ export default function SalesScreen() {
   );
 
   return (
-    <SafeAreaView style={s.container}>
+    <SafeAreaView style={s.container} edges={["top"]}>
       <View style={s.header}>
         <Text style={s.screenTitle}>Sales</Text>
       </View>

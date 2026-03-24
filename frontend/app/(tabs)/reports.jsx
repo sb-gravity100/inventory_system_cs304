@@ -211,7 +211,7 @@ function formatLogDate(iso) {
 // ── Main screen ────────────────────────────────────────────────────────────────
 export default function ReportsScreen() {
   const { theme } = useTheme();
-  const { authState } = useAuth();
+  const { authState, user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -231,18 +231,18 @@ export default function ReportsScreen() {
   const [exporting, setExporting] = useState(null);
 
   const isManagerOrAdmin =
-    authState.user?.role === "manager" || authState.user?.role === "admin";
-  const isAdmin = authState.user?.role === "admin";
+    user?.role === "manager" || user?.role === "admin";
+  const isAdmin = user?.role === "admin";
   const headers = { Authorization: `Bearer ${authState.token}` };
 
   const isMounted = useRef(false);
 
   // ── init once the role is known ───────────────────────────────────────────
   useEffect(() => {
-    if (!authState.user) return; // wait for auth context to load
+    if (!user) return; // wait for auth context to load
     isMounted.current = true;
     init();
-  }, [authState.user?.role]); // re-run if role changes (login/logout)
+  }, [user?.role]); // re-run if role changes (login/logout)
 
   // ── reload logs when group changes (skip first render) ────────────────────
   const isFirstGroupChange = useRef(true);
@@ -257,7 +257,7 @@ export default function ReportsScreen() {
   // ── refresh on tab focus ───────────────────────────────────────────────────
   useFocusEffect(
     useCallback(() => {
-      if (!isMounted.current || !authState.user) return;
+      if (!isMounted.current || !user) return;
       if (isManagerOrAdmin) {
         fetchRevenueStats();
       } else {
@@ -790,7 +790,7 @@ export default function ReportsScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={[s.container, s.loadingCenter]}>
+      <SafeAreaView style={[s.container, s.loadingCenter]} edges={["top"]}>
         <ActivityIndicator size="large" color={theme.primary} />
       </SafeAreaView>
     );
@@ -798,7 +798,7 @@ export default function ReportsScreen() {
 
   // ── render ─────────────────────────────────────────────────────────────────
   return (
-    <SafeAreaView style={s.container}>
+    <SafeAreaView style={s.container} edges={["top"]}>
       <ScrollView
         contentContainerStyle={s.content}
         refreshControl={

@@ -223,7 +223,7 @@ export default function InventoryScreen() {
   });
 
   return (
-    <SafeAreaView style={s.container}>
+    <SafeAreaView style={s.container} edges={["top"]}>
       <View style={s.header}>
         <Text style={s.screenTitle}>Inventory</Text>
         <Text style={s.screenSubtitle}>{totalProducts} products</Text>
