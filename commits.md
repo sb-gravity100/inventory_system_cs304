@@ -2,6 +2,10 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `a294082` · 2026-03-25 · docs: add printable HTML documentation following CS304 template
+- `documentation.html`
+- `FILE_INDEX.md`
+
 ### `6334e54` · 2026-03-24 · docs: increase font size in use case SVG and sequence diagram
 - `docs/use_case_diagram.svg`
 - `README.md`
