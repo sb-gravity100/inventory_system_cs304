@@ -2,6 +2,15 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `d64f5b5` · 2026-03-24 · feat: replace Create Transaction with full POS Mode screen
+- `frontend/app/pos.jsx` (new)
+- `frontend/app/transaction.jsx` (deleted)
+- `frontend/app/_layout.jsx`
+- `frontend/app/(tabs)/inventory.jsx`
+- `frontend/app/(tabs)/index.jsx`
+- `frontend/utils/quickActions.js`
+- `FILE_INDEX.md`
+
 Format:
 ```
 ### `<short-hash or pending>` · <YYYY-MM-DD> · <commit subject>
