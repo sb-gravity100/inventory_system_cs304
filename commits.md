@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `e5840be` · 2026-03-24 · docs: add Mermaid diagrams to README (use case, sequence, activity, ER)
+- `README.md`
+
 ### `73b003b` · 2026-03-24 · docs: fill in student and instructor names in README
 - `README.md`
 
