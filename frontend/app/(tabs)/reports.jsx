@@ -12,7 +12,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../components/ThemeProvider";
 import { useAuth } from "../../context/AuthContext";
 import StatCard from "../../components/home/StatCard";
-import { useCallback, useEffect, useRef, useState } from "react";
+import TransactionItem from "../../components/TransactionItem";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFocusEffect } from "expo-router";
 import axios from "axios";
 import * as Print from "expo-print";
@@ -71,23 +72,113 @@ const EVENT_LABEL = {
   USER_PASSWORD_CHANGED: "Pwd Chg",
 };
 
-function formatDate(iso) {
-  const d = new Date(iso);
+const DAY_LABELS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+
+function buildDailyData(transactions, mode) {
+  const now = new Date();
+  return Array.from({ length: 7 }, (_, i) => {
+    const dayStart = new Date(now);
+    dayStart.setDate(now.getDate() - (6 - i));
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(dayStart);
+    dayEnd.setDate(dayStart.getDate() + 1);
+
+    const dayTxs = transactions.filter((tx) => {
+      const d = new Date(tx.createdAt);
+      return d >= dayStart && d < dayEnd && tx.status === "completed";
+    });
+
+    const revenue = dayTxs.reduce(
+      (sum, tx) =>
+        sum +
+        tx.products.reduce(
+          (s, p) =>
+            s + (p.quantity || 0) * (p.price_at_sale || p.product?.price || 0),
+          0
+        ),
+      0
+    );
+
+    return {
+      label: DAY_LABELS[dayStart.getDay()],
+      value: mode === "revenue" ? revenue : dayTxs.length,
+      isToday: i === 6,
+    };
+  });
+}
+
+// ── Custom bar chart (no external dep) ────────────────────────────────────────
+function BarChart({ data, barColor, primaryText, secondaryText, labelFn }) {
+  const maxVal = Math.max(...data.map((d) => d.value), 1);
+  const BAR_MAX_H = 72;
+
   return (
-    d.toLocaleDateString("en-PH", { month: "short", day: "numeric" }) +
-    " " +
-    d.toLocaleTimeString("en-PH", { hour: "2-digit", minute: "2-digit" })
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "flex-end",
+        height: BAR_MAX_H + 44,
+        gap: 4,
+        paddingHorizontal: 4,
+      }}
+    >
+      {data.map((d, i) => {
+        const barH = d.value > 0
+          ? Math.max((d.value / maxVal) * BAR_MAX_H, 5)
+          : 0;
+        return (
+          <View key={i} style={{ flex: 1, alignItems: "center" }}>
+            {/* value label above bar */}
+            <Text
+              style={{
+                fontSize: 8,
+                color: secondaryText,
+                marginBottom: 2,
+                textAlign: "center",
+                height: 12,
+              }}
+              numberOfLines={1}
+            >
+              {d.value > 0 ? (labelFn ? labelFn(d.value) : d.value) : ""}
+            </Text>
+            {/* bar fill area */}
+            <View
+              style={{ height: BAR_MAX_H, width: "100%", justifyContent: "flex-end" }}
+            >
+              <View
+                style={{
+                  width: "100%",
+                  height: barH,
+                  backgroundColor: barH > 0 ? barColor : "transparent",
+                  borderRadius: 3,
+                  opacity: d.isToday ? 1 : 0.5,
+                }}
+              />
+            </View>
+            {/* day label */}
+            <Text
+              style={{
+                fontSize: 11,
+                marginTop: 5,
+                color: d.isToday ? primaryText : secondaryText,
+                fontFamily: d.isToday ? Font.semiBold : Font.regular,
+              }}
+            >
+              {d.label}
+            </Text>
+          </View>
+        );
+      })}
+    </View>
   );
 }
 
+// ── PDF helpers ────────────────────────────────────────────────────────────────
 function buildPdfHtml(title, tableHeaders, rows) {
   const date = new Date().toLocaleDateString("en-PH", { dateStyle: "long" });
   const thHtml = tableHeaders.map((h) => `<th>${h}</th>`).join("");
   const rowsHtml = rows
-    .map(
-      (row) =>
-        `<tr>${row.map((c) => `<td>${c ?? ""}</td>`).join("")}</tr>`
-    )
+    .map((row) => `<tr>${row.map((c) => `<td>${c ?? ""}</td>`).join("")}</tr>`)
     .join("");
   return `<!DOCTYPE html><html><head><meta charset="utf-8"/>
 <style>
@@ -108,15 +199,35 @@ function buildPdfHtml(title, tableHeaders, rows) {
 </body></html>`;
 }
 
+function formatLogDate(iso) {
+  const d = new Date(iso);
+  return (
+    d.toLocaleDateString("en-PH", { month: "short", day: "numeric" }) +
+    " " +
+    d.toLocaleTimeString("en-PH", { hour: "2-digit", minute: "2-digit" })
+  );
+}
+
+// ── Main screen ────────────────────────────────────────────────────────────────
 export default function ReportsScreen() {
   const { theme } = useTheme();
   const { authState } = useAuth();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  // manager/admin state
   const [revenueStats, setRevenueStats] = useState(null);
+
+  // staff state
+  const [myTransactions, setMyTransactions] = useState([]);
+  const [chartMode, setChartMode] = useState("revenue"); // "revenue" | "count"
+
+  // shared audit log state
   const [auditLogs, setAuditLogs] = useState([]);
   const [logGroup, setLogGroup] = useState("all");
   const [logLoading, setLogLoading] = useState(false);
+
+  // export state
   const [exporting, setExporting] = useState(null);
 
   const isManagerOrAdmin =
@@ -126,13 +237,13 @@ export default function ReportsScreen() {
 
   const isMounted = useRef(false);
 
-  // Initial load
+  // ── init on mount ──────────────────────────────────────────────────────────
   useEffect(() => {
     isMounted.current = true;
     init();
   }, []);
 
-  // Reload logs when group filter changes (skip initial mount)
+  // ── reload logs when group changes (skip first render) ────────────────────
   const isFirstGroupChange = useRef(true);
   useEffect(() => {
     if (isFirstGroupChange.current) {
@@ -142,11 +253,15 @@ export default function ReportsScreen() {
     fetchLogs(logGroup);
   }, [logGroup]);
 
-  // Refresh stats on tab focus (not logs, to avoid redundant calls)
+  // ── refresh on tab focus ───────────────────────────────────────────────────
   useFocusEffect(
     useCallback(() => {
       if (!isMounted.current) return;
-      if (isManagerOrAdmin) fetchRevenueStats();
+      if (isManagerOrAdmin) {
+        fetchRevenueStats();
+      } else {
+        fetchMyTransactions();
+      }
     }, [])
   );
 
@@ -154,7 +269,11 @@ export default function ReportsScreen() {
     setLoading(true);
     try {
       const tasks = [fetchLogs("all")];
-      if (isManagerOrAdmin) tasks.push(fetchRevenueStats());
+      if (isManagerOrAdmin) {
+        tasks.push(fetchRevenueStats());
+      } else {
+        tasks.push(fetchMyTransactions());
+      }
       await Promise.all(tasks);
     } finally {
       setLoading(false);
@@ -167,6 +286,15 @@ export default function ReportsScreen() {
       setRevenueStats(res.data);
     } catch (e) {
       console.error("[reports] revenue-stats error:", e);
+    }
+  };
+
+  const fetchMyTransactions = async () => {
+    try {
+      const res = await axios.get(`${api_url}/sales/transactions`, { headers });
+      setMyTransactions(res.data || []);
+    } catch (e) {
+      console.error("[reports] my-transactions error:", e);
     }
   };
 
@@ -198,13 +326,59 @@ export default function ReportsScreen() {
     fetchLogs(key);
   };
 
+  // ── staff performance computations ────────────────────────────────────────
+  const perf = useMemo(() => {
+    if (!myTransactions.length) return null;
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const completed = myTransactions.filter((tx) => tx.status === "completed");
+    const calcRev = (txs) =>
+      txs.reduce(
+        (sum, tx) =>
+          sum +
+          tx.products.reduce(
+            (s, p) =>
+              s +
+              (p.quantity || 0) * (p.price_at_sale || p.product?.price || 0),
+            0
+          ),
+        0
+      );
+
+    return {
+      completedCount: completed.length,
+      pendingCount: myTransactions.filter((tx) => tx.status === "pending").length,
+      cancelledCount: myTransactions.filter((tx) => tx.status === "cancelled")
+        .length,
+      totalRevenue: calcRev(completed),
+      weekRevenue: calcRev(
+        completed.filter((tx) => new Date(tx.createdAt) >= startOfWeek)
+      ),
+      totalItems: completed.reduce(
+        (sum, tx) =>
+          sum + tx.products.reduce((s, p) => s + (p.quantity || 0), 0),
+        0
+      ),
+    };
+  }, [myTransactions]);
+
+  const dailyData = useMemo(
+    () => buildDailyData(myTransactions, chartMode),
+    [myTransactions, chartMode]
+  );
+
+  const recentTxs = useMemo(() => myTransactions.slice(0, 5), [myTransactions]);
+
+  // ── export helpers ────────────────────────────────────────────────────────
   const generateAndShare = async (exportKey, title, tableHeaders, fetchData, mapRow) => {
     if (exporting) return;
     setExporting(exportKey);
     try {
       const data = await fetchData();
-      const rows = data.map(mapRow);
-      const html = buildPdfHtml(title, tableHeaders, rows);
+      const html = buildPdfHtml(title, tableHeaders, data.map(mapRow));
       const { uri } = await Print.printToFileAsync({ html });
       await Sharing.shareAsync(uri, {
         mimeType: "application/pdf",
@@ -235,7 +409,8 @@ export default function ReportsScreen() {
         (
           tx.products?.reduce(
             (s, p) =>
-              s + (p.quantity || 0) * (p.price_at_sale || p.product?.price || 0),
+              s +
+              (p.quantity || 0) * (p.price_at_sale || p.product?.price || 0),
             0
           ) || 0
         ).toFixed(2),
@@ -307,9 +482,11 @@ export default function ReportsScreen() {
       ]
     );
 
+  // ── styles ────────────────────────────────────────────────────────────────
   const s = StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
     content: { paddingBottom: 32 },
+    loadingCenter: { flex: 1, justifyContent: "center", alignItems: "center" },
     header: {
       paddingHorizontal: Spacing.screenPadding,
       paddingTop: Spacing.lg,
@@ -333,10 +510,8 @@ export default function ReportsScreen() {
       paddingHorizontal: Spacing.screenPadding,
       marginBottom: Spacing.sectionGap,
     },
-    statsRow: {
-      flexDirection: "row",
-    },
-    // Transaction breakdown
+    statsRow: { flexDirection: "row" },
+    // Breakdown bar (manager/admin)
     breakdownCard: {
       backgroundColor: theme.surface,
       borderRadius: Radius.card,
@@ -361,11 +536,8 @@ export default function ReportsScreen() {
       fontSize: FontSize.listSecondary,
       color: theme.textSecondary,
     },
-    breakdownSep: {
-      width: 1,
-      backgroundColor: theme.border,
-    },
-    // Top products
+    breakdownSep: { width: 1, backgroundColor: theme.border },
+    // Top products (manager/admin)
     topCard: {
       backgroundColor: theme.surface,
       borderRadius: Radius.card,
@@ -403,7 +575,7 @@ export default function ReportsScreen() {
       fontSize: FontSize.listSecondary,
       color: theme.textSecondary,
     },
-    // Export
+    // Export buttons (manager/admin)
     exportCard: {
       backgroundColor: theme.surface,
       borderRadius: Radius.card,
@@ -432,7 +604,51 @@ export default function ReportsScreen() {
       fontSize: 18,
       color: theme.textSecondary,
     },
-    // Chip row
+    // Chart card (staff)
+    chartCard: {
+      backgroundColor: theme.surface,
+      borderRadius: Radius.card,
+      borderWidth: 1,
+      borderColor: theme.border,
+      marginHorizontal: Spacing.screenPadding,
+      marginBottom: Spacing.sectionGap,
+      paddingHorizontal: Spacing.cardPadding,
+      paddingTop: Spacing.md,
+      paddingBottom: Spacing.sm,
+    },
+    chartHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: Spacing.sm,
+    },
+    chartTitle: {
+      flex: 1,
+      fontFamily: Font.semiBold,
+      fontSize: FontSize.body,
+      color: theme.textPrimary,
+    },
+    chartToggleRow: { flexDirection: "row", gap: Spacing.xs },
+    chartToggle: {
+      paddingHorizontal: Spacing.sm,
+      paddingVertical: 4,
+      borderRadius: 4,
+      borderWidth: 1,
+    },
+    chartToggleText: {
+      fontFamily: Font.medium,
+      fontSize: 11,
+    },
+    // Generic card
+    card: {
+      backgroundColor: theme.surface,
+      borderRadius: Radius.card,
+      borderWidth: 1,
+      borderColor: theme.border,
+      overflow: "hidden",
+      marginHorizontal: Spacing.screenPadding,
+      marginBottom: Spacing.sectionGap,
+    },
+    // Chip row (audit log filter + chart toggle)
     chipRow: {
       flexDirection: "row",
       gap: Spacing.xs,
@@ -449,15 +665,7 @@ export default function ReportsScreen() {
       fontFamily: Font.medium,
       fontSize: FontSize.listSecondary,
     },
-    // Log list
-    logCard: {
-      backgroundColor: theme.surface,
-      borderRadius: Radius.card,
-      borderWidth: 1,
-      borderColor: theme.border,
-      overflow: "hidden",
-      marginHorizontal: Spacing.screenPadding,
-    },
+    // Log items
     logItem: {
       flexDirection: "row",
       alignItems: "flex-start",
@@ -504,13 +712,9 @@ export default function ReportsScreen() {
       marginHorizontal: Spacing.lg,
     },
     logSpinner: { paddingVertical: Spacing.lg },
-    loadingCenter: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-    },
   });
 
+  // ── sub-components ────────────────────────────────────────────────────────
   const Chip = ({ label, active, onPress }) => (
     <TouchableOpacity
       onPress={onPress}
@@ -523,7 +727,9 @@ export default function ReportsScreen() {
       ]}
       activeOpacity={0.7}
     >
-      <Text style={[s.chipText, { color: active ? "#fff" : theme.textSecondary }]}>
+      <Text
+        style={[s.chipText, { color: active ? "#fff" : theme.textSecondary }]}
+      >
         {label}
       </Text>
     </TouchableOpacity>
@@ -564,7 +770,7 @@ export default function ReportsScreen() {
           <View style={s.logContent}>
             <Text style={s.logMessage}>{log.message}</Text>
             <Text style={s.logMeta}>
-              {log.actor?.username || "system"} · {formatDate(log.timestamp)}
+              {log.actor?.username || "system"} · {formatLogDate(log.timestamp)}
             </Text>
           </View>
         </View>
@@ -580,6 +786,7 @@ export default function ReportsScreen() {
     );
   }
 
+  // ── render ─────────────────────────────────────────────────────────────────
   return (
     <SafeAreaView style={s.container}>
       <ScrollView
@@ -598,90 +805,107 @@ export default function ReportsScreen() {
           <Text style={s.screenTitle}>Reports</Text>
         </View>
 
-        {/* Revenue Overview — manager+ only */}
-        {isManagerOrAdmin && revenueStats && (
-          <>
-            <Text style={s.sectionLabel}>OVERVIEW</Text>
-            <View style={s.section}>
-              <View style={s.statsRow}>
-                <StatCard
-                  value={`₱${(revenueStats.totalRevenue || 0).toLocaleString("en-PH", {
-                    maximumFractionDigits: 0,
-                  })}`}
-                  label="Total Revenue"
-                  colorScheme="green"
-                />
-                <View style={{ width: Spacing.listGap }} />
-                <StatCard
-                  value={`₱${(revenueStats.monthRevenue || 0).toLocaleString("en-PH", {
-                    maximumFractionDigits: 0,
-                  })}`}
-                  label="This Month"
-                  colorScheme="blue"
-                />
-              </View>
-              <View style={{ height: Spacing.listGap }} />
-              <StatCard
-                value={`₱${(revenueStats.weekRevenue || 0).toLocaleString("en-PH", {
-                  maximumFractionDigits: 0,
-                })}`}
-                label="This Week"
-                colorScheme="neutral"
-                fullWidth
-              />
-              {/* Transaction status breakdown */}
-              <View style={s.breakdownCard}>
-                <View style={s.breakdownItem}>
-                  <Text style={[s.breakdownValue, { color: theme.statusCompleted }]}>
-                    {revenueStats.completedCount}
-                  </Text>
-                  <Text style={s.breakdownLabel}>Completed</Text>
-                </View>
-                <View style={s.breakdownSep} />
-                <View style={s.breakdownItem}>
-                  <Text style={[s.breakdownValue, { color: theme.statusPending }]}>
-                    {revenueStats.pendingCount}
-                  </Text>
-                  <Text style={s.breakdownLabel}>Pending</Text>
-                </View>
-                <View style={s.breakdownSep} />
-                <View style={s.breakdownItem}>
-                  <Text style={[s.breakdownValue, { color: theme.statusCancelled }]}>
-                    {revenueStats.cancelledCount}
-                  </Text>
-                  <Text style={s.breakdownLabel}>Cancelled</Text>
-                </View>
-              </View>
-            </View>
-          </>
-        )}
-
-        {/* Top Selling Products — manager+ only */}
-        {isManagerOrAdmin &&
-          revenueStats?.topProducts?.length > 0 && (
-            <>
-              <Text style={s.sectionLabel}>TOP SELLING PRODUCTS</Text>
-              <View style={s.topCard}>
-                {revenueStats.topProducts.map((p, i) => (
-                  <View key={i}>
-                    {i > 0 && <View style={s.divider} />}
-                    <View style={s.topRow}>
-                      <Text style={s.topRank}>{i + 1}</Text>
-                      <Text style={s.topName} numberOfLines={1}>
-                        {p.name}
-                      </Text>
-                      <Text style={s.topQty}>{p.qty}</Text>
-                      <Text style={s.topQtyLabel}> units</Text>
-                    </View>
-                  </View>
-                ))}
-              </View>
-            </>
-          )}
-
-        {/* Export — manager+ only */}
+        {/* ── MANAGER/ADMIN VIEW ─────────────────────────────────────────── */}
         {isManagerOrAdmin && (
           <>
+            {/* Revenue overview */}
+            {revenueStats && (
+              <>
+                <Text style={s.sectionLabel}>OVERVIEW</Text>
+                <View style={s.section}>
+                  <View style={s.statsRow}>
+                    <StatCard
+                      value={`₱${(revenueStats.totalRevenue || 0).toLocaleString(
+                        "en-PH",
+                        { maximumFractionDigits: 0 }
+                      )}`}
+                      label="Total Revenue"
+                      colorScheme="green"
+                    />
+                    <View style={{ width: Spacing.listGap }} />
+                    <StatCard
+                      value={`₱${(revenueStats.monthRevenue || 0).toLocaleString(
+                        "en-PH",
+                        { maximumFractionDigits: 0 }
+                      )}`}
+                      label="This Month"
+                      colorScheme="blue"
+                    />
+                  </View>
+                  <View style={{ height: Spacing.listGap }} />
+                  <StatCard
+                    value={`₱${(revenueStats.weekRevenue || 0).toLocaleString(
+                      "en-PH",
+                      { maximumFractionDigits: 0 }
+                    )}`}
+                    label="This Week"
+                    colorScheme="neutral"
+                    fullWidth
+                  />
+                  <View style={s.breakdownCard}>
+                    <View style={s.breakdownItem}>
+                      <Text
+                        style={[
+                          s.breakdownValue,
+                          { color: theme.statusCompleted },
+                        ]}
+                      >
+                        {revenueStats.completedCount}
+                      </Text>
+                      <Text style={s.breakdownLabel}>Completed</Text>
+                    </View>
+                    <View style={s.breakdownSep} />
+                    <View style={s.breakdownItem}>
+                      <Text
+                        style={[
+                          s.breakdownValue,
+                          { color: theme.statusPending },
+                        ]}
+                      >
+                        {revenueStats.pendingCount}
+                      </Text>
+                      <Text style={s.breakdownLabel}>Pending</Text>
+                    </View>
+                    <View style={s.breakdownSep} />
+                    <View style={s.breakdownItem}>
+                      <Text
+                        style={[
+                          s.breakdownValue,
+                          { color: theme.statusCancelled },
+                        ]}
+                      >
+                        {revenueStats.cancelledCount}
+                      </Text>
+                      <Text style={s.breakdownLabel}>Cancelled</Text>
+                    </View>
+                  </View>
+                </View>
+              </>
+            )}
+
+            {/* Top products */}
+            {revenueStats?.topProducts?.length > 0 && (
+              <>
+                <Text style={s.sectionLabel}>TOP SELLING PRODUCTS</Text>
+                <View style={s.topCard}>
+                  {revenueStats.topProducts.map((p, i) => (
+                    <View key={i}>
+                      {i > 0 && <View style={s.divider} />}
+                      <View style={s.topRow}>
+                        <Text style={s.topRank}>{i + 1}</Text>
+                        <Text style={s.topName} numberOfLines={1}>
+                          {p.name}
+                        </Text>
+                        <Text style={s.topQty}>{p.qty}</Text>
+                        <Text style={s.topQtyLabel}> units</Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              </>
+            )}
+
+            {/* Export */}
             <Text style={s.sectionLabel}>EXPORT</Text>
             <View style={s.exportCard}>
               <ExportButton
@@ -719,9 +943,182 @@ export default function ReportsScreen() {
           </>
         )}
 
-        {/* Audit Log */}
-        <Text style={[s.sectionLabel, { marginTop: isManagerOrAdmin ? Spacing.sectionGap : 0 }]}>
-          AUDIT LOG
+        {/* ── STAFF VIEW ────────────────────────────────────────────────── */}
+        {!isManagerOrAdmin && (
+          <>
+            {/* Summary stats */}
+            <Text style={s.sectionLabel}>MY PERFORMANCE</Text>
+            {perf ? (
+              <View style={s.section}>
+                <View style={s.statsRow}>
+                  <StatCard
+                    value={`₱${(perf.totalRevenue || 0).toLocaleString("en-PH", {
+                      maximumFractionDigits: 0,
+                    })}`}
+                    label="Total Revenue"
+                    colorScheme="green"
+                  />
+                  <View style={{ width: Spacing.listGap }} />
+                  <StatCard
+                    value={`₱${(perf.weekRevenue || 0).toLocaleString("en-PH", {
+                      maximumFractionDigits: 0,
+                    })}`}
+                    label="This Week"
+                    colorScheme="blue"
+                  />
+                </View>
+                <View style={{ height: Spacing.listGap }} />
+                <StatCard
+                  value={perf.totalItems}
+                  label="Total Items Sold"
+                  colorScheme="neutral"
+                  fullWidth
+                />
+                <View style={s.breakdownCard}>
+                  <View style={s.breakdownItem}>
+                    <Text
+                      style={[
+                        s.breakdownValue,
+                        { color: theme.statusCompleted },
+                      ]}
+                    >
+                      {perf.completedCount}
+                    </Text>
+                    <Text style={s.breakdownLabel}>Completed</Text>
+                  </View>
+                  <View style={s.breakdownSep} />
+                  <View style={s.breakdownItem}>
+                    <Text
+                      style={[
+                        s.breakdownValue,
+                        { color: theme.statusPending },
+                      ]}
+                    >
+                      {perf.pendingCount}
+                    </Text>
+                    <Text style={s.breakdownLabel}>Pending</Text>
+                  </View>
+                  <View style={s.breakdownSep} />
+                  <View style={s.breakdownItem}>
+                    <Text
+                      style={[
+                        s.breakdownValue,
+                        { color: theme.statusCancelled },
+                      ]}
+                    >
+                      {perf.cancelledCount}
+                    </Text>
+                    <Text style={s.breakdownLabel}>Cancelled</Text>
+                  </View>
+                </View>
+              </View>
+            ) : (
+              <Text
+                style={[
+                  s.logEmpty,
+                  {
+                    marginHorizontal: Spacing.screenPadding,
+                    marginBottom: Spacing.sectionGap,
+                  },
+                ]}
+              >
+                No transactions yet.
+              </Text>
+            )}
+
+            {/* 7-day chart */}
+            <View style={s.chartCard}>
+              <View style={s.chartHeader}>
+                <Text style={s.chartTitle}>Last 7 Days</Text>
+                <View style={s.chartToggleRow}>
+                  {[
+                    { key: "revenue", label: "Revenue" },
+                    { key: "count", label: "Count" },
+                  ].map(({ key, label }) => {
+                    const active = chartMode === key;
+                    return (
+                      <TouchableOpacity
+                        key={key}
+                        onPress={() => setChartMode(key)}
+                        style={[
+                          s.chartToggle,
+                          {
+                            backgroundColor: active
+                              ? theme.primary
+                              : theme.surface,
+                            borderColor: active ? theme.primary : theme.border,
+                          },
+                        ]}
+                        activeOpacity={0.7}
+                      >
+                        <Text
+                          style={[
+                            s.chartToggleText,
+                            {
+                              color: active ? "#fff" : theme.textSecondary,
+                              fontFamily: active ? Font.semiBold : Font.regular,
+                            },
+                          ]}
+                        >
+                          {label}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </View>
+              <BarChart
+                data={dailyData}
+                barColor={chartMode === "revenue" ? theme.currency : theme.primary}
+                primaryText={theme.textPrimary}
+                secondaryText={theme.textSecondary}
+                labelFn={
+                  chartMode === "revenue"
+                    ? (v) =>
+                        v >= 1000
+                          ? `${(v / 1000).toFixed(1)}K`
+                          : String(Math.round(v))
+                    : undefined
+                }
+              />
+              <Text
+                style={{
+                  fontFamily: Font.regular,
+                  fontSize: 10,
+                  color: theme.textSecondary,
+                  textAlign: "right",
+                  marginTop: 2,
+                }}
+              >
+                {chartMode === "revenue" ? "Revenue (₱)" : "Completed transactions"}
+              </Text>
+            </View>
+
+            {/* Recent transactions */}
+            {recentTxs.length > 0 && (
+              <>
+                <Text style={s.sectionLabel}>RECENT TRANSACTIONS</Text>
+                <View style={s.card}>
+                  {recentTxs.map((tx, i) => (
+                    <View key={tx._id}>
+                      {i > 0 && <View style={s.divider} />}
+                      <TransactionItem transaction={tx} />
+                    </View>
+                  ))}
+                </View>
+              </>
+            )}
+          </>
+        )}
+
+        {/* ── AUDIT LOG (all roles) ──────────────────────────────────────── */}
+        <Text
+          style={[
+            s.sectionLabel,
+            { marginTop: Spacing.sm },
+          ]}
+        >
+          {isManagerOrAdmin ? "AUDIT LOG" : "MY ACTIVITY"}
         </Text>
         <ScrollView
           horizontal
@@ -739,7 +1136,7 @@ export default function ReportsScreen() {
           ))}
         </ScrollView>
 
-        <View style={s.logCard}>
+        <View style={s.card}>
           {logLoading ? (
             <ActivityIndicator
               size="small"
