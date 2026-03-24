@@ -6,14 +6,16 @@ import Log from "../Models/Log.js";
 const router = Router();
 
 router.post("/transaction", verifyToken, async (req, res) => {
-  const { products = [] } = req.body;
+  const { products = [], discount = 0, notes = "" } = req.body;
   if (!Array.isArray(products)) {
     return res.status(400).json({ message: "Products must be an array" });
   }
-  console.log(req.user);
+  console.info("[sales] POST /transaction seller:", req.user.id, "items:", products.length, "discount:", discount);
   const tr = new Transaction({
     seller: req.user.id,
     products,
+    discount,
+    notes,
   });
   await Log.create({
     event: "TRANSACTION_CREATED",
