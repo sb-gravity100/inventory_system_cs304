@@ -73,6 +73,7 @@ This diagram illustrates how the three user roles (Staff, Manager, Admin) intera
 This diagram shows the sequence of events when a staff member finalizes a sales transaction: the frontend sends a finalize request → the backend verifies the JWT and ownership → stock is decremented per product → `price_at_sale` is snapshotted → a `TRANSACTION_COMPLETED` log entry is written → the response is returned to the client.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '16px'}}}%%
 sequenceDiagram
     actor User
     participant App as Frontend (React Native)
