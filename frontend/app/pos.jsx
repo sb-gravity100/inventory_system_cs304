@@ -483,7 +483,7 @@ export default function POSScreen() {
     },
     discountInput: {
       flex: 1,
-      height: 34,
+      height: 40,
       borderWidth: 1,
       borderColor: theme.border,
       borderRadius: Radius.input,
@@ -492,11 +492,10 @@ export default function POSScreen() {
       fontSize: FontSize.body,
       color: theme.textPrimary,
       backgroundColor: theme.background,
-      overflow: "hidden",
     },
     typeToggle: {
-      width: 34,
-      height: 34,
+      width: 40,
+      height: 40,
       borderRadius: Radius.input,
       borderWidth: 1,
       borderColor: theme.border,
@@ -516,7 +515,7 @@ export default function POSScreen() {
     typeToggleTextActive: { color: "#ffffff" },
     notesInput: {
       flex: 1,
-      height: 34,
+      height: 40,
       borderWidth: 1,
       borderColor: theme.border,
       borderRadius: Radius.input,
@@ -525,7 +524,6 @@ export default function POSScreen() {
       fontSize: FontSize.body,
       color: theme.textPrimary,
       backgroundColor: theme.background,
-      overflow: "hidden",
     },
 
     // Totals
