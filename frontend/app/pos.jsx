@@ -9,6 +9,7 @@ import {
   Modal,
   Image,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../components/ThemeProvider";
@@ -36,6 +37,9 @@ export default function POSScreen() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   // Cart
   const [cart, setCart] = useState([]);
@@ -80,22 +84,36 @@ export default function POSScreen() {
     }
   };
 
-  const fetchProducts = async (name = searchQuery, category = selectedCategory) => {
+  const fetchProducts = async (name = searchQuery, category = selectedCategory, pageNum = 1) => {
     try {
-      setLoading(true);
-      const params = { limit: 100, name };
+      if (pageNum === 1) setLoading(true);
+      else setLoadingMore(true);
+      const params = { page: pageNum, limit: 20, name };
       if (category) params.category = category;
       const res = await axios.get(`${api_url}/products`, {
         headers: { Authorization: `Bearer ${authState.token}` },
         params,
       });
-      setProducts(res.data.products);
-      console.debug("[POS] products loaded:", res.data.products.length);
+      if (pageNum === 1) {
+        setProducts(res.data.products);
+      } else {
+        setProducts((prev) => [...prev, ...res.data.products]);
+      }
+      setHasMore(res.data.hasNext);
+      setPage(pageNum);
+      console.debug("[POS] products loaded page:", pageNum, "count:", res.data.products.length);
     } catch (err) {
       console.error("[POS] fetchProducts error:", err.message);
       Alert.alert("Error", "Failed to load products");
     } finally {
       setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  const handleLoadMore = () => {
+    if (!loadingMore && hasMore) {
+      fetchProducts(searchQuery, selectedCategory, page + 1);
     }
   };
 
@@ -231,6 +249,7 @@ export default function POSScreen() {
     // Category chips
     chipsRow: {
       flexGrow: 0,
+      flexShrink: 0,
       paddingVertical: Spacing.sm,
     },
     chipsContent: {
@@ -264,7 +283,7 @@ export default function POSScreen() {
     gridContent: {
       padding: Spacing.screenPadding,
       gap: Spacing.listGap,
-      paddingBottom: 8,
+      paddingBottom: Spacing.xl,
     },
     colWrapper: { gap: Spacing.listGap },
 
@@ -778,7 +797,16 @@ export default function POSScreen() {
           columnWrapperStyle={s.colWrapper}
           contentContainerStyle={s.gridContent}
           keyboardShouldPersistTaps="handled"
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
           renderItem={renderTile}
+          ListFooterComponent={
+            loadingMore ? (
+              <View style={{ paddingVertical: Spacing.md, alignItems: "center" }}>
+                <ActivityIndicator size="small" color={theme.primary} />
+              </View>
+            ) : null
+          }
           ListEmptyComponent={
             <Text
               style={{
