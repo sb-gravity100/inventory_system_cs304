@@ -2,6 +2,12 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `76f81cc` · 2026-03-24 · feat: POS mode — 2-col grid, category chips, discount/notes, hold/recall
+- `frontend/app/pos.jsx`
+
+### `a4416f5` · 2026-03-24 · feat: pass discount and notes through POST /sales/transaction
+- `backend/routes/sales.js`
+
 ### `6e85c6a` · 2026-03-24 · docs: allow clarifying questions via AskUserQuestion tool
 - `CLAUDE.md`
 
