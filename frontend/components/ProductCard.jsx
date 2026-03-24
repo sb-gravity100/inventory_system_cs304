@@ -1,9 +1,10 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { router } from "expo-router";
 import { Font, FontSize, Spacing, Radius } from "../constants/colors";
 
 const PLACEHOLDER_EMOJI = "📦";
 
-export default function ProductCard({ product, theme, onUpdateStock }) {
+export default function ProductCard({ product, theme }) {
   const margin =
     product.costPrice > 0
       ? Math.round(((product.price - product.costPrice) / product.price) * 100)
@@ -82,7 +83,11 @@ export default function ProductCard({ product, theme, onUpdateStock }) {
   });
 
   return (
-    <TouchableOpacity style={s.tile} onPress={() => onUpdateStock(product)} activeOpacity={0.75}>
+    <TouchableOpacity
+      style={s.tile}
+      onPress={() => router.push(`/products/${product._id}`)}
+      activeOpacity={0.75}
+    >
       <View style={s.imageArea}>
         {product.imageUrl ? (
           <Image source={{ uri: product.imageUrl }} style={s.image} resizeMode="cover" />

@@ -4,12 +4,57 @@ Prepend a new entry here after every commit. Most recent commit at top.
 
 Format:
 ```
-### `<short-hash>` · <YYYY-MM-DD> · <commit subject>
+### `<short-hash or pending>` · <YYYY-MM-DD> · <commit subject>
 - `affected/file1`
 - `affected/file2`
 ```
 
 ---
+
+### `<pending>` · 2026-03-24 · feat: replace New Category FAB action with Edit Categories screen
+- `frontend/app/categories.jsx` *(new)*
+- `frontend/app/add-category.jsx` *(deleted)*
+- `frontend/app/_layout.jsx`
+- `frontend/app/(tabs)/inventory.jsx`
+- `FILE_INDEX.md`
+
+### `<pending>` · 2026-03-24 · fix: replace category chip bar with bottom-sheet dropdown on inventory
+- `frontend/app/(tabs)/inventory.jsx`
+
+### `<pending>` · 2026-03-24 · fix: FAB color adapts to theme via fabBg/fabIcon tokens
+- `frontend/constants/colors.js`
+- `frontend/components/ui/FAB.jsx`
+
+### `<pending>` · 2026-03-24 · feat: category filter chips on inventory + clean up product detail category picker
+- `frontend/app/(tabs)/inventory.jsx`
+- `frontend/app/products/[productId].jsx`
+
+### `<pending>` · 2026-03-24 · feat: new-category FAB action and add-category screen
+- `frontend/app/add-category.jsx` *(new)*
+- `frontend/app/_layout.jsx`
+- `frontend/app/(tabs)/inventory.jsx`
+- `frontend/app/add-category.jsx` *(new)*
+- `frontend/app/_layout.jsx`
+- `frontend/app/(tabs)/inventory.jsx`
+- `frontend/app/products/[productId].jsx`
+- `FILE_INDEX.md`
+
+### `<pending>` · 2026-03-24 · feat: product detail screen with toggleable edit mode
+- `frontend/app/products/[productId].jsx` *(new)*
+- `frontend/app/_layout.jsx`
+- `frontend/components/ProductCard.jsx`
+- `frontend/app/(tabs)/inventory.jsx`
+- `frontend/components/UpdateStockModal.jsx` *(deleted)*
+- `backend/routes/products.js`
+- `FILE_INDEX.md`
+
+### `<pending>` · 2026-03-24 · feat: add seed_products.bat root script
+- `seed_products.bat` *(new)*
+- `FILE_INDEX.md`
+
+### `92f7c01` · 2026-03-24 · feat: add seed-products script for sample data
+- `backend/scripts/seed-products.js` *(new)*
+- `backend/package.json`
 
 ### `a5a375a` · 2026-03-24 · fix: FAB bottom prop + users screen lift
 - `frontend/components/ui/FAB.jsx`

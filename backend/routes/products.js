@@ -65,6 +65,13 @@ router.post("/", verifyToken, isManagerOrAdmin, async (req, res) => {
   }
 });
 
+// GET /products/:id — single product
+router.get("/:id", verifyToken, async (req, res) => {
+  const product = await Product.findById(req.params.id).populate("category", "name color");
+  if (!product) return res.status(404).json({ message: "Product not found" });
+  res.json(product);
+});
+
 // PUT /products/:id — manager/admin only
 router.put("/:id", verifyToken, isManagerOrAdmin, async (req, res) => {
   const { name, price, stock, sku, costPrice, category, imageUrl, low_stock_threshold } = req.body;

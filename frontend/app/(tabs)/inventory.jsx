@@ -3,19 +3,22 @@ import {
   Text,
   Alert,
   FlatList,
+  Modal,
+  Pressable,
   ActivityIndicator,
   RefreshControl,
   StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { FAB, SearchBar, Loading } from "../../components/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../components/ThemeProvider";
 import { useAuth } from "../../context/AuthContext";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 import { router, useFocusEffect } from "expo-router";
 import ProductCard from "../../components/ProductCard";
-import UpdateStockModal from "../../components/UpdateStockModal";
+import { MaterialIcons } from "@expo/vector-icons";
 import { Font, FontSize, Spacing, Radius } from "../../constants/colors";
 
 const api_url =
@@ -33,28 +36,38 @@ export default function InventoryScreen() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [totalProducts, setTotalProducts] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [categoryPickerOpen, setCategoryPickerOpen] = useState(false);
 
-  const [updateStockModal, setUpdateStockModal] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-
-  const [stockAction, setStockAction] = useState("add");
-  const [stockQuantity, setStockQuantity] = useState("");
   const [refreshing, setRefreshing] = useState(false);
+
+  useEffect(() => {
+    axios
+      .get(`${api_url}/categories`, {
+        headers: { Authorization: `Bearer ${authState.token}` },
+      })
+      .then((res) => setCategories(res.data))
+      .catch(() => {});
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
-      fetchProducts(1);
+      fetchProducts(1, searchQuery, selectedCategory);
     }, [])
   );
 
-  const fetchProducts = async (pageNum, name = "") => {
+  const fetchProducts = async (pageNum, name = "", category = null) => {
     try {
       if (pageNum === 1) setLoading(true);
       else setLoadingMore(true);
 
+      const params = { page: pageNum, limit: 20, name };
+      if (category) params.category = category;
+
       const response = await axios.get(`${api_url}/products`, {
         headers: { Authorization: `Bearer ${authState.token}` },
-        params: { page: pageNum, limit: 20, name },
+        params,
       });
 
       if (pageNum === 1) {
@@ -76,13 +89,8 @@ export default function InventoryScreen() {
 
   const handleLoadMore = () => {
     if (!loadingMore && hasMore) {
-      fetchProducts(page + 1, searchQuery);
+      fetchProducts(page + 1, searchQuery, selectedCategory);
     }
-  };
-
-  const handleUpdateStockFromCard = (product) => {
-    setSelectedProduct(product);
-    setUpdateStockModal(true);
   };
 
   const getActions = () => {
@@ -100,33 +108,18 @@ export default function InventoryScreen() {
         icon: "add-box",
         onPress: () => router.push("/add-product"),
       });
+      actions.push({
+        label: "Edit Categories",
+        icon: "label",
+        onPress: () => router.push("/categories"),
+      });
     }
     return actions;
   };
 
-  const handleUpdateStock = () => {
-    if (!selectedProduct || !stockQuantity) {
-      Alert.alert("Error", "Please select product and enter quantity");
-      return;
-    }
-    const endpoint =
-      stockAction === "add" ? "increase-stock" : "update-stocks";
-    axios
-      .post(
-        `${api_url}/products/${selectedProduct._id}/${endpoint}`,
-        { quantity: parseInt(stockQuantity) },
-        { headers: { Authorization: `Bearer ${authState.token}` } }
-      )
-      .then(() => fetchProducts(1))
-      .catch(() => Alert.alert("Error", "Failed to update stock"));
-    setUpdateStockModal(false);
-    setSelectedProduct(null);
-    setStockQuantity("");
-  };
-
   const onRefresh = async () => {
     setRefreshing(true);
-    await fetchProducts(1, searchQuery);
+    await fetchProducts(1, searchQuery, selectedCategory);
     setRefreshing(false);
   };
 
@@ -167,6 +160,66 @@ export default function InventoryScreen() {
       paddingVertical: 20,
       alignItems: "center",
     },
+    filterRow: {
+      marginHorizontal: Spacing.screenPadding,
+      marginBottom: Spacing.sm,
+    },
+    filterBtn: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      backgroundColor: theme.surface,
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: Radius.input,
+      paddingHorizontal: Spacing.md,
+      paddingVertical: Spacing.sm,
+    },
+    filterBtnText: {
+      fontFamily: Font.regular,
+      fontSize: FontSize.body,
+      color: theme.textPrimary,
+    },
+    backdrop: {
+      flex: 1,
+      backgroundColor: "rgba(0,0,0,0.35)",
+      justifyContent: "flex-end",
+    },
+    sheet: {
+      backgroundColor: theme.surface,
+      borderTopLeftRadius: 12,
+      borderTopRightRadius: 12,
+      paddingBottom: 32,
+    },
+    sheetTitle: {
+      fontFamily: Font.semiBold,
+      fontSize: FontSize.body,
+      color: theme.textPrimary,
+      paddingHorizontal: Spacing.lg,
+      paddingVertical: Spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+    },
+    sheetOption: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: Spacing.lg,
+      paddingVertical: 14,
+    },
+    sheetOptionText: {
+      fontFamily: Font.regular,
+      fontSize: FontSize.body,
+      color: theme.textPrimary,
+    },
+    sheetOptionTextActive: {
+      fontFamily: Font.semiBold,
+    },
+    dot: {
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+    },
   });
 
   return (
@@ -179,15 +232,59 @@ export default function InventoryScreen() {
       <SearchBar
         onChangeText={(text) => {
           setSearchQuery(text);
-          if (text === "") {
-            setProducts([]);
-            setHasMore(true);
-          }
-          fetchProducts(1, text);
+          fetchProducts(1, text, selectedCategory);
         }}
         placeholder="Search products..."
         style={{ marginHorizontal: Spacing.screenPadding, marginVertical: Spacing.sm }}
       />
+
+      {categories.length > 0 && (
+        <View style={s.filterRow}>
+          <TouchableOpacity style={s.filterBtn} onPress={() => setCategoryPickerOpen(true)} activeOpacity={0.7}>
+            <Text style={s.filterBtnText}>
+              {selectedCategory ? categories.find((c) => c._id === selectedCategory)?.name ?? "All categories" : "All categories"}
+            </Text>
+            <MaterialIcons name="expand-more" size={20} color={theme.textSecondary} />
+          </TouchableOpacity>
+        </View>
+      )}
+
+      <Modal visible={categoryPickerOpen} transparent animationType="slide" onRequestClose={() => setCategoryPickerOpen(false)}>
+        <Pressable style={s.backdrop} onPress={() => setCategoryPickerOpen(false)}>
+          <Pressable style={s.sheet} onPress={() => {}}>
+            <Text style={s.sheetTitle}>Filter by category</Text>
+            <TouchableOpacity
+              style={s.sheetOption}
+              onPress={() => {
+                setSelectedCategory(null);
+                fetchProducts(1, searchQuery, null);
+                setCategoryPickerOpen(false);
+              }}
+            >
+              <Text style={[s.sheetOptionText, !selectedCategory && s.sheetOptionTextActive]}>All categories</Text>
+              {!selectedCategory && <View style={[s.dot, { backgroundColor: theme.textPrimary }]} />}
+            </TouchableOpacity>
+            {categories.map((cat) => {
+              const active = selectedCategory === cat._id;
+              const accent = cat.color || theme.textSecondary;
+              return (
+                <TouchableOpacity
+                  key={cat._id}
+                  style={s.sheetOption}
+                  onPress={() => {
+                    setSelectedCategory(cat._id);
+                    fetchProducts(1, searchQuery, cat._id);
+                    setCategoryPickerOpen(false);
+                  }}
+                >
+                  <Text style={[s.sheetOptionText, active && s.sheetOptionTextActive]}>{cat.name}</Text>
+                  {active && <View style={[s.dot, { backgroundColor: accent }]} />}
+                </TouchableOpacity>
+              );
+            })}
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       <Loading isLoading={loading} message="Loading products...">
         <FlatList
@@ -203,11 +300,7 @@ export default function InventoryScreen() {
             />
           }
           renderItem={({ item }) => (
-            <ProductCard
-              product={item}
-              theme={theme}
-              onUpdateStock={handleUpdateStockFromCard}
-            />
+            <ProductCard product={item} theme={theme} />
           )}
           contentContainerStyle={s.gridContent}
           onEndReached={handleLoadMore}
@@ -228,22 +321,6 @@ export default function InventoryScreen() {
       </Loading>
 
       <FAB actions={getActions()} />
-
-      <UpdateStockModal
-        visible={updateStockModal}
-        selectedProduct={selectedProduct}
-        stockAction={stockAction}
-        setStockAction={setStockAction}
-        stockQuantity={stockQuantity}
-        setStockQuantity={setStockQuantity}
-        onCancel={() => {
-          setUpdateStockModal(false);
-          setSelectedProduct(null);
-          setStockQuantity("");
-          setStockAction("add");
-        }}
-        onSave={handleUpdateStock}
-      />
     </SafeAreaView>
   );
 }

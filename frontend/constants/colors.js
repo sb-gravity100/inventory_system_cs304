@@ -17,6 +17,8 @@ export const LightColors = {
   statusCompleted: "#16a34a",
   statusPending: "#d97706",
   statusCancelled: "#6b7280",
+  fabBg: "#1a2235",
+  fabIcon: "#ffffff",
   // legacy aliases kept for backward compat during UI migration
   secondary: "#3a5d63",
   accent: "#30343f",
@@ -44,6 +46,8 @@ export const DarkColors = {
   statusCompleted: "#34d399",
   statusPending: "#fbbf24",
   statusCancelled: "#94a3b8",
+  fabBg: "#e2e8f0",
+  fabIcon: "#0f172a",
   // legacy aliases
   secondary: "#1D201F",
   accent: "#d3d3d3",

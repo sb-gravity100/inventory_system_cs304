@@ -33,10 +33,26 @@ Every file read and every output costs money. Minimize both aggressively.
 
 **The user's PC crashes unpredictably, anywhere between 10 minutes and 1 hour into a session.**
 
-- After every logical unit of work: finish the change → `git commit` → update `commits.md`.
+- After every logical unit of work: finish the change → stage the commit → update `commits.md` → append the commit command to `temp_commit.json`.
 - A "logical unit" is: one file created, one feature completed, one test passing, one doc updated.
-- Never leave more than one uncommitted logical change in the working tree.
-- Every commit gets its own entry prepended to `commits.md` (format below).
+- **Do NOT run `git commit` directly.** Instead, write the commit command to `temp_commit.json` (see format below).
+- Only execute commits when the user explicitly orders it (e.g. "commit", "run commits", "execute commits").
+- Every staged commit gets its own entry prepended to `commits.md` with hash `<pending>`. When a commit is actually executed by `commit_temps.bat`, the hash stays as-is (update manually if needed).
+
+### temp_commit.json format
+```json
+[
+  {
+    "id": 1,
+    "command": "git commit -m \"feat: your message here\"",
+    "files": ["affected/file1", "affected/file2"],
+    "status": "pending"
+  }
+]
+```
+- Append new entries; never overwrite existing ones.
+- When commits are executed, update `status` to `"done"` for each executed entry.
+- After all commits in `temp_commit.json` are executed, clear the file to `[]`.
 
 ---
 
@@ -65,13 +81,15 @@ Use appropriate log levels:
 ## Key workflow rules
 
 ### commits.md rule
-After every commit, **prepend** a new entry to `commits.md`:
+After every logical unit of work, **prepend** a new entry to `commits.md`:
 ```
-### `<short-hash>` · <YYYY-MM-DD> · <commit subject>
+### `<pending>` · <YYYY-MM-DD> · <commit subject>
 - `affected/file1`
 - `affected/file2`
 ```
-`commits.md` itself gets its own commit: `docs: update commits.md`.
+Use `<pending>` as the hash placeholder for commits not yet executed. Commits are executed by running `commit_temps.bat`.
+
+`commits.md` updates follow the same queue rule — stage the update and add its commit command to `temp_commit.json`.
 
 ### Commit granularity
 Every distinguishable change gets its own commit. Never bundle unrelated changes. If you need "and" in the commit message, it should be two commits.

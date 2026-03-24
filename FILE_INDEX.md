@@ -16,6 +16,7 @@ File system index for Il Vento inventory management system. Read this before ope
 | `run_backend.bat` | Start backend dev server (nodemon) | dev, script |
 | `run_frontend.bat` | Check for USB device → auto-update local IP in frontend/.env → start Expo Android | dev, script |
 | `reset_db.bat` | Wipe all collections and re-seed admin user via `npm run reset-db` | dev, script, db |
+| `seed_products.bat` | Insert 50 sample products via `npm run seed-products`; skips existing SKUs | dev, script, db |
 
 ---
 
@@ -36,6 +37,7 @@ File system index for Il Vento inventory management system. Read this before ope
 | File | Purpose | Tags |
 |---|---|---|
 | `backend/scripts/reset-db.js` | Drops all collections and re-seeds the default admin user; run with `npm run reset-db` from `/backend` | dev, script, db |
+| `backend/scripts/seed-products.js` | Inserts 50 sample products; skips any SKU that already exists; run with `npm run seed-products` from `/backend` | dev, script, db |
 
 ### Models (`/backend/Models`)
 
@@ -53,7 +55,7 @@ File system index for Il Vento inventory management system. Read this before ope
 |---|---|---|
 | `backend/routes/auth.js` | Login, /auth/me, admin user CRUD, manager admin-request endpoint | route, auth, admin |
 | `backend/routes/categories.js` | Category CRUD; GET open to all token holders, writes require manager/admin | route, inventory |
-| `backend/routes/products.js` | Product CRUD (archive/restore replaces hard delete) + stock operations; GET populates category, filters isActive; writes require manager/admin | route, inventory |
+| `backend/routes/products.js` | Product CRUD (archive/restore replaces hard delete) + stock operations; GET / and GET /:id populate category, filter isActive; writes require manager/admin | route, inventory |
 | `backend/routes/sales.js` | Transaction lifecycle (create/update/finalize/cancel), list, detail, logs, stats | route, sales |
 
 ---
@@ -77,11 +79,12 @@ File system index for Il Vento inventory management system. Read this before ope
 | `frontend/app/(auth)/login.jsx` | Login form (username + password); calls AuthContext.login(); redirects on success | screen, auth |
 | `frontend/app/(tabs)/_layout.jsx` | Tab bar: Home, Inventory, Sales, Reports; theme-aware styling | layout, navigation |
 | `frontend/app/(tabs)/index.jsx` | Home/dashboard: stats cards (manager+), quick actions grid (role-filtered), logout, theme toggle | screen, home |
-| `frontend/app/(tabs)/inventory.jsx` | Paginated product tile grid, search, update-stock modal, FAB (Add Product → /add-product, Create Transaction); useFocusEffect refresh | screen, inventory |
+| `frontend/app/(tabs)/inventory.jsx` | Paginated product tile grid, search, FAB (Add Product → /add-product, Create Transaction); tapping a tile navigates to product detail; useFocusEffect refresh | screen, inventory |
 | `frontend/app/(tabs)/sales.jsx` | Transaction list, stats cards, pull-to-refresh; taps navigate to transaction detail | screen, sales |
 | `frontend/app/(tabs)/reports.jsx` | Stub — "coming soon" placeholder | screen, reports |
 | `frontend/app/transaction.jsx` | New transaction creation: product search, cart, quantity controls, POST to /sales/transaction | screen, sales |
 | `frontend/app/users.jsx` | Admin-only user management: list, create, edit, delete users | screen, admin |
+| `frontend/app/products/[productId].jsx` | Product detail screen: view info, toggleable edit mode (manager/admin), inline stock adjustment (all roles), archive/restore | screen, inventory |
 | `frontend/app/transactions/[transactionId]/index.jsx` | Transaction detail/edit: view info, edit products (pending only), finalize, cancel; permission: isOwner or manager+ | screen, sales |
 
 ### Context
@@ -125,8 +128,8 @@ File system index for Il Vento inventory management system. Read this before ope
 | `frontend/components/transaction/index.js` | Re-exports transaction components | sales |
 | `frontend/components/ErrorBoundary.jsx` | Class component that catches render errors and shows a fallback screen with a retry button | component, error |
 | `frontend/app/add-product.jsx` | Modal screen: create product with name, SKU, selling price, cost price, stock, category chip picker, image URL | screen, inventory |
+| `frontend/app/categories.jsx` | Category management screen: list all categories, inline edit (name + color), delete, add new | screen, inventory |
 | `frontend/components/AddProductModal.jsx` | Legacy modal form (superseded by add-product.jsx screen; kept for reference) | component, inventory, legacy |
-| `frontend/components/UpdateStockModal.jsx` | Modal to update stock (add qty or set exact value) | component, inventory |
 | `frontend/components/ProductCard.jsx` | Product tile: image/emoji placeholder, category badge, name, SKU, price, stock, margin % | component, inventory |
 | `frontend/components/TransactionItem.jsx` | Individual transaction list item | component, sales |
 | `frontend/components/FloatingActionButton.jsx` | Standalone FAB (used on inventory screen) | component, ui |

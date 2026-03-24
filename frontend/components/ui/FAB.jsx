@@ -139,7 +139,7 @@ export default function FAB({ actions = [], bottom: fabBottom = Spacing.lg }) {
       position: "absolute",
       bottom: fabBottom,
       right: Spacing.lg,
-      backgroundColor: theme.primary,
+      backgroundColor: theme.fabBg,
       width: 56,
       height: 56,
       borderRadius: 28,
@@ -199,7 +199,7 @@ export default function FAB({ actions = [], bottom: fabBottom = Spacing.lg }) {
 
       <TouchableOpacity style={s.fab} onPress={handleFabPress} activeOpacity={0.85}>
         <Animated.View style={{ transform: [{ rotate: iconRotate }] }}>
-          <MaterialIcons name="add" size={26} color="#ffffff" />
+          <MaterialIcons name="add" size={26} color={theme.fabIcon} />
         </Animated.View>
       </TouchableOpacity>
     </>
