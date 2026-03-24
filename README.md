@@ -66,9 +66,9 @@ This diagram illustrates how the three user roles (Staff, Manager, Admin) intera
 
 ```mermaid
 flowchart LR
-    S(("👤 Staff"))
-    M(("👔 Manager"))
-    A(("🔑 Admin"))
+    S@{ shape: person, label: "Staff" }
+    M@{ shape: person, label: "Manager" }
+    A@{ shape: person, label: "Admin" }
 
     subgraph sys ["  Il Vento System  "]
         direction TB
@@ -76,20 +76,39 @@ flowchart LR
         UC2([View Inventory])
         UC3([Adjust Stock])
         UC4([Create Transaction])
-        UC5([Edit & Finalize<br/>Own Transaction])
-        UC6([Manage Products<br/>& Categories])
-        UC7([View All Transactions<br/>& Stats])
-        UC8([Generate & Export<br/>Reports])
+        UC5([Finalize Own Transaction])
+        UC6([Manage Products & Categories])
+        UC7([View All Transactions & Stats])
+        UC8([Export Reports CSV / PDF])
         UC9([Send Admin Request])
         UC10([Manage Users])
         UC11([Export Audit Log])
     end
 
-    S --- UC1 & UC2 & UC3 & UC4 & UC5
-    M --- UC1 & UC2 & UC3 & UC4 & UC5 & UC6 & UC7 & UC8 & UC9
-    A --- UC1 & UC6 & UC7 & UC8 & UC10 & UC11
+    S --> UC1
+    S --> UC2
+    S --> UC3
+    S --> UC4
+    S --> UC5
 
-    classDef actor fill:#9ca3af,stroke:#6b7280,color:#fff
+    M --> UC1
+    M --> UC2
+    M --> UC3
+    M --> UC4
+    M --> UC5
+    M --> UC6
+    M --> UC7
+    M --> UC8
+    M --> UC9
+
+    A --> UC1
+    A --> UC6
+    A --> UC7
+    A --> UC8
+    A --> UC10
+    A --> UC11
+
+    classDef actor fill:#e5e7eb,stroke:#6b7280,color:#1f2937
     classDef usecase fill:#bfdbfe,stroke:#3b82f6,color:#1e3a5f
     class S,M,A actor
     class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10,UC11 usecase
