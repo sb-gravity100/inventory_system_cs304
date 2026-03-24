@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `1971885` · 2026-03-24 · fix: Loading wrapper missing flex:1 caused FlatList to push cart off screen
+- `frontend/components/ui/Loading.jsx`
+
 ### `ed6d135` · 2026-03-24 · fix: POS chips flatten, paginate product grid, bottom scroll padding
 - `frontend/app/pos.jsx`
 
