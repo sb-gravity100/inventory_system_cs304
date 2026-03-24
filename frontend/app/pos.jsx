@@ -492,6 +492,7 @@ export default function POSScreen() {
       fontSize: FontSize.body,
       color: theme.textPrimary,
       backgroundColor: theme.background,
+      overflow: "hidden",
     },
     typeToggle: {
       width: 34,
@@ -524,6 +525,7 @@ export default function POSScreen() {
       fontSize: FontSize.body,
       color: theme.textPrimary,
       backgroundColor: theme.background,
+      overflow: "hidden",
     },
 
     // Totals
