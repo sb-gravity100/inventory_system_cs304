@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `143a99d` · 2026-03-24 · fix: use ISO B7 paper size for print (88×125mm)
+- `frontend/app/transactions/[transactionId]/index.jsx`
+
 ### `a1e5168` · 2026-03-24 · fix: use 80mm receipt paper size for print
 - `frontend/app/transactions/[transactionId]/index.jsx`
 
