@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `ed6d135` · 2026-03-24 · fix: POS chips flatten, paginate product grid, bottom scroll padding
+- `frontend/app/pos.jsx`
+
 ### `76f81cc` · 2026-03-24 · feat: POS mode — 2-col grid, category chips, discount/notes, hold/recall
 - `frontend/app/pos.jsx`
 
