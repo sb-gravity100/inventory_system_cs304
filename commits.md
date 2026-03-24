@@ -2,6 +2,11 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `0e26ac9` · 2026-03-24 · docs: add README.md from CS304 template; gitignore PDF template
+- `.gitignore`
+- `README.md`
+- `FILE_INDEX.md`
+
 ### `434b524` · 2026-03-24 · fix: reuse current WT window instead of opening new one in run_all.bat
 - `run_all.bat`
 
