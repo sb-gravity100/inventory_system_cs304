@@ -64,10 +64,12 @@ router.get("/transactions", verifyToken, async (req, res) => {
   let transactions;
   if (req.user.role === "staff") {
     transactions = await Transaction.find({ seller: req.user._id })
+      .sort({ createdAt: -1 })
       .populate("seller", "username")
       .populate("products.product", "name price");
   } else {
     transactions = await Transaction.find()
+      .sort({ createdAt: -1 })
       .populate("seller", "username")
       .populate("products.product", "name price");
   }
