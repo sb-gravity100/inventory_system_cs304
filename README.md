@@ -76,10 +76,10 @@ flowchart LR
         UC2([View Inventory])
         UC3([Adjust Stock])
         UC4([Create Transaction])
-        UC5([Edit & Finalize\nOwn Transaction])
-        UC6([Manage Products\n& Categories])
-        UC7([View All Transactions\n& Stats])
-        UC8([Generate & Export\nReports])
+        UC5([Edit & Finalize<br/>Own Transaction])
+        UC6([Manage Products<br/>& Categories])
+        UC7([View All Transactions<br/>& Stats])
+        UC8([Generate & Export<br/>Reports])
         UC9([Send Admin Request])
         UC10([Manage Users])
         UC11([Export Audit Log])
@@ -133,18 +133,18 @@ This diagram shows the activity flow of the transaction lifecycle: a user opens 
 
 ```mermaid
 flowchart TD
-    A([Open App\nAndroid]) --> B{JWT Stored\nin Device?}
-    B -- No --> C[Login\nUsername + Password]
-    B -- Yes --> D[Validate Token\nGET /auth/me]
+    A([Open App<br/>Android]) --> B{JWT Stored<br/>in Device?}
+    B -- No --> C[Login<br/>Username + Password]
+    B -- Yes --> D[Validate Token<br/>GET /auth/me]
     D -- Invalid / Expired --> C
     D -- Valid --> G
-    C --> E{Credentials\nValid?}
+    C --> E{Credentials<br/>Valid?}
     E -- No --> C
-    E -- Yes --> F[Issue JWT Token\nStore in Secure Store]
+    E -- Yes --> F[Issue JWT Token<br/>Store in Secure Store]
     F --> G{Role?}
     G -- Staff --> H[Sales + Inventory Tabs]
-    G -- Manager --> I[Dashboard + Full\nInventory + Reports]
-    G -- Admin --> J[All Features +\nUser Management]
+    G -- Manager --> I[Dashboard + Full<br/>Inventory + Reports]
+    G -- Admin --> J[All Features +<br/>User Management]
     H & I & J --> K([Done])
 
     classDef terminal fill:#9ca3af,stroke:#6b7280,color:#fff
