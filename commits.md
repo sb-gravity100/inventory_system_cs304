@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `a1e5168` · 2026-03-24 · fix: use 80mm receipt paper size for print
+- `frontend/app/transactions/[transactionId]/index.jsx`
+
 ### `109aea7` · 2026-03-24 · feat: receipt-style transaction screen, print support, POS navigates to receipt
 - `frontend/app/transactions/[transactionId]/index.jsx`
 - `frontend/app/pos.jsx`
