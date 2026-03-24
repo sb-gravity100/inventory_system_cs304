@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Modal,
   Image,
   TextInput,
   ActivityIndicator,
@@ -54,9 +53,6 @@ export default function POSScreen() {
 
   // UI state
   const [submitting, setSubmitting] = useState(false);
-  const [successVisible, setSuccessVisible] = useState(false);
-  const [lastTotal, setLastTotal] = useState(0);
-  const [lastCount, setLastCount] = useState(0);
 
   // ── Derived ────────────────────────────────────────────────────────────────
   const subtotal = cart.reduce((s, c) => s + c.product.price * c.quantity, 0);
@@ -197,18 +193,16 @@ export default function POSScreen() {
         product: c.product._id,
         quantity: c.quantity,
       }));
-      await axios.post(
+      const res = await axios.post(
         `${api_url}/sales/transaction`,
         { products: productsData, discount: discountAmount, notes: notes.trim() },
         { headers: { Authorization: `Bearer ${authState.token}` } }
       );
-      console.info("[POS] charge: success");
-      setLastTotal(total);
-      setLastCount(itemCount);
+      console.info("[POS] charge: success, transaction:", res.data._id);
       setCart([]);
       setDiscountValue("");
       setNotes("");
-      setSuccessVisible(true);
+      router.push(`/transactions/${res.data._id}`);
     } catch (err) {
       console.error("[POS] charge error:", err.response?.data?.message || err.message);
       Alert.alert("Error", err.response?.data?.message || "Transaction failed");
@@ -593,76 +587,6 @@ export default function POSScreen() {
       color: theme.textSecondary,
     },
 
-    // Success modal
-    overlay: {
-      flex: 1,
-      backgroundColor: "rgba(0,0,0,0.55)",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: Spacing.xl,
-    },
-    successCard: {
-      backgroundColor: theme.surface,
-      borderRadius: Radius.modal * 2,
-      padding: Spacing.xl,
-      width: "100%",
-      alignItems: "center",
-      gap: Spacing.md,
-    },
-    successIcon: {
-      width: 64,
-      height: 64,
-      borderRadius: 32,
-      backgroundColor: theme.isDark ? "#14532d" : "#dcfce7",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    successTitle: {
-      fontFamily: Font.bold,
-      fontSize: 20,
-      color: theme.textPrimary,
-    },
-    successMeta: {
-      fontFamily: Font.regular,
-      fontSize: FontSize.body,
-      color: theme.textSecondary,
-    },
-    successTotal: {
-      fontFamily: Font.bold,
-      fontSize: 28,
-      color: theme.currency,
-    },
-    successActions: {
-      flexDirection: "row",
-      gap: Spacing.md,
-      width: "100%",
-      marginTop: Spacing.sm,
-    },
-    successBtnOutline: {
-      flex: 1,
-      borderWidth: 1,
-      borderColor: theme.border,
-      borderRadius: Radius.button,
-      paddingVertical: 12,
-      alignItems: "center",
-    },
-    successBtnOutlineText: {
-      fontFamily: Font.semiBold,
-      fontSize: FontSize.button,
-      color: theme.textPrimary,
-    },
-    successBtnFill: {
-      flex: 1,
-      backgroundColor: theme.isDark ? "#0f172a" : "#1a2235",
-      borderRadius: Radius.button,
-      paddingVertical: 12,
-      alignItems: "center",
-    },
-    successBtnFillText: {
-      fontFamily: Font.semiBold,
-      fontSize: FontSize.button,
-      color: "#ffffff",
-    },
   });
 
   // ── Render helpers ─────────────────────────────────────────────────────────
@@ -1021,42 +945,6 @@ export default function POSScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Success modal */}
-      <Modal visible={successVisible} transparent animationType="fade">
-        <View style={s.overlay}>
-          <View style={s.successCard}>
-            <View style={s.successIcon}>
-              <MaterialIcons
-                name="check"
-                size={32}
-                color={theme.isDark ? "#86efac" : "#16a34a"}
-              />
-            </View>
-            <Text style={s.successTitle}>Transaction Complete</Text>
-            <Text style={s.successMeta}>
-              {lastCount} item{lastCount !== 1 ? "s" : ""} sold
-            </Text>
-            <Text style={s.successTotal}>₱{lastTotal.toFixed(2)}</Text>
-            <View style={s.successActions}>
-              <TouchableOpacity
-                style={s.successBtnOutline}
-                onPress={() => setSuccessVisible(false)}
-              >
-                <Text style={s.successBtnOutlineText}>New Sale</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={s.successBtnFill}
-                onPress={() => {
-                  setSuccessVisible(false);
-                  router.push("/sales");
-                }}
-              >
-                <Text style={s.successBtnFillText}>View Sales</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
     </SafeAreaView>
     </KeyboardAvoidingView>
   );
