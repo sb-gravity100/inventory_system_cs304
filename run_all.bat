@@ -5,7 +5,7 @@ REM Try Windows Terminal (wt) split-pane layout first
 where wt >nul 2>&1
 if not errorlevel 1 (
     echo [Il Vento] Opening split panes in Windows Terminal...
-    wt new-tab --title "Backend" cmd /k "%~dp0run_backend.bat" ; split-pane -H --title "Frontend" cmd /k "%~dp0run_frontend.bat"
+    wt --window 0 new-tab --title "Backend" cmd /k "%~dp0run_backend.bat" ; split-pane -H --title "Frontend" cmd /k "%~dp0run_frontend.bat"
     exit /b 0
 )
 
