@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `a2fbcf5` · 2026-03-24 · fix: resolve stale closure causing staff view to show for admin/manager
+- `frontend/app/(tabs)/reports.jsx`
+
 ### `96c0e87` · 2026-03-24 · feat: add 7-day sales trend chart to manager reports view
 - `backend/routes/sales.js`
 - `frontend/app/(tabs)/reports.jsx`
