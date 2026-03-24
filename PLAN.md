@@ -195,6 +195,8 @@ timestamp:         Date  default: Date.now
 | GET | `/sales/transaction/:id` | Token | any | Get single transaction detail |
 | GET | `/sales/transaction-logs` | Token | any | Get audit logs; query: `event`, `from`, `to`, `page`, `limit` |
 | GET | `/sales/stats` | Token | any | Dashboard stats: totalItemsSold, totalStocks, todaysSales, totalRevenue |
+| GET | `/sales/revenue-stats` | Token | any | Reports stats: totalRevenue, weekRevenue, monthRevenue, completedCount, cancelledCount, pendingCount, topProducts |
+| GET | `/sales/audit-logs` | Token | any | Paginated audit log; query: `group` (transactions/inventory/users), `from`, `to`, `page`, `limit`; staff sees own only |
 
 ### Export — `/export`
 All export endpoints stream a file download. Require manager+ role.
@@ -349,7 +351,7 @@ Constants exported from `constants/colors.js`: `Font` (family names), `FontSize`
 2. `backend/routes/sales.js` `transaction-update-products` — compares `transaction.seller._id` (ObjectId) with `req.user.id` (string); needs `.toString()`.
 3. No middleware for manager role; enforced inline per-route only.
 4. No request validation/sanitization on any backend route.
-5. Reports tab is a stub — to be replaced with analytics + export UI.
+5. Reports tab implemented: revenue stats, top products, PDF export via expo-print+expo-sharing, audit log viewer.
 6. `frontend/context/AuthContext.jsx` — dev/prod API URL switch is manual (not env-flag driven).
 7. Log schema uses loose `type` enum — must be migrated to structured `event` codes (see Event Types above).
 8. Transaction `products` array has no `price_at_sale` snapshot — historical totals are unreliable if prices change.
