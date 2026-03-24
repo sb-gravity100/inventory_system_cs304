@@ -13,6 +13,7 @@ File system index for Il Vento inventory management system. Read this before ope
 | `PHASES.md` | Per-phase task lists and done criteria | docs, planning |
 | `commits.md` | Prepend-log of every git commit | docs, history |
 | `FILE_INDEX.md` | This file — maps every file to purpose | docs, meta |
+| `run_all.bat` | Launch backend + frontend together in Windows Terminal split panes (fallback: two windows) | dev, script |
 | `run_backend.bat` | Start backend dev server (nodemon) | dev, script |
 | `run_frontend.bat` | Check for USB device → auto-update local IP in frontend/.env → start Expo Android | dev, script |
 | `reset_db.bat` | Wipe all collections and re-seed admin user via `npm run reset-db` | dev, script, db |
