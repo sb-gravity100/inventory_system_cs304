@@ -64,36 +64,7 @@ To build a mobile-first, role-based inventory management and POS system that uni
 
 This diagram illustrates how the three user roles (Staff, Manager, Admin) interact with the system's core features: authentication, inventory management, transaction processing, reporting, and user administration.
 
-```mermaid
-sequenceDiagram
-    actor Staff
-    actor Manager
-    participant System as Il Vento System
-    actor Admin
-
-    Staff->>System: Login / Logout
-    Staff->>System: View Inventory
-    Staff->>System: Adjust Stock
-    Staff->>System: Create Transaction
-    Staff->>System: Finalize Own Transaction
-
-    Manager->>System: Login / Logout
-    Manager->>System: View Inventory
-    Manager->>System: Adjust Stock
-    Manager->>System: Create Transaction
-    Manager->>System: Finalize Any Transaction
-    Manager->>System: Manage Products and Categories
-    Manager->>System: View All Transactions and Stats
-    Manager->>System: Export Reports
-    Manager->>System: Send Admin Request
-
-    Admin-->>System: Login / Logout
-    Admin-->>System: Manage Products and Categories
-    Admin-->>System: View All Transactions and Stats
-    Admin-->>System: Export Reports
-    Admin-->>System: Manage Users
-    Admin-->>System: Export Audit Log
-```
+![Use Case Diagram](docs/use_case_diagram.svg)
 
 ---
 

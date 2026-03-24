@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 840" width="960" height="840" font-family="Arial, sans-serif">
+
+  <!-- Background -->
+  <rect width="960" height="840" fill="#ffffff"/>
+
+  <!-- ═══ SYSTEM BOUNDARY ═══ -->
+  <rect x="155" y="50" width="630" height="775" fill="#f9fafb" stroke="#374151" stroke-width="2" rx="4"/>
+  <text x="470" y="78" text-anchor="middle" font-size="15" font-weight="bold" fill="#111827">Il Vento System</text>
+
+  <!-- ═══ USE CASES ═══ -->
+
+  <!-- UC1: Login / Logout -->
+  <ellipse cx="470" cy="115" rx="135" ry="20" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="470" y="119" text-anchor="middle" font-size="12" fill="#1e3a5f">Login / Logout</text>
+
+  <!-- UC2: View Inventory -->
+  <ellipse cx="470" cy="180" rx="135" ry="20" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="470" y="184" text-anchor="middle" font-size="12" fill="#1e3a5f">View Inventory</text>
+
+  <!-- UC3: Adjust Stock -->
+  <ellipse cx="470" cy="245" rx="135" ry="20" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="470" y="249" text-anchor="middle" font-size="12" fill="#1e3a5f">Adjust Stock</text>
+
+  <!-- UC4: Create Transaction -->
+  <ellipse cx="470" cy="310" rx="135" ry="20" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="470" y="314" text-anchor="middle" font-size="12" fill="#1e3a5f">Create Transaction</text>
+
+  <!-- UC5: Finalize Own Transaction -->
+  <ellipse cx="470" cy="375" rx="135" ry="20" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="470" y="379" text-anchor="middle" font-size="12" fill="#1e3a5f">Finalize Own Transaction</text>
+
+  <!-- UC6: Manage Products and Categories -->
+  <ellipse cx="470" cy="440" rx="135" ry="20" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="470" y="444" text-anchor="middle" font-size="12" fill="#1e3a5f">Manage Products and Categories</text>
+
+  <!-- UC7: View All Transactions and Stats -->
+  <ellipse cx="470" cy="505" rx="135" ry="20" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="470" y="509" text-anchor="middle" font-size="12" fill="#1e3a5f">View All Transactions and Stats</text>
+
+  <!-- UC8: Export Reports -->
+  <ellipse cx="470" cy="570" rx="135" ry="20" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="470" y="574" text-anchor="middle" font-size="12" fill="#1e3a5f">Export Reports</text>
+
+  <!-- UC9: Send Admin Request -->
+  <ellipse cx="470" cy="635" rx="135" ry="20" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="470" y="639" text-anchor="middle" font-size="12" fill="#1e3a5f">Send Admin Request</text>
+
+  <!-- UC10: Manage Users -->
+  <ellipse cx="470" cy="700" rx="135" ry="20" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="470" y="704" text-anchor="middle" font-size="12" fill="#1e3a5f">Manage Users</text>
+
+  <!-- UC11: Export Audit Log -->
+  <ellipse cx="470" cy="765" rx="135" ry="20" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="470" y="769" text-anchor="middle" font-size="12" fill="#1e3a5f">Export Audit Log</text>
+
+  <!-- ═══ ASSOCIATION LINES ═══ -->
+
+  <!-- Staff (body midpoint 238) → UC1–UC5 (left edge x=335) -->
+  <line x1="92" y1="238" x2="335" y2="115" stroke="#374151" stroke-width="1.2"/>
+  <line x1="92" y1="238" x2="335" y2="180" stroke="#374151" stroke-width="1.2"/>
+  <line x1="92" y1="238" x2="335" y2="245" stroke="#374151" stroke-width="1.2"/>
+  <line x1="92" y1="238" x2="335" y2="310" stroke="#374151" stroke-width="1.2"/>
+  <line x1="92" y1="238" x2="335" y2="375" stroke="#374151" stroke-width="1.2"/>
+
+  <!-- Manager (body midpoint 518) → UC1–UC9 (left edge x=335) -->
+  <line x1="92" y1="518" x2="335" y2="115" stroke="#374151" stroke-width="1.2"/>
+  <line x1="92" y1="518" x2="335" y2="180" stroke="#374151" stroke-width="1.2"/>
+  <line x1="92" y1="518" x2="335" y2="245" stroke="#374151" stroke-width="1.2"/>
+  <line x1="92" y1="518" x2="335" y2="310" stroke="#374151" stroke-width="1.2"/>
+  <line x1="92" y1="518" x2="335" y2="375" stroke="#374151" stroke-width="1.2"/>
+  <line x1="92" y1="518" x2="335" y2="440" stroke="#374151" stroke-width="1.2"/>
+  <line x1="92" y1="518" x2="335" y2="505" stroke="#374151" stroke-width="1.2"/>
+  <line x1="92" y1="518" x2="335" y2="570" stroke="#374151" stroke-width="1.2"/>
+  <line x1="92" y1="518" x2="335" y2="635" stroke="#374151" stroke-width="1.2"/>
+
+  <!-- Admin (body midpoint 478) → UC1, UC6–UC8, UC10–UC11 (right edge x=605) -->
+  <line x1="863" y1="478" x2="605" y2="115" stroke="#374151" stroke-width="1.2"/>
+  <line x1="863" y1="478" x2="605" y2="440" stroke="#374151" stroke-width="1.2"/>
+  <line x1="863" y1="478" x2="605" y2="505" stroke="#374151" stroke-width="1.2"/>
+  <line x1="863" y1="478" x2="605" y2="570" stroke="#374151" stroke-width="1.2"/>
+  <line x1="863" y1="478" x2="605" y2="700" stroke="#374151" stroke-width="1.2"/>
+  <line x1="863" y1="478" x2="605" y2="765" stroke="#374151" stroke-width="1.2"/>
+
+  <!-- ═══ ACTOR STICK FIGURES ═══ -->
+
+  <!-- Staff — head center (70, 210) -->
+  <circle cx="70" cy="210" r="14" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="70" y1="224" x2="70" y2="252" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="48" y1="237" x2="92" y2="237" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="70" y1="252" x2="55" y2="274" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="70" y1="252" x2="85" y2="274" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="70" y="292" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2937">Staff</text>
+
+  <!-- Manager — head center (70, 490) -->
+  <circle cx="70" cy="490" r="14" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="70" y1="504" x2="70" y2="532" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="48" y1="517" x2="92" y2="517" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="70" y1="532" x2="55" y2="554" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="70" y1="532" x2="85" y2="554" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="70" y="572" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2937">Manager</text>
+
+  <!-- Admin — head center (885, 450) -->
+  <circle cx="885" cy="450" r="14" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="885" y1="464" x2="885" y2="492" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="863" y1="477" x2="907" y2="477" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="885" y1="492" x2="870" y2="514" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="885" y1="492" x2="900" y2="514" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="885" y="532" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2937">Admin</text>
+
+</svg>
