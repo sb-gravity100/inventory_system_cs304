@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `f22e6d2` · 2026-03-24 · feat: push POS screen up when keyboard is open
+- `frontend/app/pos.jsx`
+
 ### `935ac39` · 2026-03-24 · fix: increase POS cart input height to fit placeholder text
 - `frontend/app/pos.jsx`
 
