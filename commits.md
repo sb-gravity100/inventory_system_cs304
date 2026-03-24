@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `bf78946` · 2026-03-24 · feat: add +/- stepper to product detail stock input
+- `frontend/app/products/[productId].jsx`
+
 ### `f22e6d2` · 2026-03-24 · feat: push POS screen up when keyboard is open
 - `frontend/app/pos.jsx`
 
