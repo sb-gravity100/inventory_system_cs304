@@ -2,6 +2,10 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `6f9491b` · 2026-03-24 · refactor: remove pending/finalize flow — transactions complete on creation
+- `backend/routes/sales.js`
+- `frontend/app/transactions/[transactionId]/index.jsx`
+
 ### `c0e850a` · 2026-03-24 · feat: push product detail screen up when keyboard is open
 - `frontend/app/products/[productId].jsx`
 
