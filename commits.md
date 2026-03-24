@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `6e85c6a` · 2026-03-24 · docs: allow clarifying questions via AskUserQuestion tool
+- `CLAUDE.md`
+
 ### `d64f5b5` · 2026-03-24 · feat: replace Create Transaction with full POS Mode screen
 - `frontend/app/pos.jsx` (new)
 - `frontend/app/transaction.jsx` (deleted)
