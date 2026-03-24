@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `821bc2d` · 2026-03-24 · feat: replace status chips with user/seller chip filter on sales screen
+- `frontend/app/(tabs)/sales.jsx`
+
 ### `d1766d7` · 2026-03-24 · feat: add date/status/seller filters to sales transaction list
 - `frontend/app/(tabs)/sales.jsx`
 
