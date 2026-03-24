@@ -6,7 +6,6 @@ import {
   RefreshControl,
   Alert,
   ScrollView,
-  TextInput,
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -30,13 +29,6 @@ const DATE_FILTERS = [
   { key: "week", label: "This Week" },
 ];
 
-const STATUS_FILTERS = [
-  { key: "all", label: "All" },
-  { key: "pending", label: "Pending" },
-  { key: "completed", label: "Completed" },
-  { key: "cancelled", label: "Cancelled" },
-];
-
 export default function SalesScreen() {
   const { theme } = useTheme();
   const { authState } = useAuth();
@@ -49,8 +41,7 @@ export default function SalesScreen() {
     todaysSales: 0,
   });
   const [dateFilter, setDateFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [sellerQuery, setSellerQuery] = useState("");
+  const [sellerFilter, setSellerFilter] = useState("all");
 
   const isManagerOrAdmin =
     authState.user?.role === "manager" || authState.user?.role === "admin";
@@ -83,6 +74,20 @@ export default function SalesScreen() {
     setRefreshing(false);
   };
 
+  // Unique sellers derived from loaded transactions
+  const sellers = useMemo(() => {
+    const seen = new Set();
+    const list = [];
+    for (const tx of transactions) {
+      const name = tx.seller?.username;
+      if (name && !seen.has(name)) {
+        seen.add(name);
+        list.push(name);
+      }
+    }
+    return list;
+  }, [transactions]);
+
   const filteredTransactions = useMemo(() => {
     const now = new Date();
     const startOfDay = new Date(now);
@@ -98,16 +103,12 @@ export default function SalesScreen() {
         if (new Date(tx.createdAt) < startOfWeek) return false;
       }
 
-      if (statusFilter !== "all" && tx.status !== statusFilter) return false;
-
-      if (sellerQuery.trim()) {
-        const username = tx.seller?.username?.toLowerCase() || "";
-        if (!username.includes(sellerQuery.trim().toLowerCase())) return false;
-      }
+      if (sellerFilter !== "all" && tx.seller?.username !== sellerFilter)
+        return false;
 
       return true;
     });
-  }, [transactions, dateFilter, statusFilter, sellerQuery]);
+  }, [transactions, dateFilter, sellerFilter]);
 
   const s = StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
@@ -143,14 +144,6 @@ export default function SalesScreen() {
     },
     chipText: {
       fontFamily: Font.medium,
-      fontSize: FontSize.listSecondary,
-    },
-    sellerInput: {
-      height: 34,
-      borderWidth: 1,
-      borderRadius: Radius.input,
-      paddingHorizontal: Spacing.md,
-      fontFamily: Font.regular,
       fontSize: FontSize.listSecondary,
     },
     sectionLabel: {
@@ -198,7 +191,12 @@ export default function SalesScreen() {
       ]}
       activeOpacity={0.7}
     >
-      <Text style={[s.chipText, { color: active ? "#ffffff" : theme.textSecondary }]}>
+      <Text
+        style={[
+          s.chipText,
+          { color: active ? "#ffffff" : theme.textSecondary },
+        ]}
+      >
         {label}
       </Text>
     </TouchableOpacity>
@@ -249,36 +247,28 @@ export default function SalesScreen() {
           ))}
         </ScrollView>
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={s.chipRow}
-        >
-          {STATUS_FILTERS.map((f) => (
+        {isManagerOrAdmin && sellers.length > 0 && (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={s.chipRow}
+          >
             <Chip
-              key={f.key}
-              label={f.label}
-              active={statusFilter === f.key}
-              onPress={() => setStatusFilter(f.key)}
+              label="All Users"
+              active={sellerFilter === "all"}
+              onPress={() => setSellerFilter("all")}
             />
-          ))}
-        </ScrollView>
-
-        {isManagerOrAdmin && (
-          <TextInput
-            style={[
-              s.sellerInput,
-              {
-                borderColor: theme.border,
-                color: theme.textPrimary,
-                backgroundColor: theme.surface,
-              },
-            ]}
-            placeholder="Filter by seller..."
-            placeholderTextColor={theme.textSecondary}
-            value={sellerQuery}
-            onChangeText={setSellerQuery}
-          />
+            {sellers.map((name) => (
+              <Chip
+                key={name}
+                label={name}
+                active={sellerFilter === name}
+                onPress={() =>
+                  setSellerFilter(sellerFilter === name ? "all" : name)
+                }
+              />
+            ))}
+          </ScrollView>
         )}
       </View>
 
@@ -300,9 +290,7 @@ export default function SalesScreen() {
             renderItem={({ item }) => <TransactionItem transaction={item} />}
             ItemSeparatorComponent={() => <View style={s.divider} />}
             ListEmptyComponent={
-              <Text style={s.empty}>
-                No transactions found.
-              </Text>
+              <Text style={s.empty}>No transactions found.</Text>
             }
           />
         </View>
