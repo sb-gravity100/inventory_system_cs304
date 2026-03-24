@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `935ac39` · 2026-03-24 · fix: increase POS cart input height to fit placeholder text
+- `frontend/app/pos.jsx`
+
 ### `c139115` · 2026-03-24 · fix: clip overflowing placeholder text in POS cart inputs
 - `frontend/app/pos.jsx`
 
