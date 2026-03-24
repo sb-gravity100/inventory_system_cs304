@@ -2,6 +2,12 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `d1766d7` · 2026-03-24 · feat: add date/status/seller filters to sales transaction list
+- `frontend/app/(tabs)/sales.jsx`
+
+### `72693d2` · 2026-03-24 · fix: sort transactions descending by createdAt
+- `backend/routes/sales.js`
+
 ### `4fc9341` · 2026-03-24 · feat: add run_all.bat to launch backend + frontend in split panes
 - `run_all.bat`
 - `FILE_INDEX.md`
