@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `6abc857` · 2026-03-24 · feat: add staff sales performance view with bar chart to reports screen
+- `frontend/app/(tabs)/reports.jsx`
+
 ### `dfe10e7` · 2026-03-24 · docs: update FILE_INDEX and PLAN for reports screen implementation
 - `FILE_INDEX.md`
 - `PLAN.md`
