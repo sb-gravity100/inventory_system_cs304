@@ -2,6 +2,11 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `109aea7` · 2026-03-24 · feat: receipt-style transaction screen, print support, POS navigates to receipt
+- `frontend/app/transactions/[transactionId]/index.jsx`
+- `frontend/app/pos.jsx`
+- `frontend/package.json`
+
 ### `7e787c2` · 2026-03-24 · refactor: simplify transaction detail to read-only receipt view
 - `frontend/app/transactions/[transactionId]/index.jsx`
 
