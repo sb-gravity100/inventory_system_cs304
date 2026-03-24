@@ -2,6 +2,12 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `3d12896` · 2026-03-24 · fix: use correct user from useAuth and add edges top to all tab SafeAreaViews
+- `frontend/app/(tabs)/reports.jsx`
+- `frontend/app/(tabs)/sales.jsx`
+- `frontend/app/(tabs)/index.jsx`
+- `frontend/app/(tabs)/inventory.jsx`
+
 ### `a2fbcf5` · 2026-03-24 · fix: resolve stale closure causing staff view to show for admin/manager
 - `frontend/app/(tabs)/reports.jsx`
 
