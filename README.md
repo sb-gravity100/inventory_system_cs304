@@ -64,7 +64,36 @@ To build a mobile-first, role-based inventory management and POS system that uni
 
 This diagram illustrates how the three user roles (Staff, Manager, Admin) interact with the system's core features: authentication, inventory management, transaction processing, reporting, and user administration.
 
-> _[Insert Use Case Diagram here]_
+```mermaid
+flowchart LR
+    S(("👤 Staff"))
+    M(("👔 Manager"))
+    A(("🔑 Admin"))
+
+    subgraph sys ["  Il Vento System  "]
+        direction TB
+        UC1([Login / Logout])
+        UC2([View Inventory])
+        UC3([Adjust Stock])
+        UC4([Create Transaction])
+        UC5([Edit & Finalize\nOwn Transaction])
+        UC6([Manage Products\n& Categories])
+        UC7([View All Transactions\n& Stats])
+        UC8([Generate & Export\nReports])
+        UC9([Send Admin Request])
+        UC10([Manage Users])
+        UC11([Export Audit Log])
+    end
+
+    S --- UC1 & UC2 & UC3 & UC4 & UC5
+    M --- UC1 & UC2 & UC3 & UC4 & UC5 & UC6 & UC7 & UC8 & UC9
+    A --- UC1 & UC6 & UC7 & UC8 & UC10 & UC11
+
+    classDef actor fill:#9ca3af,stroke:#6b7280,color:#fff
+    classDef usecase fill:#bfdbfe,stroke:#3b82f6,color:#1e3a5f
+    class S,M,A actor
+    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10,UC11 usecase
+```
 
 ---
 
@@ -72,7 +101,29 @@ This diagram illustrates how the three user roles (Staff, Manager, Admin) intera
 
 This diagram shows the sequence of events when a staff member finalizes a sales transaction: the frontend sends a finalize request → the backend verifies the JWT and ownership → stock is decremented per product → `price_at_sale` is snapshotted → a `TRANSACTION_COMPLETED` log entry is written → the response is returned to the client.
 
-> _[Insert Sequence Diagram here]_
+```mermaid
+sequenceDiagram
+    actor User
+    participant App as Frontend (React Native)
+    participant API as Backend (Express)
+    participant DB as MongoDB Atlas
+
+    User->>App: Tap "Finalize Transaction"
+    App->>API: POST /sales/transaction-finalize { transactionId }
+    API->>API: verifyToken → req.user
+    API->>DB: Find Transaction by ID
+    DB-->>API: Transaction document
+    API->>API: Check ownership or manager/admin role
+    loop For each product in transaction
+        API->>DB: product.decreaseStock(qty)
+        API->>DB: Set price_at_sale snapshot
+    end
+    API->>DB: Transaction.status → "completed"
+    API->>DB: Log.create(TRANSACTION_COMPLETED)
+    DB-->>API: Saved
+    API-->>App: { success: true, transaction }
+    App-->>User: Navigate to Sales Tab
+```
 
 ---
 
@@ -80,7 +131,29 @@ This diagram shows the sequence of events when a staff member finalizes a sales 
 
 This diagram shows the activity flow of the transaction lifecycle: a user opens a new transaction and adds products from inventory → the transaction is saved as **pending** → the user (or a manager) can edit products, then either **finalize** (stock decremented, status → completed) or **cancel** (stock unchanged, status → cancelled).
 
-> _[Insert Activity Diagram here]_
+```mermaid
+flowchart TD
+    A([Open App\nAndroid]) --> B{JWT Stored\nin Device?}
+    B -- No --> C[Login\nUsername + Password]
+    B -- Yes --> D[Validate Token\nGET /auth/me]
+    D -- Invalid / Expired --> C
+    D -- Valid --> G
+    C --> E{Credentials\nValid?}
+    E -- No --> C
+    E -- Yes --> F[Issue JWT Token\nStore in Secure Store]
+    F --> G{Role?}
+    G -- Staff --> H[Sales + Inventory Tabs]
+    G -- Manager --> I[Dashboard + Full\nInventory + Reports]
+    G -- Admin --> J[All Features +\nUser Management]
+    H & I & J --> K([Done])
+
+    classDef terminal fill:#9ca3af,stroke:#6b7280,color:#fff
+    classDef process fill:#bfdbfe,stroke:#3b82f6,color:#1e3a5f
+    classDef decision fill:#f9a8d4,stroke:#ec4899,color:#831843
+    class A,K terminal
+    class C,D,F,H,I,J process
+    class B,E,G decision
+```
 
 ---
 
@@ -102,7 +175,56 @@ The system uses five MongoDB collections. Key relationships:
 | **Transaction** | `status` (pending/completed/cancelled), `seller` → User, `products[]` (product ref + qty + price_at_sale), `payment_method`, `discount` |
 | **Log** | `event` (event code), `message`, `actor` → User, `transaction_id`, `products_involved[]`, `metadata`, `timestamp` |
 
-> _[Insert ER Diagram here]_
+```mermaid
+erDiagram
+    USER {
+        ObjectId _id PK
+        String username
+        String password
+        String role
+    }
+    CATEGORY {
+        ObjectId _id PK
+        String name
+        String color
+    }
+    PRODUCT {
+        ObjectId _id PK
+        String name
+        String sku
+        Number price
+        Number costPrice
+        Number stock
+        Number low_stock_threshold
+        Boolean isActive
+    }
+    TRANSACTION {
+        ObjectId _id PK
+        String status
+        String payment_method
+        Number discount
+        Date createdAt
+    }
+    TRANSACTION_PRODUCT {
+        ObjectId product FK
+        Number quantity
+        Number price_at_sale
+    }
+    LOG {
+        ObjectId _id PK
+        String event
+        String message
+        Date timestamp
+    }
+
+    USER ||--o{ TRANSACTION : "seller"
+    TRANSACTION ||--o{ TRANSACTION_PRODUCT : "contains"
+    PRODUCT ||--o{ TRANSACTION_PRODUCT : "referenced in"
+    CATEGORY ||--o{ PRODUCT : "categorizes"
+    USER ||--o{ LOG : "actor"
+    TRANSACTION ||--o{ LOG : "logged in"
+    PRODUCT ||--o{ LOG : "products_involved"
+```
 
 ---
 
