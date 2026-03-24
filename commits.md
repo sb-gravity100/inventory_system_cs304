@@ -2,6 +2,9 @@
 
 Prepend a new entry here after every commit. Most recent commit at top.
 
+### `6e53182` · 2026-03-24 · fix: quote use case labels to resolve Mermaid syntax error
+- `README.md`
+
 ### `f36de74` · 2026-03-24 · docs: use person shape actors and clean up use case diagram lines
 - `README.md`
 
